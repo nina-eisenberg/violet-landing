@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Violet Investigations — AI-Powered Workplace Investigation Platform</title>
+  <meta name="description" content="Violet is an AI-powered case management platform for workplace investigators. The investigator drives the car. Violet writes the brief.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --violet-50: #f5f0ff;
+      --violet-100: #ede5ff;
+      --violet-200: #dcceff;
+      --violet-300: #c4a8ff;
+      --violet-400: #a67aff;
+      --violet-500: #8b4ffa;
+      --violet-600: #7c3aed;
+      --violet-700: #6926d4;
+      --violet-800: #5720a8;
+      --violet-900: #3b1578;
+      --violet-950: #1e0a3e;
+      --cream: #faf8f5;
+      --charcoal: #1a1a2e;
+      --text: #2d2d3a;
+      --text-light: #6b6b7b;
+      --border: #e8e4ef;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--cream);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(250, 248, 245, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(139, 79, 250, 0.08);
+    }
+
+    .nav-logo {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.35rem;
+      color: var(--violet-800);
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--violet-500); }
+
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+
+    .nav-links a {
+      font-size: 0.9rem; font-weight: 500;
+      color: var(--text-light); text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--violet-600); }
+
+    .nav-cta {
+      background: var(--violet-600) !important;
+      color: white !important;
+      padding: 0.6rem 1.4rem;
+      border-radius: 8px;
+      font-weight: 600 !important;
+    }
+
+    .nav-cta:hover { background: var(--violet-700) !important; }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 70%;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(139, 79, 250, 0.08) 0%, transparent 100%),
+        radial-gradient(ellipse 60% 40% at 20% 20%, rgba(108, 45, 199, 0.04) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.4rem 1rem;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 0.82rem; font-weight: 500;
+      color: var(--violet-700);
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--violet-500);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: clamp(2.8rem, 6vw, 4.5rem);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--charcoal);
+      max-width: 800px;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .hero h1 em { font-style: italic; color: var(--violet-600); }
+
+    .hero-sub {
+      font-size: 1.2rem; line-height: 1.6;
+      color: var(--text-light);
+      max-width: 560px;
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+
+    .hero-cta-group {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      justify-content: center;
+      position: relative;
+    }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.9rem 2rem;
+      background: var(--violet-600); color: white;
+      border: none; border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-primary:hover {
+      background: var(--violet-700);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(139, 79, 250, 0.25);
+    }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.9rem 2rem;
+      background: white; color: var(--text);
+      border: 1px solid var(--border); border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem; font-weight: 500;
+      cursor: pointer; transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--violet-300);
+      transform: translateY(-2px);
+    }
+
+    .video-section {
+      padding: 0 2rem 6rem;
+      display: flex; justify-content: center;
+    }
+
+    .video-container {
+      width: 100%; max-width: 900px;
+      border-radius: 16px; overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.04), 0 20px 60px rgba(139, 79, 250, 0.1), 0 0 0 1px rgba(139, 79, 250, 0.08);
+      background: var(--charcoal);
+    }
+
+    .video-link {
+      display: block; position: relative;
+      cursor: pointer; text-decoration: none;
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, var(--violet-950) 0%, var(--violet-800) 100%);
+    }
+
+    .video-thumb {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      position: absolute; top: 0; left: 0;
+    }
+
+    .video-play-overlay {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.3);
+      transition: background 0.2s;
+    }
+
+    .video-link:hover .video-play-overlay { background: rgba(0,0,0,0.15); }
+
+    .play-btn {
+      width: 72px; height: 72px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s;
+    }
+
+    .video-link:hover .play-btn { transform: scale(1.08); }
+
+    .features {
+      padding: 6rem 2rem;
+      background: white;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .features-inner { max-width: 1100px; margin: 0 auto; }
+
+    .section-label {
+      font-size: 0.8rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--violet-500); margin-bottom: 0.75rem;
+    }
+
+    .section-heading {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      color: var(--charcoal); letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+
+    .section-sub {
+      font-size: 1.1rem; color: var(--text-light);
+      max-width: 560px; line-height: 1.6;
+      margin-bottom: 3.5rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .feature-card {
+      padding: 2rem; border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--cream);
+      transition: all 0.25s ease;
+    }
+
+    .feature-card:hover {
+      border-color: var(--violet-200);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(139, 79, 250, 0.08);
+    }
+
+    .feature-icon {
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 10px;
+      background: var(--violet-100); color: var(--violet-600);
+      margin-bottom: 1.25rem;
+    }
+
+    .feature-card h3 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.2rem; color: var(--charcoal);
+      margin-bottom: 0.6rem;
+    }
+
+    .feature-card p { font-size: 0.92rem; color: var(--text-light); line-height: 1.6; }
+
+    .how-it-works { padding: 6rem 2rem; }
+    .how-inner { max-width: 800px; margin: 0 auto; }
+    .how-it-works .section-heading, .how-it-works .section-label { text-align: center; }
+    .how-it-works .section-sub { text-align: center; margin: 0 auto 3.5rem; }
+
+    .step {
+      display: flex; gap: 2rem;
+      align-items: flex-start;
+      margin-bottom: 2.5rem;
+    }
+
+    .step-number {
+      width: 40px; height: 40px; min-width: 40px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      background: var(--violet-100); color: var(--violet-700);
+      font-weight: 700; font-size: 0.95rem;
+    }
+
+    .step-content h3 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.15rem; color: var(--charcoal);
+      margin-bottom: 0.4rem;
+    }
+
+    .step-content p { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
+
+    .waitlist {
+      padding: 6rem 2rem;
+      background: linear-gradient(135deg, var(--violet-950) 0%, var(--violet-800) 50%, var(--violet-700) 100%);
+      text-align: center; position: relative; overflow: hidden;
+    }
+
+    .waitlist::before {
+      content: '';
+      position: absolute; top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background:
+        radial-gradient(ellipse at 30% 50%, rgba(255,255,255,0.03) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 50%, rgba(167, 120, 255, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .waitlist-inner { position: relative; max-width: 560px; margin: 0 auto; }
+    .waitlist .section-label { color: var(--violet-300); }
+    .waitlist .section-heading { color: white; }
+    .waitlist .section-sub { color: rgba(255,255,255,0.65); margin: 0 auto 2.5rem; }
+
+    .waitlist-form {
+      display: flex; gap: 0.75rem;
+      max-width: 480px; margin: 0 auto;
+    }
+
+    .waitlist-form input {
+      flex: 1; padding: 0.9rem 1.25rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.08);
+      color: white;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem; outline: none;
+    }
+
+    .waitlist-form input::placeholder { color: rgba(255,255,255,0.4); }
+    .waitlist-form input:focus { border-color: var(--violet-400); background: rgba(255,255,255,0.12); }
+
+    .waitlist-form button {
+      padding: 0.9rem 1.8rem; border-radius: 10px;
+      border: none; background: white;
+      color: var(--violet-800);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .waitlist-form button:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+
+    .waitlist-note { font-size: 0.8rem; color: rgba(255,255,255,0.35); margin-top: 1rem; }
+
+    .waitlist-success {
+      display: none;
+      color: var(--violet-200);
+      font-size: 1.05rem; font-weight: 500;
+    }
+
+    footer {
+      padding: 3rem 2rem;
+      display: flex; justify-content: space-between; align-items: center;
+      max-width: 1100px; margin: 0 auto;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-logo {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.1rem; color: var(--violet-800);
+    }
+
+    .footer-links { display: flex; gap: 1.5rem; }
+
+    .footer-links a {
+      font-size: 0.85rem; color: var(--text-light);
+      text-decoration: none; transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--violet-600); }
+
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero { padding: 7rem 1.5rem 3rem; }
+      .features-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+      .step { gap: 1.25rem; }
+      .waitlist-form { flex-direction: column; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="nav-logo">Violet<span>.</span></a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#waitlist" class="nav-cta">Join Waitlist</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-badge">Now Live — Early Access</div>
+    <h1>The investigator drives the car. <em>Violet writes the brief.</em></h1>
+    <p class="hero-sub">AI-powered case management for workplace investigators. Spend your time on the judgment that matters — let Violet handle the drafting.</p>
+    <div class="hero-cta-group">
+      <a href="#waitlist" class="btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Join the Waitlist
+      </a>
+      <a href="#demo" class="btn-secondary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Watch Demo
+      </a>
+    </div>
+  </section>
+
+  <section class="video-section" id="demo">
+    <div class="video-container">
+      <a href="https://youtu.be/pxjFsri5liQ" target="_blank" class="video-link">
+        <img src="https://img.youtube.com/vi/pxjFsri5liQ/maxresdefault.jpg"
+             alt="Violet Investigations Demo"
+             class="video-thumb"
+             onerror="this.style.display='none'">
+        <div class="video-play-overlay">
+          <div class="play-btn">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="#5720a8"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="features-inner">
+      <div class="section-label">Built for Investigators</div>
+      <h2 class="section-heading">Every step of the investigation, accelerated.</h2>
+      <p class="section-sub">From intake to close-out, Violet generates professional artifacts while you stay focused on the evidence and the people.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+          <h3>Investigation Plans</h3>
+          <p>Violet generates scope questions, witness lists, and document requests from your intake notes. Review, adjust, and go.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <h3>Interview Outlines</h3>
+          <p>Tailored outlines for each party using funnel methodology — open questions first, confrontation only when earned. Best practice, built in.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+          <h3>Investigation Reports</h3>
+          <p>Full reports with facts, credibility analysis, and findings — sourced directly from interview notes and exhibits. No hallucinations.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+          <h3>Credibility Analysis</h3>
+          <p>AI evaluates each party's testimony against the evidence — corroboration, consistency, shifting accounts — using investigative best practices.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
+          <h3>Case Management</h3>
+          <p>Track parties, interviews, exhibits, and workflow status — all in one place. Every case organized from intake to close-out.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div>
+          <h3>Google Docs Export</h3>
+          <p>One click sends your report to Google Docs — automatically filed in the right folder, labeled by subject name, ready to share.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-it-works" id="how-it-works">
+    <div class="how-inner">
+      <div class="section-label">How It Works</div>
+      <h2 class="section-heading">Your investigation workflow, streamlined.</h2>
+      <p class="section-sub">Violet follows the same process you already use — it just handles the writing so you can focus on the thinking.</p>
+      <div class="step"><div class="step-number">1</div><div class="step-content"><h3>Enter your intake notes</h3><p>Paste or type your intake notes from the HRBP referral. Violet generates a case synopsis and suggests scope questions.</p></div></div>
+      <div class="step"><div class="step-number">2</div><div class="step-content"><h3>Generate your investigation plan</h3><p>Violet identifies the allegations, suggests witnesses and documents to review, and drafts your scope of investigation. You review and adjust.</p></div></div>
+      <div class="step"><div class="step-number">3</div><div class="step-content"><h3>Conduct interviews with tailored outlines</h3><p>For each party, Violet generates a custom outline based on the case evidence — using funnel methodology and confrontation sequencing. Enter your notes after each interview.</p></div></div>
+      <div class="step"><div class="step-number">4</div><div class="step-content"><h3>Set your finding and generate the report</h3><p>You decide the finding direction. Violet drafts the full report — facts, credibility analysis, and finding — sourced entirely from your interview notes and exhibits. Review it, edit it, make it yours.</p></div></div>
+      <div class="step"><div class="step-number">5</div><div class="step-content"><h3>Export and close</h3><p>Send the report to Google Docs, record the resolution, and close the case. Everything is tracked and stored.</p></div></div>
+    </div>
+  </section>
+
+  <section class="waitlist" id="waitlist">
+    <div class="waitlist-inner">
+      <div class="section-label">Early Access</div>
+      <h2 class="section-heading">Built by an investigator,<br>for investigators.</h2>
+      <p class="section-sub">Violet was created by a workplace investigator who replaced a $75K/year case management tool with an AI-powered platform. Join the waitlist for early access.</p>
+      <div class="waitlist-form" id="waitlistForm">
+        <input type="email" id="emailInput" placeholder="you@company.com" required>
+        <button type="button" onclick="handleWaitlist()">Join Waitlist</button>
+      </div>
+      <p class="waitlist-note" id="waitlistNote">No spam. We'll notify you when early access opens.</p>
+      <p class="waitlist-success" id="waitlistSuccess">You're on the list. We'll be in touch soon.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">Violet Investigations</div>
+    <div class="footer-links">
+      <a href="/cdn-cgi/l/email-protection#b8d6d1d6d9f8ced1d7d4ddccd1d6ceddcbccd1dfd9ccd1d7d6cb96dbd7d5">Contact</a>
+      <a href="https://www.linkedin.com/in/nina-eisenberg" target="_blank">LinkedIn</a>
+    </div>
+  </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    function handleWaitlist() {
+      var email = document.getElementById('emailInput').value;
+      if (!email || email.indexOf('@') === -1) {
+        document.getElementById('emailInput').style.borderColor = '#ff4444';
+        return;
+      }
+      fetch('https://formspree.io/f/xgolgawr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      }).then(function() {
+        document.getElementById('waitlistForm').style.display = 'none';
+        document.getElementById('waitlistNote').style.display = 'none';
+        document.getElementById('waitlistSuccess').style.display = 'block';
+      }).catch(function() {
+        document.getElementById('waitlistForm').style.display = 'none';
+        document.getElementById('waitlistNote').style.display = 'none';
+        document.getElementById('waitlistSuccess').style.display = 'block';
+      });
+    }
+    docum
