@@ -511,9 +511,9 @@
       <div class="section-label">Early Access</div>
       <h2 class="section-heading">Built by an investigator,<br>for investigators.</h2>
       <p class="section-sub">Violet was created by a workplace investigator who replaced a $75K/year case management tool with an AI-powered platform. Join the waitlist for early access.</p>
-      <div class="waitlist-form" id="waitlistForm">
-        <input type="email" id="emailInput" placeholder="you@company.com" required>
-        <button type="button" onclick="handleWaitlist()">Join Waitlist</button>
+      <div id="waitlistForm" style="display:flex;gap:0.75rem;max-width:480px;margin:0 auto;">
+        <input type="email" id="emailInput" placeholder="you@company.com" style="flex:1;padding:0.9rem 1.25rem;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:white;font-family:'DM Sans',sans-serif;font-size:0.95rem;outline:none;">
+        <button type="button" id="waitlistBtn" style="padding:0.9rem 1.8rem;border-radius:10px;border:none;background:white;color:#5720a8;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;white-space:nowrap;">Join Waitlist</button>
       </div>
       <p class="waitlist-note" id="waitlistNote">No spam. We'll notify you when early access opens.</p>
       <p class="waitlist-success" id="waitlistSuccess">You're on the list. We'll be in touch soon.</p>
@@ -523,30 +523,39 @@
   <footer>
     <div class="footer-logo">Violet Investigations</div>
     <div class="footer-links">
-      <a href="/cdn-cgi/l/email-protection#b8d6d1d6d9f8ced1d7d4ddccd1d6ceddcbccd1dfd9ccd1d7d6cb96dbd7d5">Contact</a>
+      <a href="https://www.linkedin.com/in/nina-eisenberg" target="_blank">Contact</a>
       <a href="https://www.linkedin.com/in/nina-eisenberg" target="_blank">LinkedIn</a>
     </div>
   </footer>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-    function handleWaitlist() {
+  <script>
+    document.getElementById('waitlistBtn').addEventListener('click', function() {
       var email = document.getElementById('emailInput').value;
       if (!email || email.indexOf('@') === -1) {
-        document.getElementById('emailInput').style.borderColor = '#ff4444';
+        alert('Please enter a valid email');
         return;
       }
-      fetch('https://formspree.io/f/xgolgawr', {
-        method: 'POST',
-       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ email: email })
-      }).then(function() {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://formspree.io/f/xgolgawr');
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.onload = function() {
         document.getElementById('waitlistForm').style.display = 'none';
         document.getElementById('waitlistNote').style.display = 'none';
         document.getElementById('waitlistSuccess').style.display = 'block';
-      }).catch(function() {
-        document.getElementById('waitlistForm').style.display = 'none';
-        document.getElementById('waitlistNote').style.display = 'none';
-        document.getElementById('waitlistSuccess').style.display = 'block';
-      });
-    }
-    docum
+      };
+      xhr.onerror = function() {
+        alert('Something went wrong. Please try again.');
+      };
+      xhr.send(JSON.stringify({ email: email }));
+    });
+
+    document.getElementById('emailInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        document.getElementById('waitlistBtn').click();
+      }
+    });
+  </script>
+
+</body>
+</html>
