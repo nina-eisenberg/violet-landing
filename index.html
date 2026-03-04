@@ -537,7 +537,7 @@
       }
       fetch('https://formspree.io/f/xgolgawr', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({ email: email })
       }).then(function() {
         document.getElementById('waitlistForm').style.display = 'none';
