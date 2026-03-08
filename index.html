@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Violet Investigations — AI-Powered Workplace Investigation Platform</title>
-  <meta name="description" content="Violet is an AI-powered case management platform for workplace investigators. The investigator drives the car. Violet writes the brief.">
+  <title>Violet Investigations — AI-Powered Workplace Compliance Platform</title>
+  <meta name="description" content="Violet drafts, you decide. From policies to investigations to training — one AI platform for workplace compliance.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap" rel="stylesheet">
@@ -82,6 +82,7 @@
 
     .nav-cta:hover { background: var(--violet-700) !important; }
 
+    /* ── Hero ── */
     .hero {
       min-height: 100vh;
       display: flex;
@@ -131,16 +132,24 @@
       letter-spacing: -0.03em;
       color: var(--charcoal);
       max-width: 800px;
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.75rem;
       position: relative;
     }
 
     .hero h1 em { font-style: italic; color: var(--violet-600); }
 
+    .hero-tagline {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: clamp(1.3rem, 3vw, 1.8rem);
+      color: var(--violet-600);
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
     .hero-sub {
-      font-size: 1.2rem; line-height: 1.6;
+      font-size: 1.15rem; line-height: 1.7;
       color: var(--text-light);
-      max-width: 600px;
+      max-width: 640px;
       margin-bottom: 2.5rem;
       position: relative;
     }
@@ -184,6 +193,7 @@
       transform: translateY(-2px);
     }
 
+    /* ── Video ── */
     .video-section {
       padding: 0 2rem 6rem;
       display: flex; justify-content: center;
@@ -196,43 +206,53 @@
       background: var(--charcoal);
     }
 
-    .video-link {
-      display: block; position: relative;
-      cursor: pointer; text-decoration: none;
-      aspect-ratio: 16/9;
-      background: linear-gradient(135deg, var(--violet-950) 0%, var(--violet-800) 100%);
-    }
-
-    .video-thumb {
-      width: 100%; height: 100%;
-      object-fit: cover; display: block;
-      position: absolute; top: 0; left: 0;
-    }
-
-    .video-play-overlay {
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      background: rgba(0,0,0,0.3);
-      transition: background 0.2s;
-    }
-
-    .video-link:hover .video-play-overlay { background: rgba(0,0,0,0.15); }
-
-    .play-btn {
-      width: 72px; height: 72px;
-      background: rgba(255,255,255,0.95);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      transition: transform 0.2s;
-    }
-
-    .video-link:hover .play-btn { transform: scale(1.08); }
-
-    .features {
+    /* ── Meet Violet Section ── */
+    .meet-violet {
       padding: 6rem 2rem;
       background: white;
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
+    }
+
+    .meet-violet-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .violet-personas {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5rem;
+      margin-top: 3rem;
+    }
+
+    .persona-card {
+      text-align: center;
+      padding: 2rem 1.5rem;
+    }
+
+    .persona-icon {
+      width: 64px; height: 64px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      background: var(--violet-100); color: var(--violet-600);
+      margin: 0 auto 1.25rem;
+    }
+
+    .persona-card h3 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.3rem; color: var(--charcoal);
+      margin-bottom: 0.5rem;
+    }
+
+    .persona-card p {
+      font-size: 0.92rem; color: var(--text-light); line-height: 1.6;
+    }
+
+    /* ── Features ── */
+    .features {
+      padding: 6rem 2rem;
     }
 
     .features-inner { max-width: 1100px; margin: 0 auto; }
@@ -265,7 +285,7 @@
     .feature-card {
       padding: 2rem; border-radius: 14px;
       border: 1px solid var(--border);
-      background: var(--cream);
+      background: white;
       transition: all 0.25s ease;
     }
 
@@ -291,7 +311,21 @@
 
     .feature-card p { font-size: 0.92rem; color: var(--text-light); line-height: 1.6; }
 
-    /* ── Phone Hotline Highlight ── */
+    .feature-tag {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      background: var(--violet-50);
+      border: 1px solid var(--violet-200);
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--violet-600);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Phone Hotline ── */
     .hotline {
       padding: 6rem 2rem;
       background: linear-gradient(135deg, var(--violet-950) 0%, var(--violet-800) 50%, var(--violet-700) 100%);
@@ -324,10 +358,7 @@
       margin: 0 auto 2rem;
     }
 
-    .hotline .section-heading {
-      color: white;
-      margin-bottom: 1.25rem;
-    }
+    .hotline .section-heading { color: white; margin-bottom: 1.25rem; }
 
     .hotline-desc {
       font-size: 1.1rem;
@@ -337,7 +368,8 @@
       margin: 0 auto;
     }
 
-    .how-it-works { padding: 6rem 2rem; }
+    /* ── How It Works ── */
+    .how-it-works { padding: 6rem 2rem; background: white; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
     .how-inner { max-width: 800px; margin: 0 auto; }
     .how-it-works .section-heading, .how-it-works .section-label { text-align: center; }
     .how-it-works .section-sub { text-align: center; margin: 0 auto 3.5rem; }
@@ -364,27 +396,16 @@
 
     .step-content p { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
 
-    /* ── Competitor Comparison ── */
+    /* ── Comparison ── */
     .comparison {
       padding: 6rem 2rem;
-      background: white;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
     }
 
-    .comparison-inner {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .comparison .section-heading,
-    .comparison .section-label { text-align: center; }
+    .comparison-inner { max-width: 950px; margin: 0 auto; }
+    .comparison .section-heading, .comparison .section-label { text-align: center; }
     .comparison .section-sub { text-align: center; margin: 0 auto 3rem; }
 
-    .comparison-table-wrap {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
+    .comparison-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
     .comparison-table {
       width: 100%;
@@ -416,7 +437,6 @@
       color: var(--text);
     }
 
-    /* Violet column highlight */
     .comparison-table th.violet-col {
       background: var(--violet-600);
       color: white;
@@ -425,9 +445,7 @@
       text-transform: none;
     }
 
-    .comparison-table th.violet-col:first-of-type {
-      border-radius: 12px 12px 0 0;
-    }
+    .comparison-table th.violet-col:first-of-type { border-radius: 12px 12px 0 0; }
 
     .comparison-table td.violet-col {
       background: var(--violet-50);
@@ -435,18 +453,14 @@
       color: var(--violet-800);
     }
 
-    .comparison-table tr:last-child td.violet-col {
-      border-radius: 0 0 12px 12px;
-    }
-
-    .comparison-table tr:last-child td {
-      border-bottom: none;
-    }
+    .comparison-table tr:last-child td.violet-col { border-radius: 0 0 12px 12px; }
+    .comparison-table tr:last-child td { border-bottom: none; }
 
     .check { color: #16a34a; font-weight: 700; font-size: 1.1rem; }
     .cross { color: #dc2626; font-weight: 700; font-size: 1.1rem; }
     .muted { color: var(--text-light); font-size: 0.85rem; }
 
+    /* ── Waitlist ── */
     .waitlist {
       padding: 6rem 2rem;
       background: linear-gradient(135deg, var(--violet-950) 0%, var(--violet-800) 50%, var(--violet-700) 100%);
@@ -468,43 +482,7 @@
     .waitlist .section-heading { color: white; }
     .waitlist .section-sub { color: rgba(255,255,255,0.65); margin: 0 auto 2.5rem; }
 
-    .waitlist-form {
-      display: flex; gap: 0.75rem;
-      max-width: 480px; margin: 0 auto;
-    }
-
-    .waitlist-form input {
-      flex: 1; padding: 0.9rem 1.25rem;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.15);
-      background: rgba(255,255,255,0.08);
-      color: white;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.95rem; outline: none;
-    }
-
-    .waitlist-form input::placeholder { color: rgba(255,255,255,0.4); }
-    .waitlist-form input:focus { border-color: var(--violet-400); background: rgba(255,255,255,0.12); }
-
-    .waitlist-form button {
-      padding: 0.9rem 1.8rem; border-radius: 10px;
-      border: none; background: white;
-      color: var(--violet-800);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.95rem; font-weight: 600;
-      cursor: pointer; white-space: nowrap;
-      transition: all 0.2s;
-    }
-
-    .waitlist-form button:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
-
     .waitlist-note { font-size: 0.8rem; color: rgba(255,255,255,0.35); margin-top: 1rem; }
-
-    .waitlist-success {
-      display: none;
-      color: var(--violet-200);
-      font-size: 1.05rem; font-weight: 500;
-    }
 
     footer {
       padding: 3rem 2rem;
@@ -533,8 +511,8 @@
       .nav-links { display: none; }
       .hero { padding: 7rem 1.5rem 3rem; }
       .features-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+      .violet-personas { grid-template-columns: 1fr; gap: 1.5rem; }
       .step { gap: 1.25rem; }
-      .waitlist-form { flex-direction: column; }
       footer { flex-direction: column; gap: 1rem; text-align: center; }
       .comparison-table { font-size: 0.8rem; }
       .comparison-table th,
@@ -549,18 +527,21 @@
     <div class="nav-links">
       <a href="#features">Features</a>
       <a href="#how-it-works">How It Works</a>
-      <a href="#waitlist" class="nav-cta">Become a Beta Tester</a>
+      <a href="#comparison">Compare</a>
+      <a href="#waitlist" class="nav-cta">Get Early Access</a>
     </div>
   </nav>
 
+  <!-- ── Hero ── -->
   <section class="hero">
-    <div class="hero-badge">Now Live — Looking for Testers</div>
-    <h1>Meet <em>Violet.</em> Your AI investigations team member.</h1>
-    <p class="hero-sub">From the moment an employee speaks up to the final investigation report — Violet handles the heavy lifting so your team can focus on what matters.</p>
+    <div class="hero-badge">Now in Beta — Accepting Testers</div>
+    <h1><em>Violet</em> drafts. You decide.</h1>
+    <p class="hero-tagline">From policies to investigations to training.</p>
+    <p class="hero-sub">Violet builds your workplace policies, manages your investigations, generates your reports, and trains your employees — so your team can focus on the people, not the paperwork.</p>
     <div class="hero-cta-group">
       <a href="#waitlist" class="btn-primary">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        Become a Beta Tester
+        Get Early Access
       </a>
       <a href="#demo" class="btn-secondary">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -569,69 +550,123 @@
     </div>
   </section>
 
+  <!-- ── Video ── -->
   <section class="video-section" id="demo">
     <div class="video-container">
       <iframe width="100%" style="aspect-ratio:16/9;display:block;border:none;" src="https://www.youtube.com/embed/j7dTywYOoho" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
   </section>
 
-  <section class="features" id="features">
-    <div class="features-inner">
-      <div class="section-label">Built for Investigators</div>
-      <h2 class="section-heading">Every step of the investigation, accelerated.</h2>
-      <p class="section-sub">From intake to close-out, Violet generates professional artifacts while you stay focused on the evidence and the people.</p>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+  <!-- ── Meet Violet's Three Modes ── -->
+  <section class="meet-violet">
+    <div class="meet-violet-inner">
+      <div class="section-label">One Platform, Three Modes</div>
+      <h2 class="section-heading">Tell Violet. Ask Violet. Coach Violet.</h2>
+      <p class="section-sub" style="margin: 0 auto;">Violet works the way you do — just say what you need.</p>
+      <div class="violet-personas">
+        <div class="persona-card">
+          <div class="persona-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
           <h3>Tell Violet</h3>
-          <p>Employees report concerns by chatting with Violet on the web or calling a dedicated phone number. Violet has a natural conversation, asks smart follow-up questions, and submits a structured report to your inbox — 24/7, in 50+ languages. No forms. No hold music. No scripts.</p>
+          <p>Employees report concerns by chatting with Violet or calling a dedicated phone number. 24/7, in 50+ languages. No forms, no hold music.</p>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
-          <h3>AI-Powered Inbox</h3>
-          <p>Every report lands in a triage queue with AI-generated summaries, urgency ratings, and suggested categories. Review the full conversation, send anonymous follow-up questions to the reporter, or convert to a full investigation case with one click.</p>
+        <div class="persona-card">
+          <div class="persona-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <h3>Ask Violet</h3>
+          <p>Query your case data in plain English. "How many harassment cases this quarter?" "Which department is overrepresented?" Instant answers.</p>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
-          <h3>Investigation Toolkit</h3>
-          <p>Violet generates investigation plans, interview outlines tailored to each witness with funnel methodology and confrontation sequencing, and full investigation reports with credibility analysis — all sourced from your interview notes and exhibits.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
-          <h3>Investigator in Control</h3>
-          <p>AI drafts, you decide. Violet writes the analysis but the investigator sets the findings and recommendations. Every report is reviewed and edited before it goes anywhere. Legally defensible by design.</p>
+        <div class="persona-card">
+          <div class="persona-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </div>
+          <h3>Coach Violet</h3>
+          <p>Contextual investigation guidance at every step. Best practices for interviews, credibility assessment, report writing — right when you need it.</p>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- ── Features ── -->
+  <section class="features" id="features">
+    <div class="features-inner">
+      <div class="section-label">The Full Platform</div>
+      <h2 class="section-heading">Everything your compliance program needs.</h2>
+      <p class="section-sub">From the first policy to the final report — and the training that prevents the next case.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-tag">Investigate</div>
+          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+          <h3>AI Investigation Reports</h3>
+          <p>Full investigation reports with party-by-party credibility analysis, policy citations from your actual policies, and findings grounded in the preponderance of the evidence standard. Set your finding — Violet writes the supporting analysis.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-tag">Investigate</div>
+          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <h3>Smart Interview Outlines</h3>
+          <p>Tailored outlines for each witness using funnel methodology. Case intelligence reads completed interviews and builds follow-up questions that test the next witness against prior testimony.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-tag">Policies</div>
+          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <h3>Policy Management</h3>
+          <p>Draft workplace policies with AI tailored to your jurisdiction, company size, and industry. Upload existing policies or generate new ones. Violet cites your actual policy language in every investigation report.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-tag">Training</div>
+          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <h3>Interactive Training</h3>
+          <p>Generate choose-your-own-adventure ethics training scenarios from your anonymized case data. Assign to employees, track completion, and identify knowledge gaps — all from one platform.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-tag">Analytics</div>
+          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+          <h3>Dashboard & Reporting</h3>
+          <p>Case rates by department and geography, substantiation rates, cycle times, trend analysis, and disparity detection. Generate quarterly leadership reports with charts and AI insights in one click.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-tag">Control</div>
+          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+          <h3>Investigator in Control</h3>
+          <p>AI drafts, you decide. Violet writes the analysis but you set the findings and recommendations. A confidence check warns you when evidence doesn't support your conclusion. Legally defensible by design.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Phone Hotline ── -->
   <section class="hotline">
     <div class="hotline-inner">
       <div class="hotline-icon">
         <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
       </div>
       <h2 class="section-heading">A real phone number. An AI that listens.</h2>
-      <p class="hotline-desc">Give your employees a dedicated hotline number. When they call, Violet answers — has a natural conversation, captures the details, and drops a fully triaged report in your inbox. What traditional hotlines charge $10-50K/year for, Violet does for pennies per call.</p>
+      <p class="hotline-desc">Give your employees a dedicated hotline number. When they call, Violet answers — has a natural conversation, captures the details, and drops a fully triaged report in your inbox. What traditional hotlines charge $10–50K/year for, Violet does for pennies per call.</p>
     </div>
   </section>
 
+  <!-- ── How It Works ── -->
   <section class="how-it-works" id="how-it-works">
     <div class="how-inner">
       <div class="section-label">How It Works</div>
-      <h2 class="section-heading">Your investigation workflow, streamlined.</h2>
-      <p class="section-sub">Violet follows the same process you already use — it just handles the writing so you can focus on the thinking.</p>
-      <div class="step"><div class="step-number">1</div><div class="step-content"><h3>An employee tells Violet</h3><p>Someone has a concern. They chat with Violet on the web or call the hotline. Violet listens, asks a few clarifying questions, and submits a report.</p></div></div>
-      <div class="step"><div class="step-number">2</div><div class="step-content"><h3>You triage in the Inbox</h3><p>The report lands in your Inbox with an AI summary, urgency rating, and suggested category. Convert to a case with one click.</p></div></div>
-      <div class="step"><div class="step-number">3</div><div class="step-content"><h3>Violet drafts your investigation</h3><p>Generate an investigation plan, tailored interview outlines for each party, and a full investigation report with credibility analysis.</p></div></div>
-      <div class="step"><div class="step-number">4</div><div class="step-content"><h3>You set the finding</h3><p>Review the AI draft, edit it, set your findings and recommendations. Export to Google Docs and close the case.</p></div></div>
+      <h2 class="section-heading">The full compliance lifecycle, streamlined.</h2>
+      <p class="section-sub">Violet covers every stage — from setting up your policies to closing the case and training your team.</p>
+      <div class="step"><div class="step-number">1</div><div class="step-content"><h3>Build your policies</h3><p>Draft workplace policies tailored to your jurisdiction and industry, or upload your existing ones. Violet references your actual policy language in every investigation.</p></div></div>
+      <div class="step"><div class="step-number">2</div><div class="step-content"><h3>An employee tells Violet</h3><p>Someone has a concern. They chat with Violet on the web or call the hotline. Violet listens, asks clarifying questions, and submits a report to your inbox.</p></div></div>
+      <div class="step"><div class="step-number">3</div><div class="step-content"><h3>Violet drafts your investigation</h3><p>Generate an investigation plan, tailored interview outlines that build on prior testimony, and a full report with credibility analysis and policy citations.</p></div></div>
+      <div class="step"><div class="step-number">4</div><div class="step-content"><h3>You set the finding</h3><p>Review the AI draft, set your findings and recommendations. Violet warns you if the evidence doesn't support your conclusion. Export to Google Docs and close the case.</p></div></div>
+      <div class="step"><div class="step-number">5</div><div class="step-content"><h3>Train and prevent</h3><p>Generate interactive training scenarios from your anonymized cases. Assign to employees, track completion, and identify where your organization needs education most.</p></div></div>
     </div>
   </section>
 
+  <!-- ── Comparison ── -->
   <section class="comparison" id="comparison">
     <div class="comparison-inner">
       <div class="section-label">Why Violet</div>
-      <h2 class="section-heading">Enterprise features. Startup price.</h2>
-      <p class="section-sub">See how Violet stacks up against legacy investigation platforms.</p>
+      <h2 class="section-heading">A complete platform. Not just case management.</h2>
+      <p class="section-sub">See how Violet compares to legacy investigation tools.</p>
       <div class="comparison-table-wrap">
         <table class="comparison-table">
           <thead>
@@ -640,7 +675,7 @@
               <th class="violet-col">Violet</th>
               <th>CaseIQ</th>
               <th>HR Acuity</th>
-              <th>Talk to Spot</th>
+              <th>NAVEX</th>
             </tr>
           </thead>
           <tbody>
@@ -649,14 +684,14 @@
               <td class="violet-col"><span class="check">&#10003;</span></td>
               <td><span class="muted">Coming Soon</span></td>
               <td><span class="cross">&#10005;</span></td>
-              <td><span class="check">&#10003;</span></td>
+              <td><span class="cross">&#10005;</span></td>
             </tr>
             <tr>
               <td>AI Phone Hotline</td>
               <td class="violet-col"><span class="check">&#10003;</span></td>
               <td><span class="cross">&#10005;</span></td>
               <td><span class="cross">&#10005;</span></td>
-              <td><span class="check">&#10003;</span></td>
+              <td><span class="muted">Human agents</span></td>
             </tr>
             <tr>
               <td>AI Investigation Reports</td>
@@ -666,13 +701,6 @@
               <td><span class="cross">&#10005;</span></td>
             </tr>
             <tr>
-              <td>AI Interview Outlines</td>
-              <td class="violet-col"><span class="check">&#10003;</span></td>
-              <td><span class="muted">Basic</span></td>
-              <td><span class="cross">&#10005;</span></td>
-              <td><span class="check">&#10003;</span></td>
-            </tr>
-            <tr>
               <td>Credibility Analysis</td>
               <td class="violet-col"><span class="check">&#10003;</span></td>
               <td><span class="cross">&#10005;</span></td>
@@ -680,22 +708,43 @@
               <td><span class="cross">&#10005;</span></td>
             </tr>
             <tr>
+              <td>Smart Interview Outlines</td>
+              <td class="violet-col"><span class="check">&#10003;</span></td>
+              <td><span class="muted">Basic</span></td>
+              <td><span class="cross">&#10005;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+            </tr>
+            <tr>
+              <td>AI Policy Drafting</td>
+              <td class="violet-col"><span class="check">&#10003;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+            </tr>
+            <tr>
+              <td>Interactive Training Scenarios</td>
+              <td class="violet-col"><span class="check">&#10003;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+              <td><span class="muted">Separate product</span></td>
+            </tr>
+            <tr>
+              <td>Natural Language Analytics</td>
+              <td class="violet-col"><span class="check">&#10003;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+              <td><span class="muted">Dashboards only</span></td>
+              <td><span class="muted">Dashboards only</span></td>
+            </tr>
+            <tr>
               <td>Multi-Language (50+)</td>
               <td class="violet-col"><span class="check">&#10003;</span></td>
               <td><span class="muted">Limited</span></td>
               <td><span class="muted">35</span></td>
-              <td><span class="check">&#10003;</span></td>
-            </tr>
-            <tr>
-              <td>Anonymous Two-Way Messaging</td>
-              <td class="violet-col"><span class="check">&#10003;</span></td>
-              <td><span class="check">&#10003;</span></td>
-              <td><span class="check">&#10003;</span></td>
-              <td><span class="check">&#10003;</span></td>
+              <td><span class="muted">Limited</span></td>
             </tr>
             <tr>
               <td>Pricing</td>
-              <td class="violet-col"><strong>Mid-market</strong></td>
+              <td class="violet-col"><strong>From $299/mo</strong></td>
               <td><span class="muted">Enterprise</span></td>
               <td><span class="muted">Enterprise</span></td>
               <td><span class="muted">Enterprise</span></td>
@@ -707,17 +756,18 @@
     </div>
   </section>
 
+  <!-- ── Waitlist ── -->
   <section class="waitlist" id="waitlist">
     <div class="waitlist-inner">
       <div class="section-label">Early Access</div>
       <h2 class="section-heading">Built by an investigator,<br>for investigators.</h2>
-      <p class="section-sub">Violet was built by a workplace investigator who replaced a $75K/year case management contract with AI. Now it's becoming a platform for every investigations team. Sign up for early access.</p>
+      <p class="section-sub">Violet was built by a workplace investigator who replaced a $75K/year case management contract with AI. Now it's a platform for every compliance team. Sign up for early access.</p>
       <div id="waitlistForm" style="display:flex;gap:0.75rem;max-width:480px;margin:0 auto;">
         <input type="email" id="emailInput" placeholder="you@company.com" style="flex:1;padding:0.9rem 1.25rem;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:white;font-family:'DM Sans',sans-serif;font-size:0.95rem;outline:none;">
         <button type="button" id="waitlistBtn" style="padding:0.9rem 1.8rem;border-radius:10px;border:none;background:white;color:#5720a8;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;white-space:nowrap;">Sign Me Up</button>
       </div>
-      <p class="waitlist-note" id="waitlistNote">No spam. We'll reach out when beta testing begins.</p>
-      <p class="waitlist-success" id="waitlistSuccess" style="display:none;color:white;font-size:1.3rem;font-weight:600;margin-top:1rem;">&#10003; You're in. We'll reach out when beta testing begins.</p>
+      <p class="waitlist-note" id="waitlistNote">No spam. We'll reach out when your spot is ready.</p>
+      <p id="waitlistSuccess" style="display:none;color:white;font-size:1.3rem;font-weight:600;margin-top:1rem;">&#10003; You're in. We'll be in touch soon.</p>
     </div>
   </section>
 
