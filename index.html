@@ -545,7 +545,7 @@
   <!-- ── Video ── -->
   <section class="video-section" id="demo">
     <div class="video-container">
-      <iframe width="100%" style="aspect-ratio:16/9;display:block;border:none;" src="https://www.youtube.com/embed/j7dTywYOoho" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <iframe width="100%" style="aspect-ratio:16/9;display:block;border:none;" src="https://www.youtube.com/embed/AKhy8lqCyqI" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
   </section>
 
@@ -801,12 +801,12 @@
     <div class="footer-links">
       <a href="https://app.violetinvestigations.com/privacy">Privacy</a>
       <a href="https://app.violetinvestigations.com/terms">Terms</a>
-      <a href="mailto:nina@violetinvestigations.com">Contact</a>
+      <a href="/cdn-cgi/l/email-protection#36585f585776405f595a53425f58405345425f5157425f5958451855595b">Contact</a>
       <a href="https://www.linkedin.com/in/nina-eisenberg-01513728/" target="_blank">LinkedIn</a>
     </div>
   </footer>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     document.getElementById('waitlistBtn').addEventListener('click', function() {
       var email = document.getElementById('emailInput').value;
       if (!email || email.indexOf('@') === -1) {
@@ -828,12 +828,4 @@
       xhr.send(JSON.stringify({ email: email }));
     });
 
-    document.getElementById('emailInput').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        document.getElementById('waitlistBtn').click();
-      }
-    });
-  </script>
-
-</body>
-</html>
+    document.getElementById('emailInput').addEventListene
