@@ -82,7 +82,6 @@
 
     .nav-cta:hover { background: var(--violet-700) !important; }
 
-    /* ── Hero ── */
     .hero {
       min-height: 100vh;
       display: flex;
@@ -193,7 +192,6 @@
       transform: translateY(-2px);
     }
 
-    /* ── Video ── */
     .video-section {
       padding: 0 2rem 6rem;
       display: flex; justify-content: center;
@@ -206,7 +204,6 @@
       background: var(--charcoal);
     }
 
-    /* ── Meet Violet Section ── */
     .meet-violet {
       padding: 6rem 2rem;
       background: white;
@@ -250,7 +247,6 @@
       font-size: 0.92rem; color: var(--text-light); line-height: 1.6;
     }
 
-    /* ── Features ── */
     .features {
       padding: 6rem 2rem;
     }
@@ -325,7 +321,6 @@
       margin-bottom: 1rem;
     }
 
-    /* ── Phone Hotline ── */
     .hotline {
       padding: 6rem 2rem;
       background: linear-gradient(135deg, var(--violet-950) 0%, var(--violet-800) 50%, var(--violet-700) 100%);
@@ -368,7 +363,6 @@
       margin: 0 auto;
     }
 
-    /* ── How It Works ── */
     .how-it-works { padding: 6rem 2rem; background: white; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
     .how-inner { max-width: 800px; margin: 0 auto; }
     .how-it-works .section-heading, .how-it-works .section-label { text-align: center; }
@@ -396,7 +390,6 @@
 
     .step-content p { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
 
-    /* ── Comparison ── */
     .comparison {
       padding: 6rem 2rem;
     }
@@ -460,7 +453,6 @@
     .cross { color: #dc2626; font-weight: 700; font-size: 1.1rem; }
     .muted { color: var(--text-light); font-size: 0.85rem; }
 
-    /* ── Waitlist ── */
     .waitlist {
       padding: 6rem 2rem;
       background: linear-gradient(135deg, var(--violet-950) 0%, var(--violet-800) 50%, var(--violet-700) 100%);
@@ -612,7 +604,13 @@
           <div class="feature-tag">Policies</div>
           <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
           <h3>Policy Management</h3>
-          <p>Draft workplace policies with AI tailored to your jurisdiction, company size, and industry. Upload existing policies or generate new ones. Violet cites your actual policy language in every investigation report.</p>
+          <p>Draft workplace policies with AI tailored to your jurisdiction, company size, and industry. Analyze existing policies for gaps with severity ratings, then fix them with one click. Violet cites your actual policy language in every investigation report.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-tag">Policies</div>
+          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+          <h3>Employee Handbook</h3>
+          <p>Generate a branded employee handbook from your policies &mdash; plain-language summaries with practical do's and don'ts informed by your own case history. Export as PDF, Word, or a shareable web page. Distribute to your team and track who's read and acknowledged it.</p>
         </div>
         <div class="feature-card">
           <div class="feature-tag">Training</div>
@@ -659,7 +657,7 @@
       <div class="section-label">How It Works</div>
       <h2 class="section-heading">The full compliance lifecycle, streamlined.</h2>
       <p class="section-sub">Violet covers every stage — from setting up your policies to closing the case and training your team.</p>
-      <div class="step"><div class="step-number">1</div><div class="step-content"><h3>Build your policies</h3><p>Draft workplace policies tailored to your jurisdiction and industry, or upload your existing ones. Violet references your actual policy language in every investigation.</p></div></div>
+      <div class="step"><div class="step-number">1</div><div class="step-content"><h3>Build your policies</h3><p>Draft workplace policies tailored to your jurisdiction and industry, or upload your existing ones. Violet analyzes them for gaps and fixes issues with one click. Then generate an employee handbook and track acknowledgments.</p></div></div>
       <div class="step"><div class="step-number">2</div><div class="step-content"><h3>An employee tells Violet</h3><p>Someone has a concern. They chat with Violet on the web, talk in their browser, or call the hotline. Violet listens, asks clarifying questions, and submits a report to your inbox.</p></div></div>
       <div class="step"><div class="step-number">3</div><div class="step-content"><h3>Violet drafts your investigation</h3><p>Generate an investigation plan, tailored interview outlines that build on prior testimony, and a full report with credibility analysis and policy citations.</p></div></div>
       <div class="step"><div class="step-number">4</div><div class="step-content"><h3>You set the finding</h3><p>Review the AI draft, set your findings and recommendations. Violet warns you if the evidence doesn't support your conclusion. Export to Google Docs and close the case.</p></div></div>
@@ -722,6 +720,20 @@
             </tr>
             <tr>
               <td>AI Policy Drafting</td>
+              <td class="violet-col"><span class="check">&#10003;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+            </tr>
+            <tr>
+              <td>Policy Gap Analysis &amp; Auto-Fix</td>
+              <td class="violet-col"><span class="check">&#10003;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+            </tr>
+            <tr>
+              <td>Employee Handbook Generator</td>
               <td class="violet-col"><span class="check">&#10003;</span></td>
               <td><span class="cross">&#10005;</span></td>
               <td><span class="cross">&#10005;</span></td>
