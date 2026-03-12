@@ -1094,10 +1094,16 @@
     <div class="waitlist-inner">
       <div class="section-label">Early Access</div>
       <h2 class="section-heading">Built by an investigator,<br>for investigators.</h2>
-      <p class="section-sub">Violet was built by a workplace investigator who replaced a $75K/year case management contract with AI. Now it's a complete compliance platform &mdash; policies, investigations, training, and analytics &mdash; for teams of every size. Don't have an investigator? We do that too. Sign up for early access.</p>
-      <div id="waitlistForm" style="display:flex;gap:0.75rem;max-width:480px;margin:0 auto;">
-        <input type="email" id="emailInput" placeholder="you@company.com" style="flex:1;padding:0.9rem 1.25rem;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:white;font-family:'DM Sans',sans-serif;font-size:0.95rem;outline:none;">
-        <button type="button" id="waitlistBtn" style="padding:0.9rem 1.8rem;border-radius:10px;border:none;background:white;color:#5720a8;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;white-space:nowrap;">Sign Me Up</button>
+      <p class="section-sub">Built by a workplace investigator who needed a better tool &mdash; and decided to build it. Policies, investigations, training, and analytics in one platform. Don't have an investigator? We do that too.</p>
+      <div id="waitlistForm" style="max-width:480px;margin:0 auto;">
+        <div style="display:flex;gap:0.75rem;margin-bottom:0.75rem;">
+          <button type="button" class="interest-btn active" data-value="beta" style="flex:1;padding:0.75rem 1rem;border-radius:10px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.15);color:white;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">Try the Beta</button>
+          <button type="button" class="interest-btn" data-value="pricing" style="flex:1;padding:0.75rem 1rem;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6);font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">Get Started with a Plan</button>
+        </div>
+        <div style="display:flex;gap:0.75rem;">
+          <input type="email" id="emailInput" placeholder="you@company.com" style="flex:1;padding:0.9rem 1.25rem;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:white;font-family:'DM Sans',sans-serif;font-size:0.95rem;outline:none;">
+          <button type="button" id="waitlistBtn" style="padding:0.9rem 1.8rem;border-radius:10px;border:none;background:white;color:#5720a8;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;white-space:nowrap;">Sign Me Up</button>
+        </div>
       </div>
       <p class="waitlist-note" id="waitlistNote">No spam. We'll reach out when your spot is ready.</p>
       <p id="waitlistSuccess" style="display:none;color:white;font-size:1.3rem;font-weight:600;margin-top:1rem;">&#10003; You're in. We'll be in touch soon.</p>
@@ -1115,6 +1121,22 @@
   </footer>
 
   <script>
+    var selectedInterest = 'beta';
+
+    document.querySelectorAll('.interest-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.interest-btn').forEach(function(b) {
+          b.style.background = 'rgba(255,255,255,0.05)';
+          b.style.borderColor = 'rgba(255,255,255,0.15)';
+          b.style.color = 'rgba(255,255,255,0.6)';
+        });
+        this.style.background = 'rgba(255,255,255,0.15)';
+        this.style.borderColor = 'rgba(255,255,255,0.3)';
+        this.style.color = 'white';
+        selectedInterest = this.getAttribute('data-value');
+      });
+    });
+
     document.getElementById('waitlistBtn').addEventListener('click', function() {
       var email = document.getElementById('emailInput').value;
       if (!email || email.indexOf('@') === -1) {
@@ -1133,7 +1155,7 @@
       xhr.onerror = function() {
         alert('Something went wrong. Please try again.');
       };
-      xhr.send(JSON.stringify({ email: email }));
+      xhr.send(JSON.stringify({ email: email, interest: selectedInterest }));
     });
 
     document.getElementById('emailInput').addEventListener('keydown', function(e) {
