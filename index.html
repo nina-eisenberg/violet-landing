@@ -390,6 +390,185 @@
 
     .step-content p { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
 
+    /* ── Pricing ── */
+    .pricing {
+      padding: 6rem 2rem;
+      background: white;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pricing-inner {
+      max-width: 1250px;
+      margin: 0 auto;
+    }
+
+    .pricing .section-heading,
+    .pricing .section-label { text-align: center; }
+    .pricing .section-sub { text-align: center; margin: 0 auto 3.5rem; }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .pricing-grid-5 {
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1.25rem;
+    }
+
+    .pricing-card {
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--cream);
+      padding: 2rem 1.5rem;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .pricing-card:hover {
+      border-color: var(--violet-200);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(139, 79, 250, 0.08);
+    }
+
+    .pricing-card.featured {
+      border-color: var(--violet-400);
+      background: white;
+      box-shadow: 0 8px 40px rgba(139, 79, 250, 0.12);
+    }
+
+    .pricing-card.managed {
+      border-color: var(--violet-600);
+      background: linear-gradient(170deg, var(--violet-950) 0%, var(--violet-800) 100%);
+      color: white;
+    }
+
+    .pricing-badge {
+      position: absolute;
+      top: -10px; left: 50%;
+      transform: translateX(-50%);
+      padding: 0.25rem 0.9rem;
+      background: var(--violet-600);
+      color: white;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    .pricing-card h3 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.25rem;
+      color: var(--charcoal);
+      margin-bottom: 0.5rem;
+    }
+
+    .pricing-card.managed h3 { color: white; }
+
+    .pricing-price {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 2.2rem;
+      color: var(--charcoal);
+      margin-bottom: 0.25rem;
+    }
+
+    .pricing-card.managed .pricing-price { color: white; }
+
+    .pricing-price span {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--text-light);
+    }
+
+    .pricing-card.managed .pricing-price span { color: rgba(255,255,255,0.6); }
+
+    .pricing-desc {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+      min-height: 2.5rem;
+    }
+
+    .pricing-card.managed .pricing-desc { color: rgba(255,255,255,0.65); }
+
+    .pricing-features {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .pricing-features li {
+      font-size: 0.85rem;
+      color: var(--text);
+      padding: 0.4rem 0;
+      padding-left: 1.4rem;
+      position: relative;
+      line-height: 1.5;
+    }
+
+    .pricing-card.managed .pricing-features li { color: rgba(255,255,255,0.85); }
+
+    .pricing-features li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--violet-500);
+      font-weight: 700;
+    }
+
+    .pricing-card.managed .pricing-features li::before { color: var(--violet-300); }
+
+    .pricing-cta {
+      display: block;
+      text-align: center;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      margin-top: 1.5rem;
+      transition: all 0.2s;
+    }
+
+    .pricing-cta-outline {
+      border: 1px solid var(--border);
+      color: var(--violet-700);
+      background: white;
+    }
+
+    .pricing-cta-outline:hover {
+      border-color: var(--violet-300);
+      background: var(--violet-50);
+    }
+
+    .pricing-cta-primary {
+      border: none;
+      background: var(--violet-600);
+      color: white;
+    }
+
+    .pricing-cta-primary:hover {
+      background: var(--violet-700);
+    }
+
+    .pricing-cta-managed {
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .pricing-cta-managed:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
     .comparison {
       padding: 6rem 2rem;
     }
@@ -499,6 +678,20 @@
 
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
+    @media (max-width: 1200px) {
+      .pricing-grid-5 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .pricing-grid,
+      .pricing-grid-5 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+      }
+    }
+
     @media (max-width: 768px) {
       .nav-links { display: none; }
       .hero { padding: 7rem 1.5rem 3rem; }
@@ -509,6 +702,8 @@
       .comparison-table { font-size: 0.8rem; }
       .comparison-table th,
       .comparison-table td { padding: 0.65rem 0.6rem; }
+      .pricing-grid,
+      .pricing-grid-5 { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
     }
   </style>
 </head>
@@ -519,6 +714,7 @@
     <div class="nav-links">
       <a href="#features">Features</a>
       <a href="#how-it-works">How It Works</a>
+      <a href="#pricing">Pricing</a>
       <a href="#comparison">Compare</a>
       <a href="#waitlist" class="nav-cta">Get Early Access</a>
     </div>
@@ -613,6 +809,12 @@
           <p>Generate a branded employee handbook from your policies &mdash; plain-language summaries with practical do's and don'ts informed by your own case history. Export as PDF, Word, or a shareable web page. Distribute to your team and track who's read and acknowledged it.</p>
         </div>
         <div class="feature-card">
+          <div class="feature-tag">Integrate</div>
+          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/></svg></div>
+          <h3>Slack Integration</h3>
+          <p>Right-click any Slack message and send it to Violet. AI analyzes the message, identifies the issue type and parties involved, and creates a fully populated case in seconds. Triage workplace concerns without leaving Slack.</p>
+        </div>
+        <div class="feature-card">
           <div class="feature-tag">Training</div>
           <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
           <h3>Interactive Training</h3>
@@ -665,6 +867,96 @@
     </div>
   </section>
 
+  <!-- ── Pricing ── -->
+  <section class="pricing" id="pricing">
+    <div class="pricing-inner">
+      <div class="section-label">Pricing</div>
+      <h2 class="section-heading">Start free. Scale when you're ready.</h2>
+      <p class="section-sub">Every feature on every plan. The only difference is volume.</p>
+      <div class="pricing-grid pricing-grid-5">
+
+        <div class="pricing-card">
+          <h3>Free</h3>
+          <div class="pricing-price">$0</div>
+          <p class="pricing-desc">Try the full platform. No charge until you upgrade.</p>
+          <ul class="pricing-features">
+            <li>1 investigation report</li>
+            <li>1 policy draft &amp; gap analysis</li>
+            <li>1 training scenario</li>
+            <li>1 employee handbook</li>
+            <li>Tell Violet intake</li>
+            <li>Dashboard &amp; analytics</li>
+            <li>All features included</li>
+          </ul>
+          <a href="#waitlist" class="pricing-cta pricing-cta-outline">Get Started Free</a>
+        </div>
+
+        <div class="pricing-card">
+          <h3>Starter</h3>
+          <div class="pricing-price">$299<span>/mo</span></div>
+          <p class="pricing-desc">For small teams building their compliance program.</p>
+          <ul class="pricing-features">
+            <li>Up to 5 investigations/year</li>
+            <li>Up to 5 policies</li>
+            <li>Up to 5 training scenarios</li>
+            <li>Employee handbook &amp; acknowledgments</li>
+            <li>Phone hotline</li>
+            <li>Slack integration</li>
+            <li>Email support</li>
+          </ul>
+          <a href="#waitlist" class="pricing-cta pricing-cta-outline">Get Early Access</a>
+        </div>
+
+        <div class="pricing-card featured">
+          <div class="pricing-badge">Most Popular</div>
+          <h3>Professional</h3>
+          <div class="pricing-price">$799<span>/mo</span></div>
+          <p class="pricing-desc">For established investigation teams.</p>
+          <ul class="pricing-features">
+            <li>Up to 50 investigations/year</li>
+            <li>Unlimited policies &amp; training</li>
+            <li>Everything in Starter</li>
+            <li>Google Workspace integration</li>
+            <li>Quarterly leadership reports</li>
+            <li>Priority support</li>
+          </ul>
+          <a href="#waitlist" class="pricing-cta pricing-cta-primary">Get Early Access</a>
+        </div>
+
+        <div class="pricing-card">
+          <h3>Enterprise</h3>
+          <div class="pricing-price">$1,499<span>/mo</span></div>
+          <p class="pricing-desc">For organizations with complex, multi-jurisdiction needs.</p>
+          <ul class="pricing-features">
+            <li>Unlimited investigations</li>
+            <li>Everything in Professional</li>
+            <li>Unlimited policies &amp; training</li>
+            <li>Dedicated onboarding</li>
+            <li>Custom integrations</li>
+            <li>Dedicated account manager</li>
+          </ul>
+          <a href="#waitlist" class="pricing-cta pricing-cta-outline">Contact Us</a>
+        </div>
+
+        <div class="pricing-card managed">
+          <h3>Managed Investigations</h3>
+          <div class="pricing-price">Custom</div>
+          <p class="pricing-desc">Don't have an investigator on staff? We'll handle it.</p>
+          <ul class="pricing-features">
+            <li>Professional investigations conducted for you</li>
+            <li>Expert investigator powered by Violet</li>
+            <li>Legally defensible reports delivered</li>
+            <li>Fraction of the cost of traditional firms</li>
+            <li>Full platform access included</li>
+            <li>Perfect for startups &amp; growing companies</li>
+          </ul>
+          <a href="#waitlist" class="pricing-cta pricing-cta-managed">Let's Talk</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <!-- ── Comparison ── -->
   <section class="comparison" id="comparison">
     <div class="comparison-inner">
@@ -696,6 +988,13 @@
               <td><span class="cross">&#10005;</span></td>
               <td><span class="cross">&#10005;</span></td>
               <td><span class="muted">Human agents</span></td>
+            </tr>
+            <tr>
+              <td>Slack Integration</td>
+              <td class="violet-col"><span class="check">&#10003;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+              <td><span class="cross">&#10005;</span></td>
             </tr>
             <tr>
               <td>AI Investigation Reports</td>
@@ -761,6 +1060,13 @@
               <td><span class="muted">Dashboards only</span></td>
             </tr>
             <tr>
+              <td>Managed Investigations</td>
+              <td class="violet-col"><span class="check">&#10003;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+            </tr>
+            <tr>
               <td>Multi-Language (50+)</td>
               <td class="violet-col"><span class="check">&#10003;</span></td>
               <td><span class="muted">Limited</span></td>
@@ -769,7 +1075,7 @@
             </tr>
             <tr>
               <td>Pricing</td>
-              <td class="violet-col"><strong>From $299/mo</strong></td>
+              <td class="violet-col"><strong>Free to start</strong></td>
               <td><span class="muted">Enterprise</span></td>
               <td><span class="muted">Enterprise</span></td>
               <td><span class="muted">Enterprise</span></td>
@@ -786,7 +1092,7 @@
     <div class="waitlist-inner">
       <div class="section-label">Early Access</div>
       <h2 class="section-heading">Built by an investigator,<br>for investigators.</h2>
-      <p class="section-sub">Violet was built by a workplace investigator who replaced a $75K/year case management contract with AI. Now it's a complete compliance platform &mdash; policies, investigations, training, and analytics &mdash; for teams of every size. Sign up for early access.</p>
+      <p class="section-sub">Violet was built by a workplace investigator who replaced a $75K/year case management contract with AI. Now it's a complete compliance platform &mdash; policies, investigations, training, and analytics &mdash; for teams of every size. Don't have an investigator? We do that too. Sign up for early access.</p>
       <div id="waitlistForm" style="display:flex;gap:0.75rem;max-width:480px;margin:0 auto;">
         <input type="email" id="emailInput" placeholder="you@company.com" style="flex:1;padding:0.9rem 1.25rem;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:white;font-family:'DM Sans',sans-serif;font-size:0.95rem;outline:none;">
         <button type="button" id="waitlistBtn" style="padding:0.9rem 1.8rem;border-radius:10px;border:none;background:white;color:#5720a8;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;white-space:nowrap;">Sign Me Up</button>
@@ -801,12 +1107,12 @@
     <div class="footer-links">
       <a href="https://app.violetinvestigations.com/privacy">Privacy</a>
       <a href="https://app.violetinvestigations.com/terms">Terms</a>
-      <a href="/cdn-cgi/l/email-protection#36585f585776405f595a53425f58405345425f5157425f5958451855595b">Contact</a>
+      <a href="mailto:nina@violetinvestigations.com">Contact</a>
       <a href="https://www.linkedin.com/in/nina-eisenberg-01513728/" target="_blank">LinkedIn</a>
     </div>
   </footer>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  <script>
     document.getElementById('waitlistBtn').addEventListener('click', function() {
       var email = document.getElementById('emailInput').value;
       if (!email || email.indexOf('@') === -1) {
@@ -828,4 +1134,12 @@
       xhr.send(JSON.stringify({ email: email }));
     });
 
-    document.getElementById('emailInput').addEventListene
+    document.getElementById('emailInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        document.getElementById('waitlistBtn').click();
+      }
+    });
+  </script>
+
+</body>
+</html>
