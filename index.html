@@ -399,7 +399,7 @@
     }
 
     .pricing-inner {
-      max-width: 1250px;
+      max-width: 1100px;
       margin: 0 auto;
     }
 
@@ -414,9 +414,30 @@
       align-items: start;
     }
 
-    .pricing-grid-5 {
-      grid-template-columns: repeat(5, 1fr);
-      gap: 1.25rem;
+    .managed-callout {
+      margin-top: 2.5rem;
+      padding: 2.5rem;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--violet-950) 0%, var(--violet-800) 100%);
+      color: white;
+    }
+
+    .managed-callout-content {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    .managed-callout h3 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.4rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .managed-callout p {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.6;
     }
 
     .pricing-card {
@@ -678,17 +699,14 @@
 
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-    @media (max-width: 1200px) {
-      .pricing-grid-5 {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
     @media (max-width: 1024px) {
-      .pricing-grid,
-      .pricing-grid-5 {
+      .pricing-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 1.25rem;
+      }
+      .managed-callout-content {
+        flex-direction: column;
+        text-align: center;
       }
     }
 
@@ -702,8 +720,7 @@
       .comparison-table { font-size: 0.8rem; }
       .comparison-table th,
       .comparison-table td { padding: 0.65rem 0.6rem; }
-      .pricing-grid,
-      .pricing-grid-5 { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
     }
   </style>
 </head>
@@ -809,12 +826,6 @@
           <p>Generate a branded employee handbook from your policies &mdash; plain-language summaries with practical do's and don'ts informed by your own case history. Export as PDF, Word, or a shareable web page. Distribute to your team and track who's read and acknowledged it.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-tag">Integrate</div>
-          <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/></svg></div>
-          <h3>Slack Integration</h3>
-          <p>Right-click any Slack message and send it to Violet. AI analyzes the message, identifies the issue type and parties involved, and creates a fully populated case in seconds. Triage workplace concerns without leaving Slack.</p>
-        </div>
-        <div class="feature-card">
           <div class="feature-tag">Training</div>
           <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
           <h3>Interactive Training</h3>
@@ -873,7 +884,7 @@
       <div class="section-label">Pricing</div>
       <h2 class="section-heading">Start free. Scale when you're ready.</h2>
       <p class="section-sub">Every feature on every plan. The only difference is volume.</p>
-      <div class="pricing-grid pricing-grid-5">
+      <div class="pricing-grid">
 
         <div class="pricing-card">
           <h3>Free</h3>
@@ -940,21 +951,17 @@
           <a href="#waitlist" class="pricing-cta pricing-cta-outline">Contact Us</a>
         </div>
 
-        <div class="pricing-card managed">
-          <h3>Managed Investigations</h3>
-          <div class="pricing-price">Custom</div>
-          <p class="pricing-desc">Don't have an investigator on staff? We'll handle it.</p>
-          <ul class="pricing-features">
-            <li>Professional investigations conducted for you</li>
-            <li>Expert investigator powered by Violet</li>
-            <li>Legally defensible reports delivered</li>
-            <li>Fraction of the cost of traditional firms</li>
-            <li>Full platform access included</li>
-            <li>Perfect for startups &amp; growing companies</li>
-          </ul>
-          <a href="#waitlist" class="pricing-cta pricing-cta-managed">Let's Talk</a>
-        </div>
+      </div>
 
+      <!-- Managed Investigations callout -->
+      <div class="managed-callout">
+        <div class="managed-callout-content">
+          <div>
+            <h3>Don't have an investigator on staff?</h3>
+            <p>Our team conducts professional workplace investigations powered by Violet &mdash; legally defensible reports at a fraction of the cost of traditional firms. Full platform access included. Perfect for startups and growing companies.</p>
+          </div>
+          <a href="#waitlist" class="pricing-cta pricing-cta-primary" style="white-space:nowrap;">Let's Talk</a>
+        </div>
       </div>
     </div>
   </section>
