@@ -109,12 +109,6 @@
     display: flex; align-items: center; justify-content: center;
     position: relative; overflow: hidden;
     box-shadow: 0 24px 80px rgba(27, 42, 74, 0.18);
-    cursor: pointer;
-  }
-  .hero-video::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(124,58,237,0.15), transparent 60%);
   }
   .play-btn {
     width: 72px; height: 72px; border-radius: 50%;
@@ -519,10 +513,7 @@
     </div>
   </div>
   <div class="hero-video" id="demo">
-    <div class="play-btn">
-      <svg viewBox="0 0 24 24"><polygon points="8 5 19 12 8 19"/></svg>
-    </div>
-    <span class="video-label">See a full investigation — intake to final report</span>
+    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/ubJ39HvKXp8" style="border:none;border-radius:12px;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
   </div>
 </section>
 
@@ -889,9 +880,14 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-left">Violet.</div>
+  <div class="footer-left">Violet Investigations</div>
   <div class="footer-links">
-    <a href="#">Privacy</a>
-    <a href="#">Terms</a>
-    <a href="/cdn-cgi/l/email-protection#46282f282706302f292a23322f28302335322f2127322f2928356825292b">Contact</a>
-    <a href="
+    <a href="https://violetinvestigations.com/privacy">Privacy</a>
+    <a href="https://violetinvestigations.com/terms">Terms</a>
+    <a href="mailto:nina@violetinvestigations.com">Contact</a>
+    <a href="https://www.linkedin.com/in/nina-eisenberg-01513728/" target="_blank">LinkedIn</a>
+  </div>
+</footer>
+
+</body>
+</html>
