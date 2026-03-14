@@ -448,6 +448,22 @@
   }
   .footer-links a:hover { color: var(--navy); }
 
+  /* ---- HAMBURGER ---- */
+  .hamburger {
+    display: none;
+    background: none; border: none; cursor: pointer;
+    padding: 8px; z-index: 200;
+  }
+  .hamburger span {
+    display: block; width: 22px; height: 2px;
+    background: var(--navy); margin: 5px 0;
+    transition: all 0.3s;
+    border-radius: 2px;
+  }
+  .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .hamburger.active span:nth-child(2) { opacity: 0; }
+  .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
   /* ---- RESPONSIVE ---- */
   @media (max-width: 1024px) {
     .hero { grid-template-columns: 1fr; gap: 48px; padding: 140px 32px 60px; }
@@ -458,16 +474,63 @@
     .pricing-grid { grid-template-columns: repeat(2, 1fr); }
     .steps-grid { grid-template-columns: repeat(3, 1fr); }
   }
+
+  @media (max-width: 768px) {
+    .hamburger { display: block; }
+
+    .nav-links {
+      display: none;
+      position: fixed; top: 64px; left: 0; right: 0;
+      background: rgba(250, 248, 245, 0.98);
+      backdrop-filter: blur(16px);
+      flex-direction: column;
+      padding: 24px 20px;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(27, 42, 74, 0.1);
+    }
+    .nav-links.open { display: flex; }
+    .nav-links a {
+      font-size: 16px !important;
+      padding: 12px 0 !important;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-links a:last-child { border-bottom: none; }
+    .nav-cta {
+      margin-top: 8px;
+      text-align: center !important;
+      padding: 14px 20px !important;
+      border-bottom: none !important;
+    }
+
+    .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+    .steps-grid { grid-template-columns: repeat(2, 1fr); }
+    .faq-grid { grid-template-columns: 1fr !important; }
+    .hotline-number { font-size: 22px; }
+  }
+
   @media (max-width: 640px) {
     nav { padding: 0 20px; }
-    .nav-links a:not(.nav-cta) { display: none; }
     section { padding: 60px 20px; }
     .hero { padding: 120px 20px 48px; }
-    .hero h1 { font-size: 34px; }
+    .hero h1 { font-size: 32px; }
+    .hero-sub { font-size: 16px; }
+    .hero-cta-row { flex-direction: column; gap: 12px; }
+    .hero-cta-row a { text-align: center; }
     .modes-grid { grid-template-columns: 1fr; }
-    .pricing-grid { grid-template-columns: 1fr; }
     .steps-grid { grid-template-columns: 1fr; }
-    .section-heading { font-size: 30px; }
+    .section-heading { font-size: 28px; }
+    .section-desc { font-size: 15px; }
+    .feature-text h3 { font-size: 24px; }
+    .bottom-cta h2 { font-size: 28px; }
+    .hotline-banner h2 { font-size: 28px; }
+    .hotline-banner p { font-size: 15px; }
+    .price-card { padding: 28px 20px; }
+    .price-amount { font-size: 36px; }
+    table { font-size: 13px; }
+    .comparison-table-wrap { margin: 0 -20px; border-radius: 0; border-left: none; border-right: none; }
+    footer { flex-direction: column; gap: 16px; text-align: center; padding: 32px 20px; }
+    .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
   }
 
   /* ---- ANIMATIONS ---- */
@@ -488,7 +551,10 @@
 <!-- NAV -->
 <nav>
   <a href="#" class="nav-logo">Violet.</a>
-  <div class="nav-links">
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="navLinks">
     <a href="#features">Features</a>
     <a href="#comparison">Compare</a>
     <a href="#pricing">Pricing</a>
@@ -864,6 +930,20 @@
     if (e.key === 'Enter') {
       document.getElementById('waitlistBtn').click();
     }
+  });
+
+  // Hamburger menu toggle
+  document.getElementById('hamburger').addEventListener('click', function() {
+    this.classList.toggle('active');
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+
+  // Close menu when a nav link is clicked
+  document.querySelectorAll('#navLinks a').forEach(function(link) {
+    link.addEventListener('click', function() {
+      document.getElementById('hamburger').classList.remove('active');
+      document.getElementById('navLinks').classList.remove('open');
+    });
   });
 </script>
 
