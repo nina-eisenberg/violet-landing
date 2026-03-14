@@ -699,6 +699,40 @@
 
     .footer-links a:hover { color: var(--violet-600); }
 
+    /* ── FAQ ── */
+    .faq {
+      padding: 6rem 2rem;
+    }
+
+    .faq-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .faq .section-heading,
+    .faq .section-label { text-align: center; }
+
+    .faq .section-heading { margin-bottom: 3rem; }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+
+    .faq-item h3 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.05rem;
+      color: var(--charcoal);
+      margin-bottom: 0.5rem;
+    }
+
+    .faq-item p {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
     @media (max-width: 1024px) {
@@ -723,6 +757,7 @@
       .comparison-table th,
       .comparison-table td { padding: 0.65rem 0.6rem; }
       .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+      .faq-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -735,6 +770,7 @@
       <a href="#how-it-works">How It Works</a>
       <a href="#pricing">Pricing</a>
       <a href="#comparison">Compare</a>
+      <a href="#faq">FAQ</a>
       <a href="#waitlist" class="nav-cta">Get Early Access</a>
     </div>
   </nav>
@@ -1080,6 +1116,57 @@
         </table>
       </div>
       <p style="font-size:0.78rem;color:var(--text-light);text-align:center;margin-top:1.5rem;opacity:0.7;">Feature comparison based on publicly available information as of March 2026.</p>
+    </div>
+  </section>
+
+  <!-- ── FAQ ── -->
+  <section class="faq" id="faq">
+    <div class="faq-inner">
+      <div class="section-label">Questions</div>
+      <h2 class="section-heading">Frequently asked questions</h2>
+      <div class="faq-grid">
+
+        <div class="faq-item">
+          <h3>Who is Violet built for?</h3>
+          <p>External workplace investigators, internal HR and compliance teams, and employee relations professionals. Whether you're a solo investigator managing your own caseload or a team running a full compliance program, Violet fits your workflow.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Does Violet make legal decisions?</h3>
+          <p>No. Violet drafts, you decide. The investigator sets the findings and recommendations &mdash; Violet writes the supporting analysis. A built-in confidence check warns you if the evidence doesn't support your conclusion. All AI outputs include appropriate disclaimers and should be reviewed by qualified professionals.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>What reports come built in?</h3>
+          <p>Investigation reports with credibility analysis, interview outlines, investigation plans, triage memos, written warnings, employee handbooks, and quarterly executive reports with industry benchmarking &mdash; all generated from your data with one click.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Where is my data stored?</h3>
+          <p>Your data is hosted in the United States on production-grade infrastructure with encryption at rest and in transit. Investigation data is never used to train AI models. Each organization's data is fully isolated &mdash; no cross-tenant access.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Can I export my data?</h3>
+          <p>Yes. Investigation reports export to Google Docs, quarterly reports to PDF and PowerPoint, and handbooks to PDF, Word, or web. Case data CSV export and full data portability are on our near-term roadmap.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>What access controls are available?</h3>
+          <p>Violet includes role-based access control with four roles: Admin, Manager, Investigator, and Viewer. Admins manage team membership and organization settings. Investigators can only access their assigned cases. All actions are scoped to your organization.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>What compliance standards does Violet follow?</h3>
+          <p>Violet is built with security-first architecture: encrypted data, tenant isolation, input validation, and rate-limited APIs. SOC 2 readiness, bias testing, and vendor security documentation are on our 2026 roadmap. We're happy to complete your security questionnaire.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Can external investigators use Violet?</h3>
+          <p>Absolutely &mdash; the Investigator plan is designed specifically for solo and external investigators. You get AI investigation reports, smart interview outlines, Google Drive integration, and Coach Violet guidance without needing the intake or policy features that internal teams use.</p>
+        </div>
+
+      </div>
     </div>
   </section>
 
