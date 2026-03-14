@@ -925,7 +925,7 @@
         <div class="pricing-card featured">
           <div class="pricing-badge">Most Popular</div>
           <h3>Professional</h3>
-          <div class="pricing-price">$799<span>/mo</span></div>
+          <div class="pricing-price">$999<span>/mo</span></div>
           <p class="pricing-desc">For established investigation teams.</p>
           <ul class="pricing-features">
             <li>250 cases/year</li>
@@ -1109,12 +1109,12 @@
     <div class="footer-links">
       <a href="https://app.violetinvestigations.com/privacy">Privacy</a>
       <a href="https://app.violetinvestigations.com/terms">Terms</a>
-      <a href="mailto:nina@violetinvestigations.com">Contact</a>
+      <a href="/cdn-cgi/l/email-protection#92fcfbfcf3d2e4fbfdfef7e6fbfce4f7e1e6fbf5f3e6fbfdfce1bcf1fdff">Contact</a>
       <a href="https://www.linkedin.com/in/nina-eisenberg-01513728/" target="_blank">LinkedIn</a>
     </div>
   </footer>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     var selectedInterest = 'beta';
 
     document.querySelectorAll('.interest-btn').forEach(function(btn) {
@@ -1152,12 +1152,4 @@
       xhr.send(JSON.stringify({ email: email, interest: selectedInterest }));
     });
 
-    document.getElementById('emailInput').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        document.getElementById('waitlistBtn').click();
-      }
-    });
-  </script>
-
-</body>
-</html>
+    document.getElementById('emailInput').addEventListen
