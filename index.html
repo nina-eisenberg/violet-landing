@@ -538,6 +538,8 @@
     .comparison-table-wrap { margin: 0 -20px; border-radius: 0; border-left: none; border-right: none; }
     footer { flex-direction: column; gap: 16px; text-align: center; padding: 32px 20px; }
     .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
+    #waitlistForm > div:nth-child(2), #waitlistForm > div:nth-child(3) { flex-direction: column !important; }
+    #waitlistBtn { width: 100%; }
   }
 
   /* ---- ANIMATIONS ---- */
@@ -898,6 +900,10 @@
         Get Started with Violet
       </label>
     </div>
+    <div style="display:flex;gap:12px;margin-bottom:12px;">
+      <input type="text" id="nameInput" placeholder="Your name" style="flex:1;padding:14px 20px;border-radius:8px;border:1px solid var(--border);background:var(--white);color:var(--navy);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;">
+      <input type="text" id="orgInput" placeholder="Organization (optional)" style="flex:1;padding:14px 20px;border-radius:8px;border:1px solid var(--border);background:var(--white);color:var(--navy);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;">
+    </div>
     <div style="display:flex;gap:12px;">
       <input type="email" id="emailInput" placeholder="you@company.com" style="flex:1;padding:14px 20px;border-radius:8px;border:1px solid var(--border);background:var(--white);color:var(--navy);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;">
       <button type="button" id="waitlistBtn" class="btn-primary" style="white-space:nowrap;">Sign Me Up</button>
@@ -930,7 +936,7 @@
     xhr.onerror = function() {
       alert('Something went wrong. Please try again.');
     };
-    xhr.send(JSON.stringify({ email: email, interest: selectedInterest }));
+    xhr.send(JSON.stringify({ email: email, name: document.getElementById('nameInput').value, organization: document.getElementById('orgInput').value, interest: selectedInterest }));
   });
 
   document.getElementById('emailInput').addEventListener('keydown', function(e) {
