@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog | Violet Investigations</title>
+<meta name="description" content="Practical guidance on workplace investigations, harassment prevention, compliance training, and California employment law from Nina Eisenberg, Esq.">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://violetinvestigations.com/blog">
+<meta property="og:title" content="Blog | Violet Investigations">
+<meta property="og:description" content="Practical guidance on workplace investigations, harassment prevention, compliance training, and California employment law from Nina Eisenberg, Esq.">
+<meta property="og:site_name" content="Violet Investigations">
+
+<!-- Twitter/X -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Blog | Violet Investigations">
+<meta name="twitter:description" content="Practical guidance on workplace investigations, harassment prevention, compliance training, and California employment law from Nina Eisenberg, Esq.">
+
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAy0lEQVR4nNWVQRaCMAxEkz5O4HH0arDybB5Hr6CrogytaZuSktlRwsufSQCer08CvfGgs/j3Ihg33/UIuRtWEAEPrCHCoOYrBO6AuSap4P647M6W26tb/fAERIAUfcpl7vyf+yKAo1UEILnQPOcjgZRw3rm96AZQO4bSel8jQFcxdoy/Ji1fCZwCQIq3dlnVCbS+fiqAnMuWL6a/HTgNAMbd+sPymwDR13WrezVAD6kBNO4jAItVx4ljAiMgmGg7AkuItRfugAXEpscHkgU2YVRz7iUAAAAASUVORK5CYII=">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6QQX43BVH5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6QQX43BVH5');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --violet: #7C3AED;
+    --violet-light: #A78BFA;
+    --violet-glow: rgba(124, 58, 237, 0.12);
+    --navy: #1B2A4A;
+    --navy-deep: #0F1A2E;
+    --cream: #FAF8F5;
+    --warm-gray: #6B6570;
+    --warm-gray-light: #9B95A0;
+    --border: rgba(27, 42, 74, 0.08);
+    --white: #FFFFFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    color: var(--navy);
+    background: var(--cream);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+  }
+
+  /* ---- NAV ---- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(250, 248, 245, 0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; color: var(--violet);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .nav-links a {
+    font-size: 14px; font-weight: 500; color: var(--warm-gray);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--navy); }
+  .nav-links a.active { color: var(--navy); font-weight: 600; }
+  .nav-cta {
+    background: var(--violet) !important; color: var(--white) !important;
+    padding: 8px 20px !important; border-radius: 6px;
+    font-weight: 600 !important; font-size: 13px !important;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: #6D28D9 !important; }
+  .nav-signin {
+    border: 1.5px solid var(--violet) !important;
+    color: var(--violet) !important;
+    padding: 8px 20px !important; border-radius: 6px;
+    font-weight: 600 !important; font-size: 13px !important;
+    transition: background 0.2s, color 0.2s !important;
+  }
+  .nav-signin:hover { background: var(--violet) !important; color: var(--white) !important; }
+
+  /* ---- HAMBURGER ---- */
+  .hamburger {
+    display: none;
+    background: none; border: none; cursor: pointer;
+    padding: 8px; z-index: 200;
+  }
+  .hamburger span {
+    display: block; width: 22px; height: 2px;
+    background: var(--navy); margin: 5px 0;
+    transition: all 0.3s;
+    border-radius: 2px;
+  }
+  .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .hamburger.active span:nth-child(2) { opacity: 0; }
+  .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+  /* ---- BLOG HEADER ---- */
+  .blog-header {
+    padding: 140px 48px 60px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .blog-header .section-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--violet);
+    margin-bottom: 16px;
+  }
+  .blog-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 42px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--navy);
+    margin-bottom: 16px;
+  }
+  .blog-header p {
+    font-size: 17px;
+    color: var(--warm-gray);
+    line-height: 1.7;
+    max-width: 560px;
+  }
+
+  /* ---- POST LIST ---- */
+  .post-list {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 48px 80px;
+  }
+  .post-item {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--border);
+    transition: opacity 0.2s;
+  }
+  .post-item:first-child {
+    border-top: 1px solid var(--border);
+  }
+  .post-item:hover {
+    opacity: 0.75;
+  }
+  .post-meta {
+    font-size: 13px;
+    color: var(--warm-gray-light);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .post-meta-dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--warm-gray-light);
+  }
+  .post-item h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .post-excerpt {
+    font-size: 15px;
+    color: var(--warm-gray);
+    line-height: 1.7;
+    max-width: 640px;
+  }
+
+  /* ---- FOOTER ---- */
+  footer {
+    padding: 40px 48px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between;
+    align-items: center; max-width: 1200px;
+    margin: 0 auto;
+  }
+  .footer-left {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px; color: var(--violet);
+  }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a {
+    font-size: 13px; color: var(--warm-gray-light);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--navy); }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 768px) {
+    .hamburger { display: block; }
+    .nav-links {
+      display: none;
+      position: fixed; top: 64px; left: 0; right: 0;
+      background: rgba(250, 248, 245, 0.98);
+      backdrop-filter: blur(16px);
+      flex-direction: column;
+      padding: 24px 20px;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(27, 42, 74, 0.1);
+    }
+    .nav-links.open { display: flex; }
+    .nav-links a {
+      font-size: 16px !important;
+      padding: 12px 0 !important;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-links a:last-child { border-bottom: none; }
+    .nav-signin {
+      margin-top: 8px;
+      text-align: center !important;
+      padding: 14px 20px !important;
+    }
+    .nav-cta {
+      margin-top: 8px;
+      text-align: center !important;
+      padding: 14px 20px !important;
+      border-bottom: none !important;
+    }
+  }
+
+  @media (max-width: 640px) {
+    nav { padding: 0 20px; }
+    .blog-header { padding: 120px 20px 48px; }
+    .blog-header h1 { font-size: 32px; }
+    .post-list { padding: 0 20px 60px; }
+    .post-item h2 { font-size: 20px; }
+    footer { flex-direction: column; gap: 16px; text-align: center; padding: 32px 20px; }
+    .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">Violet.</a>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="navLinks">
+    <a href="/#features">Features</a>
+    <a href="/california-training">Training</a>
+    <a href="/#pricing">Pricing</a>
+    <a href="/blog" class="active">Blog</a>
+    <a href="/#faq">FAQ</a>
+    <a href="https://app.violetinvestigations.com" class="nav-signin">Sign In</a>
+    <a href="/#waitlist" class="nav-cta">Get Early Access</a>
+  </div>
+</nav>
+
+<!-- BLOG HEADER -->
+<section class="blog-header">
+  <div class="section-label">Blog</div>
+  <h1>From the Field</h1>
+  <p>Practical guidance on workplace investigations, harassment prevention, and California employment law.</p>
+</section>
+
+<!-- POST LIST -->
+<!-- To add a new post: create a new .html file in blog/, then add an entry here -->
+<!-- Template:
+<a href="/blog/your-post-slug" class="post-item">
+  <div class="post-meta">
+    <span>Month DD, YYYY</span>
+    <span class="post-meta-dot"></span>
+    <span>Nina Eisenberg, Esq.</span>
+  </div>
+  <h2>Post Title Here</h2>
+  <p class="post-excerpt">A short excerpt (1-2 sentences) for the listing page.</p>
+</a>
+-->
+<div class="post-list">
+  <p style="font-size: 17px; color: var(--warm-gray); padding: 32px 0;">New posts coming soon.</p>
+</div>
+
+<footer>
+  <div class="footer-left">Violet Investigations</div>
+  <div class="footer-links">
+    <a href="/about">About</a>
+    <a href="/blog">Blog</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+    <a href="mailto:nina@violetinvestigations.com">Contact</a>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('hamburger').addEventListener('click', function() {
+    this.classList.toggle('active');
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  document.querySelectorAll('#navLinks a').forEach(function(link) {
+    link.addEventListener('click', function() {
+      document.getElementById('hamburger').classList.remove('active');
+      document.getElementById('navLinks').classList.remove('open');
+    });
+  });
+</script>
+
+</body>
+</html>

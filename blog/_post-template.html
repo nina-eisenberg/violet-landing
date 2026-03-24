@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POST_TITLE | Violet Investigations</title>
+<meta name="description" content="POST_DESCRIPTION">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://violetinvestigations.com/blog/POST_SLUG">
+<meta property="og:title" content="POST_TITLE">
+<meta property="og:description" content="POST_DESCRIPTION">
+<meta property="og:site_name" content="Violet Investigations">
+<meta property="article:published_time" content="YYYY-MM-DD">
+<meta property="article:author" content="Nina Eisenberg, Esq.">
+
+<!-- Twitter/X -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="POST_TITLE">
+<meta name="twitter:description" content="POST_DESCRIPTION">
+
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAy0lEQVR4nNWVQRaCMAxEkz5O4HH0arDybB5Hr6CrogytaZuSktlRwsufSQCer08CvfGgs/j3Ihg33/UIuRtWEAEPrCHCoOYrBO6AuSap4P647M6W26tb/fAERIAUfcpl7vyf+yKAo1UEILnQPOcjgZRw3rm96AZQO4bSel8jQFcxdoy/Ji1fCZwCQIq3dlnVCbS+fiqAnMuWL6a/HTgNAMbd+sPymwDR13WrezVAD6kBNO4jAItVx4ljAiMgmGg7AkuItRfugAXEpscHkgU2YVRz7iUAAAAASUVORK5CYII=">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6QQX43BVH5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6QQX43BVH5');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --violet: #7C3AED;
+    --violet-light: #A78BFA;
+    --violet-glow: rgba(124, 58, 237, 0.12);
+    --navy: #1B2A4A;
+    --navy-deep: #0F1A2E;
+    --cream: #FAF8F5;
+    --warm-gray: #6B6570;
+    --warm-gray-light: #9B95A0;
+    --border: rgba(27, 42, 74, 0.08);
+    --white: #FFFFFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    color: var(--navy);
+    background: var(--cream);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+  }
+
+  /* ---- NAV ---- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(250, 248, 245, 0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; color: var(--violet);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .nav-links a {
+    font-size: 14px; font-weight: 500; color: var(--warm-gray);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--navy); }
+  .nav-links a.active { color: var(--navy); font-weight: 600; }
+  .nav-cta {
+    background: var(--violet) !important; color: var(--white) !important;
+    padding: 8px 20px !important; border-radius: 6px;
+    font-weight: 600 !important; font-size: 13px !important;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: #6D28D9 !important; }
+  .nav-signin {
+    border: 1.5px solid var(--violet) !important;
+    color: var(--violet) !important;
+    padding: 8px 20px !important; border-radius: 6px;
+    font-weight: 600 !important; font-size: 13px !important;
+    transition: background 0.2s, color 0.2s !important;
+  }
+  .nav-signin:hover { background: var(--violet) !important; color: var(--white) !important; }
+
+  /* ---- HAMBURGER ---- */
+  .hamburger {
+    display: none;
+    background: none; border: none; cursor: pointer;
+    padding: 8px; z-index: 200;
+  }
+  .hamburger span {
+    display: block; width: 22px; height: 2px;
+    background: var(--navy); margin: 5px 0;
+    transition: all 0.3s;
+    border-radius: 2px;
+  }
+  .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .hamburger.active span:nth-child(2) { opacity: 0; }
+  .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+  /* ---- ARTICLE ---- */
+  .article-header {
+    padding: 140px 48px 0;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .back-link {
+    font-size: 13px;
+    color: var(--violet);
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 32px;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-meta {
+    font-size: 14px;
+    color: var(--warm-gray-light);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .article-meta-dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--warm-gray-light);
+  }
+  .article-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 38px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--navy);
+    margin-bottom: 0;
+  }
+
+  .article-body {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 48px 80px;
+  }
+  .article-body p {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--navy);
+    margin-bottom: 24px;
+  }
+  .article-body h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    line-height: 1.3;
+    color: var(--navy);
+    margin-top: 48px;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+  .article-body h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-top: 36px;
+    margin-bottom: 12px;
+  }
+  .article-body ul, .article-body ol {
+    margin-bottom: 24px;
+    padding-left: 24px;
+  }
+  .article-body li {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .article-body strong {
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .article-body blockquote {
+    border-left: 3px solid var(--violet);
+    padding: 4px 0 4px 24px;
+    margin: 32px 0;
+  }
+  .article-body blockquote p {
+    font-style: italic;
+    color: var(--warm-gray);
+    margin-bottom: 0;
+  }
+
+  /* ---- FOOTER ---- */
+  footer {
+    padding: 40px 48px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between;
+    align-items: center; max-width: 1200px;
+    margin: 0 auto;
+  }
+  .footer-left {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px; color: var(--violet);
+  }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a {
+    font-size: 13px; color: var(--warm-gray-light);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--navy); }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 768px) {
+    .hamburger { display: block; }
+    .nav-links {
+      display: none;
+      position: fixed; top: 64px; left: 0; right: 0;
+      background: rgba(250, 248, 245, 0.98);
+      backdrop-filter: blur(16px);
+      flex-direction: column;
+      padding: 24px 20px;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(27, 42, 74, 0.1);
+    }
+    .nav-links.open { display: flex; }
+    .nav-links a {
+      font-size: 16px !important;
+      padding: 12px 0 !important;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-links a:last-child { border-bottom: none; }
+    .nav-signin {
+      margin-top: 8px;
+      text-align: center !important;
+      padding: 14px 20px !important;
+    }
+    .nav-cta {
+      margin-top: 8px;
+      text-align: center !important;
+      padding: 14px 20px !important;
+      border-bottom: none !important;
+    }
+  }
+
+  @media (max-width: 640px) {
+    nav { padding: 0 20px; }
+    .article-header { padding: 120px 20px 0; }
+    .article-header h1 { font-size: 28px; }
+    .article-body { padding: 36px 20px 60px; }
+    .article-body h2 { font-size: 22px; }
+    footer { flex-direction: column; gap: 16px; text-align: center; padding: 32px 20px; }
+    .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">Violet.</a>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="navLinks">
+    <a href="/#features">Features</a>
+    <a href="/california-training">Training</a>
+    <a href="/#pricing">Pricing</a>
+    <a href="/blog" class="active">Blog</a>
+    <a href="/#faq">FAQ</a>
+    <a href="https://app.violetinvestigations.com" class="nav-signin">Sign In</a>
+    <a href="/#waitlist" class="nav-cta">Get Early Access</a>
+  </div>
+</nav>
+
+<!-- ARTICLE -->
+<header class="article-header">
+  <a href="/blog" class="back-link">&larr; All posts</a>
+  <div class="article-meta">
+    <span>POST_DATE</span>
+    <span class="article-meta-dot"></span>
+    <span>Nina Eisenberg, Esq.</span>
+  </div>
+  <h1>POST_TITLE</h1>
+</header>
+
+<article class="article-body">
+  <!-- Write your post content here using standard HTML tags:
+       <p> for paragraphs
+       <h2> for section headings
+       <h3> for sub-headings
+       <ul>/<ol> and <li> for lists
+       <strong> for bold
+       <blockquote><p>...</p></blockquote> for pull quotes
+  -->
+
+  <p>Your content here.</p>
+</article>
+
+<footer>
+  <div class="footer-left">Violet Investigations</div>
+  <div class="footer-links">
+    <a href="/about">About</a>
+    <a href="/blog">Blog</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+    <a href="mailto:nina@violetinvestigations.com">Contact</a>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('hamburger').addEventListener('click', function() {
+    this.classList.toggle('active');
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  document.querySelectorAll('#navLinks a').forEach(function(link) {
+    link.addEventListener('click', function() {
+      document.getElementById('hamburger').classList.remove('active');
+      document.getElementById('navLinks').classList.remove('open');
+    });
+  });
+</script>
+
+</body>
+</html>
