@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free SB 1343 Compliance Checker | Violet Investigations</title>
+<meta name="description" content="Check if your company meets California's SB 1343 harassment training requirements. Free instant compliance scorecard — no login required.">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://violetinvestigations.com/compliance-check">
+<meta property="og:title" content="Free SB 1343 Compliance Checker | Violet Investigations">
+<meta property="og:description" content="Check if your company meets California's SB 1343 harassment training requirements. Free instant compliance scorecard — no login required.">
+<meta property="og:site_name" content="Violet Investigations">
+
+<!-- Twitter/X -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Free SB 1343 Compliance Checker | Violet Investigations">
+<meta name="twitter:description" content="Check if your company meets California's SB 1343 harassment training requirements. Free instant compliance scorecard — no login required.">
+
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAy0lEQVR4nNWVQRaCMAxEkz5O4HH0arDybB5Hr6CrogytaZuSktlRwsufSQCer08CvfGgs/j3Ihg33/UIuRtWEAEPrCHCoOYrBO6AuSap4P647M6W26tb/fAERIAUfcpl7vyf+yKAo1UEILnQPOcjgZRw3rm96AZQO4bSel8jQFcxdoy/Ji1fCZwCQIq3dlnVCbS+fiqAnMuWL6a/HTgNAMbd+sPymwDR13WrezVAD6kBNO4jAItVx4ljAiMgmGg7AkuItRfugAXEpscHkgU2YVRz7iUAAAAASUVORK5CYII=">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6QQX43BVH5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6QQX43BVH5');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --violet: #7C3AED;
+    --violet-light: #A78BFA;
+    --violet-glow: rgba(124, 58, 237, 0.12);
+    --navy: #1B2A4A;
+    --navy-deep: #0F1A2E;
+    --cream: #FAF8F5;
+    --warm-gray: #6B6570;
+    --warm-gray-light: #9B95A0;
+    --border: rgba(27, 42, 74, 0.08);
+    --white: #FFFFFF;
+    --emerald: #10B981;
+    --amber: #F59E0B;
+    --red: #EF4444;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    color: var(--navy);
+    background: var(--cream);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+  }
+
+  /* ---- NAV ---- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(250, 248, 245, 0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px; height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--violet); text-decoration: none; letter-spacing: -0.02em; }
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .nav-links a { font-size: 14px; font-weight: 500; color: var(--warm-gray); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--navy); }
+  .nav-links a.active { color: var(--navy); font-weight: 600; }
+  .nav-cta { background: var(--violet) !important; color: var(--white) !important; padding: 8px 20px !important; border-radius: 6px; font-weight: 600 !important; font-size: 13px !important; transition: background 0.2s !important; }
+  .nav-cta:hover { background: #6D28D9 !important; }
+  .nav-signin { border: 1.5px solid var(--violet) !important; color: var(--violet) !important; padding: 8px 20px !important; border-radius: 6px; font-weight: 600 !important; font-size: 13px !important; transition: background 0.2s, color 0.2s !important; }
+  .nav-signin:hover { background: var(--violet) !important; color: var(--white) !important; }
+
+  .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; z-index: 200; }
+  .hamburger span { display: block; width: 22px; height: 2px; background: var(--navy); margin: 5px 0; transition: all 0.3s; border-radius: 2px; }
+  .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .hamburger.active span:nth-child(2) { opacity: 0; }
+  .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+  /* ---- MAIN ---- */
+  .checker-wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 120px 24px 80px;
+    min-height: 100vh;
+  }
+
+  /* ---- PROGRESS BAR ---- */
+  .progress-bar { height: 4px; background: var(--border); border-radius: 4px; margin-bottom: 48px; overflow: hidden; display: none; }
+  .progress-bar.visible { display: block; }
+  .progress-fill { height: 100%; background: var(--violet); border-radius: 4px; transition: width 0.4s ease; }
+
+  /* ---- STEP SCREENS ---- */
+  .step { display: none; animation: fadeIn 0.35s ease; }
+  .step.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  .step-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--violet); margin-bottom: 12px; }
+  .step h2 { font-family: 'DM Serif Display', serif; font-size: 28px; line-height: 1.25; color: var(--navy); margin-bottom: 8px; letter-spacing: -0.02em; }
+  .step .subhead { font-size: 16px; color: var(--warm-gray); margin-bottom: 32px; line-height: 1.6; }
+
+  /* ---- ANSWER OPTIONS ---- */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 20px; border-radius: 10px;
+    border: 1.5px solid var(--border); background: var(--white);
+    cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s;
+    font-size: 15px; color: var(--navy); font-weight: 500;
+  }
+  .opt:hover { border-color: var(--violet-light); box-shadow: 0 2px 8px rgba(124,58,237,0.06); }
+  .opt.selected { border-color: var(--violet); background: rgba(124,58,237,0.04); box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+  .opt-radio {
+    width: 20px; height: 20px; min-width: 20px;
+    border: 2px solid var(--warm-gray-light); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.2s;
+  }
+  .opt.selected .opt-radio { border-color: var(--violet); }
+  .opt.selected .opt-radio::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--violet); }
+
+  /* Checkbox variant */
+  .opt-check {
+    width: 20px; height: 20px; min-width: 20px;
+    border: 2px solid var(--warm-gray-light); border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.2s, background 0.2s; font-size: 12px; color: white; font-weight: 700;
+  }
+  .opt.selected .opt-check { border-color: var(--violet); background: var(--violet); }
+  .opt.selected .opt-check::after { content: '\2713'; }
+
+  /* ---- BUTTONS ---- */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--violet); color: var(--white);
+    padding: 14px 28px; border-radius: 8px; border: none;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: background 0.2s, transform 0.15s;
+    margin-top: 24px;
+  }
+  .btn-primary:hover { background: #6D28D9; transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent; color: var(--violet);
+    padding: 14px 28px; border-radius: 8px;
+    border: 1.5px solid var(--violet);
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: background 0.2s;
+    text-decoration: none;
+  }
+  .btn-secondary:hover { background: rgba(124,58,237,0.04); }
+
+  .skip-link { display: inline-block; margin-top: 16px; font-size: 13px; color: var(--warm-gray-light); text-decoration: underline; cursor: pointer; }
+  .skip-link:hover { color: var(--warm-gray); }
+
+  /* ---- EMAIL CAPTURE ---- */
+  .email-field {
+    width: 100%; padding: 14px 16px; border-radius: 8px;
+    border: 1.5px solid var(--border); background: var(--white);
+    font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--navy);
+    transition: border-color 0.2s;
+  }
+  .email-field:focus { outline: none; border-color: var(--violet); }
+
+  /* ---- SCORECARD ---- */
+  .score-summary {
+    text-align: center; padding: 32px 24px;
+    border-radius: 14px; margin-bottom: 32px;
+  }
+  .score-summary.green { background: rgba(16,185,129,0.08); border: 1.5px solid rgba(16,185,129,0.2); }
+  .score-summary.yellow { background: rgba(245,158,11,0.08); border: 1.5px solid rgba(245,158,11,0.2); }
+  .score-summary.red { background: rgba(239,68,68,0.08); border: 1.5px solid rgba(239,68,68,0.2); }
+
+  .score-number { font-family: 'DM Serif Display', serif; font-size: 48px; color: var(--navy); }
+  .score-label { font-size: 14px; font-weight: 600; margin-top: 4px; }
+  .score-label.green { color: var(--emerald); }
+  .score-label.yellow { color: var(--amber); }
+  .score-label.red { color: var(--red); }
+
+  .scorecard { display: flex; flex-direction: column; gap: 8px; margin-bottom: 40px; }
+  .sc-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 16px 18px; border-radius: 10px;
+    background: var(--white); border: 1px solid var(--border);
+    cursor: pointer; transition: box-shadow 0.2s;
+  }
+  .sc-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .sc-dot { width: 10px; height: 10px; min-width: 10px; border-radius: 50%; margin-top: 5px; }
+  .sc-dot.green { background: var(--emerald); }
+  .sc-dot.yellow { background: var(--amber); }
+  .sc-dot.red { background: var(--red); }
+  .sc-dot.gray { background: var(--warm-gray-light); }
+  .sc-title { font-size: 14px; font-weight: 600; color: var(--navy); }
+  .sc-status { font-size: 12px; font-weight: 600; margin-left: auto; white-space: nowrap; padding-left: 12px; }
+  .sc-status.green { color: var(--emerald); }
+  .sc-status.yellow { color: var(--amber); }
+  .sc-status.red { color: var(--red); }
+  .sc-status.gray { color: var(--warm-gray-light); }
+  .sc-detail { display: none; font-size: 13px; color: var(--warm-gray); line-height: 1.6; margin-top: 8px; }
+  .sc-item.expanded .sc-detail { display: block; }
+
+  .cta-card {
+    background: var(--navy-deep); border-radius: 14px; padding: 40px 32px; text-align: center; margin-bottom: 24px;
+  }
+  .cta-card h3 { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--white); margin-bottom: 10px; }
+  .cta-card p { font-size: 14px; color: var(--warm-gray-light); margin-bottom: 24px; line-height: 1.7; max-width: 440px; margin-left: auto; margin-right: auto; }
+  .cta-card .btn-primary { margin-top: 0; }
+  .cta-card .btn-link { display: inline-block; margin-top: 16px; font-size: 13px; color: var(--violet-light); text-decoration: none; }
+  .cta-card .btn-link:hover { text-decoration: underline; }
+
+  .contact-line { text-align: center; font-size: 13px; color: var(--warm-gray-light); margin-top: 24px; }
+  .contact-line a { color: var(--violet); text-decoration: none; }
+  .contact-line a:hover { text-decoration: underline; }
+
+  /* ---- NOT APPLICABLE RESULT ---- */
+  .na-card {
+    background: rgba(16,185,129,0.06); border: 1.5px solid rgba(16,185,129,0.15);
+    border-radius: 14px; padding: 40px 32px; text-align: center;
+  }
+  .na-card h2 { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--navy); margin-bottom: 12px; }
+  .na-card p { font-size: 15px; color: var(--warm-gray); line-height: 1.7; max-width: 480px; margin: 0 auto; }
+
+  /* ---- FOOTER ---- */
+  footer {
+    padding: 40px 48px; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;
+  }
+  .footer-left { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--violet); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-size: 13px; color: var(--warm-gray-light); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--navy); }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 768px) {
+    .hamburger { display: block; }
+    .nav-links {
+      display: none; position: fixed; top: 64px; left: 0; right: 0;
+      background: rgba(250, 248, 245, 0.98); backdrop-filter: blur(16px);
+      flex-direction: column; padding: 24px 20px; gap: 8px;
+      border-bottom: 1px solid var(--border); box-shadow: 0 8px 32px rgba(27, 42, 74, 0.1);
+    }
+    .nav-links.open { display: flex; }
+    .nav-links a { font-size: 16px !important; padding: 12px 0 !important; border-bottom: 1px solid var(--border); }
+    .nav-links a:last-child { border-bottom: none; }
+    .nav-signin { margin-top: 8px; text-align: center !important; padding: 14px 20px !important; }
+    .nav-cta { margin-top: 8px; text-align: center !important; padding: 14px 20px !important; border-bottom: none !important; }
+  }
+  @media (max-width: 640px) {
+    nav { padding: 0 20px; }
+    .checker-wrap { padding: 100px 16px 60px; }
+    .step h2 { font-size: 24px; }
+    footer { flex-direction: column; gap: 16px; text-align: center; padding: 32px 20px; }
+    .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">Violet.</a>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="navLinks">
+    <a href="/#features">Features</a>
+    <a href="/california-training">Training</a>
+    <a href="/compliance-check" class="active">Compliance Check</a>
+    <a href="/#pricing">Pricing</a>
+    <a href="/blog">Blog</a>
+    <a href="/#faq">FAQ</a>
+    <a href="https://app.violetinvestigations.com" class="nav-signin">Sign In</a>
+    <a href="/#waitlist" class="nav-cta">Get Early Access</a>
+  </div>
+</nav>
+
+<div class="checker-wrap">
+  <!-- PROGRESS BAR -->
+  <div class="progress-bar" id="progressBar">
+    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+  </div>
+
+  <!-- STEP: INTRO -->
+  <div class="step active" id="step-intro">
+    <div class="step-label">Free Compliance Check</div>
+    <h1 style="font-family: 'DM Serif Display', serif; font-size: 38px; line-height: 1.2; letter-spacing: -0.02em; color: var(--navy); margin-bottom: 16px;">Is Your Company SB 1343 Compliant?</h1>
+    <p class="subhead">Answer 7 questions. Get your compliance scorecard in 60 seconds. No login required.</p>
+    <button class="btn-primary" onclick="startCheck()">Start Free Check &rarr;</button>
+  </div>
+
+  <!-- STEP: Q1 -->
+  <div class="step" id="step-q1">
+    <div class="step-label">Question 1 of 7</div>
+    <h2>How many employees does your company have in California?</h2>
+    <p class="subhead">Include full-time, part-time, temporary, and seasonal employees.</p>
+    <div class="options" data-q="q1">
+      <div class="opt" data-val="1-4" onclick="selectOpt(this)"><div class="opt-radio"></div>1 &ndash; 4 employees</div>
+      <div class="opt" data-val="5-49" onclick="selectOpt(this)"><div class="opt-radio"></div>5 &ndash; 49 employees</div>
+      <div class="opt" data-val="50+" onclick="selectOpt(this)"><div class="opt-radio"></div>50+ employees</div>
+    </div>
+    <button class="btn-primary" id="btn-q1" disabled onclick="nextStep('q2')">Next &rarr;</button>
+  </div>
+
+  <!-- STEP: NOT APPLICABLE -->
+  <div class="step" id="step-na">
+    <div class="na-card">
+      <h2>Good News</h2>
+      <p>SB 1343 doesn't apply to employers with fewer than 5 employees in California. However, you may still have obligations under other state and federal laws, including FEHA's general anti-harassment protections.</p>
+    </div>
+    <div style="text-align: center; margin-top: 24px;">
+      <a href="mailto:nina@violetinvestigations.com" class="btn-secondary">Want to make sure? Talk to us &rarr;</a>
+    </div>
+    <div class="contact-line">Or check out our <a href="/blog/california-sb-1343-requirements-2026">complete SB 1343 guide</a>.</div>
+  </div>
+
+  <!-- STEP: Q2 -->
+  <div class="step" id="step-q2">
+    <div class="step-label">Question 2 of 7</div>
+    <h2>Have you provided sexual harassment prevention training to ALL employees in the last 2 years?</h2>
+    <div class="options" data-q="q2">
+      <div class="opt" data-val="yes-all" onclick="selectOpt(this)"><div class="opt-radio"></div>Yes, all employees</div>
+      <div class="opt" data-val="some" onclick="selectOpt(this)"><div class="opt-radio"></div>Some employees but not all</div>
+      <div class="opt" data-val="no" onclick="selectOpt(this)"><div class="opt-radio"></div>No</div>
+      <div class="opt" data-val="unsure" onclick="selectOpt(this)"><div class="opt-radio"></div>I'm not sure</div>
+    </div>
+    <button class="btn-primary" id="btn-q2" disabled onclick="nextStep('q3')">Next &rarr;</button>
+  </div>
+
+  <!-- STEP: Q3 -->
+  <div class="step" id="step-q3">
+    <div class="step-label">Question 3 of 7</div>
+    <h2>Have all supervisory employees received at least 2 hours of training?</h2>
+    <div class="options" data-q="q3">
+      <div class="opt" data-val="yes-2hr" onclick="selectOpt(this)"><div class="opt-radio"></div>Yes, 2+ hours</div>
+      <div class="opt" data-val="yes-1hr" onclick="selectOpt(this)"><div class="opt-radio"></div>Yes, but only 1 hour (same as non-supervisors)</div>
+      <div class="opt" data-val="no" onclick="selectOpt(this)"><div class="opt-radio"></div>No</div>
+      <div class="opt" data-val="unsure" onclick="selectOpt(this)"><div class="opt-radio"></div>I'm not sure</div>
+      <div class="opt" data-val="na" onclick="selectOpt(this)"><div class="opt-radio"></div>We don't have supervisors in California</div>
+    </div>
+    <button class="btn-primary" id="btn-q3" disabled onclick="nextStep('q4')">Next &rarr;</button>
+  </div>
+
+  <!-- STEP: Q4 -->
+  <div class="step" id="step-q4">
+    <div class="step-label">Question 4 of 7</div>
+    <h2>Have all non-supervisory employees received at least 1 hour of training?</h2>
+    <div class="options" data-q="q4">
+      <div class="opt" data-val="yes-1hr" onclick="selectOpt(this)"><div class="opt-radio"></div>Yes, 1+ hours</div>
+      <div class="opt" data-val="unsure-dur" onclick="selectOpt(this)"><div class="opt-radio"></div>We provided training but I'm not sure of the duration</div>
+      <div class="opt" data-val="no" onclick="selectOpt(this)"><div class="opt-radio"></div>No</div>
+      <div class="opt" data-val="unsure" onclick="selectOpt(this)"><div class="opt-radio"></div>I'm not sure</div>
+    </div>
+    <button class="btn-primary" id="btn-q4" disabled onclick="nextStep('q5')">Next &rarr;</button>
+  </div>
+
+  <!-- STEP: Q5 -->
+  <div class="step" id="step-q5">
+    <div class="step-label">Question 5 of 7</div>
+    <h2>Are new employees trained within 6 months of hire?</h2>
+    <div class="options" data-q="q5">
+      <div class="opt" data-val="yes" onclick="selectOpt(this)"><div class="opt-radio"></div>Yes, within 6 months</div>
+      <div class="opt" data-val="sometimes" onclick="selectOpt(this)"><div class="opt-radio"></div>Yes, but it sometimes takes longer</div>
+      <div class="opt" data-val="annual" onclick="selectOpt(this)"><div class="opt-radio"></div>No, we train at the next annual cycle</div>
+      <div class="opt" data-val="unsure" onclick="selectOpt(this)"><div class="opt-radio"></div>I'm not sure</div>
+    </div>
+    <button class="btn-primary" id="btn-q5" disabled onclick="nextStep('q6')">Next &rarr;</button>
+  </div>
+
+  <!-- STEP: Q6 (checkboxes) -->
+  <div class="step" id="step-q6">
+    <div class="step-label">Question 6 of 7</div>
+    <h2>Does your training cover ALL of the following?</h2>
+    <p class="subhead">Select all that apply.</p>
+    <div class="options" data-q="q6">
+      <div class="opt" data-val="feha" onclick="toggleCheck(this)"><div class="opt-check"></div>Definition of sexual harassment under California law (FEHA)</div>
+      <div class="opt" data-val="gender-identity" onclick="toggleCheck(this)"><div class="opt-check"></div>Harassment based on gender identity and gender expression (SB 396)</div>
+      <div class="opt" data-val="abusive-conduct" onclick="toggleCheck(this)"><div class="opt-check"></div>Abusive conduct / workplace bullying (AB 2053)</div>
+      <div class="opt" data-val="remedies" onclick="toggleCheck(this)"><div class="opt-check"></div>Remedies available to victims</div>
+      <div class="opt" data-val="complaint-process" onclick="toggleCheck(this)"><div class="opt-check"></div>The complaint process (internal and CRD)</div>
+      <div class="opt" data-val="interactive" onclick="toggleCheck(this)"><div class="opt-check"></div>Practical examples and interactive exercises</div>
+      <div class="opt" data-val="unsure" onclick="toggleCheck(this)"><div class="opt-check"></div>I'm not sure what our training covers</div>
+    </div>
+    <button class="btn-primary" id="btn-q6" onclick="nextStep('q7')">Next &rarr;</button>
+  </div>
+
+  <!-- STEP: Q7 -->
+  <div class="step" id="step-q7">
+    <div class="step-label">Question 7 of 7</div>
+    <h2>Do you maintain records of who completed training, when, and what topics were covered?</h2>
+    <div class="options" data-q="q7">
+      <div class="opt" data-val="detailed" onclick="selectOpt(this)"><div class="opt-radio"></div>Yes, detailed records with topics and dates</div>
+      <div class="opt" data-val="dates-only" onclick="selectOpt(this)"><div class="opt-radio"></div>We have completion dates but not topic details</div>
+      <div class="opt" data-val="no" onclick="selectOpt(this)"><div class="opt-radio"></div>No formal records</div>
+      <div class="opt" data-val="unsure" onclick="selectOpt(this)"><div class="opt-radio"></div>I'm not sure</div>
+    </div>
+    <button class="btn-primary" id="btn-q7" disabled onclick="nextStep('email')">See My Results &rarr;</button>
+  </div>
+
+  <!-- STEP: EMAIL CAPTURE -->
+  <div class="step" id="step-email">
+    <div class="step-label">Your Scorecard is Ready</div>
+    <h2>Where should we send your results?</h2>
+    <p class="subhead">We'll also email you a summary of your compliance gaps with next steps. No spam.</p>
+    <input type="email" class="email-field" id="leadEmail" placeholder="you@company.com">
+    <button class="btn-primary" id="btn-email" onclick="submitEmail()">See My Scorecard &rarr;</button>
+    <div class="skip-link" onclick="showResults()">Skip &mdash; just show me</div>
+  </div>
+
+  <!-- STEP: RESULTS -->
+  <div class="step" id="step-results"></div>
+</div>
+
+<footer>
+  <div class="footer-left">Violet Investigations</div>
+  <div class="footer-links">
+    <a href="/about">About</a>
+    <a href="/blog">Blog</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+    <a href="mailto:nina@violetinvestigations.com">Contact</a>
+  </div>
+</footer>
+
+<script>
+var answers = {};
+var currentStep = 'intro';
+
+function ga(event, params) {
+  if (typeof gtag === 'function') gtag('event', event, params || {});
+}
+
+function show(id) {
+  document.querySelectorAll('.step').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('step-' + id).classList.add('active');
+  currentStep = id;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress(step) {
+  var bar = document.getElementById('progressBar');
+  var fill = document.getElementById('progressFill');
+  var steps = { q1: 1, q2: 2, q3: 3, q4: 4, q5: 5, q6: 6, q7: 7, email: 7, results: 7 };
+  if (steps[step] !== undefined) {
+    bar.classList.add('visible');
+    fill.style.width = Math.round((steps[step] / 7) * 100) + '%';
+  }
+}
+
+function startCheck() {
+  ga('compliance_check_start');
+  show('q1');
+  updateProgress('q1');
+}
+
+function selectOpt(el) {
+  var siblings = el.parentElement.querySelectorAll('.opt');
+  siblings.forEach(function(s) { s.classList.remove('selected'); });
+  el.classList.add('selected');
+  var q = el.parentElement.getAttribute('data-q');
+  answers[q] = el.getAttribute('data-val');
+  var btn = document.getElementById('btn-' + q);
+  if (btn) btn.disabled = false;
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('selected');
+  var q = el.parentElement.getAttribute('data-q');
+  var selected = el.parentElement.querySelectorAll('.opt.selected');
+  var vals = [];
+  selected.forEach(function(s) { vals.push(s.getAttribute('data-val')); });
+  answers[q] = vals;
+}
+
+function nextStep(next) {
+  // Q1 special case
+  if (currentStep === 'q1' && answers.q1 === '1-4') {
+    show('na');
+    ga('compliance_check_complete', { result: 'not_applicable' });
+    return;
+  }
+  ga('compliance_check_question', { question: currentStep });
+  show(next);
+  updateProgress(next);
+}
+
+function submitEmail() {
+  var email = document.getElementById('leadEmail').value.trim();
+  if (!email || email.indexOf('@') < 1) {
+    showResults();
+    return;
+  }
+  answers._email = email;
+  var score = computeScore();
+  // Send to Formspree
+  fetch('https://formspree.io/f/xgolgawr', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      _subject: 'SB 1343 Compliance Check Lead',
+      email: email,
+      answers: JSON.stringify(answers),
+      score: score.met + '/' + score.total,
+      status: score.grade,
+      source: window.location.search || 'direct'
+    })
+  }).catch(function() {});
+  ga('compliance_check_lead', { email_captured: true });
+  showResults();
+}
+
+function computeScore() {
+  var items = [];
+  var q6 = answers.q6 || [];
+  var unsureContent = q6.indexOf('unsure') >= 0;
+
+  // 1. All employees trained
+  var a2 = answers.q2;
+  items.push({ label: 'All Employees Trained', status: a2 === 'yes-all' ? 'green' : a2 === 'some' ? 'yellow' : a2 === 'unsure' ? 'yellow' : 'red',
+    detail: a2 === 'yes-all' ? 'You\'re meeting the requirement to train all employees every 2 years.' : a2 === 'some' ? 'Some employees are trained but not all. SB 1343 requires training for every employee with 5+ California workers.' : a2 === 'unsure' ? 'You\'re not sure if all employees are trained. Audit your training records to confirm.' : 'SB 1343 requires all employees to complete harassment prevention training every 2 years.' });
+
+  // 2. Supervisor 2-hour minimum
+  var a3 = answers.q3;
+  items.push({ label: 'Supervisor 2-Hour Minimum', status: a3 === 'yes-2hr' ? 'green' : a3 === 'na' ? 'gray' : a3 === 'unsure' ? 'yellow' : a3 === 'yes-1hr' ? 'red' : 'red',
+    detail: a3 === 'yes-2hr' ? 'Supervisors are receiving the required 2 hours of training.' : a3 === 'na' ? 'Not applicable — you indicated no supervisors in California.' : a3 === 'yes-1hr' ? 'Supervisors need 2 hours, not 1. The supervisor track covers additional topics including duty to report and personal liability.' : 'Supervisors must receive at least 2 hours of harassment prevention training under SB 1343.' });
+
+  // 3. Non-supervisor 1-hour minimum
+  var a4 = answers.q4;
+  items.push({ label: 'Non-Supervisor 1-Hour Minimum', status: a4 === 'yes-1hr' ? 'green' : a4 === 'unsure-dur' ? 'yellow' : a4 === 'unsure' ? 'yellow' : 'red',
+    detail: a4 === 'yes-1hr' ? 'Non-supervisory employees are receiving the required 1 hour of training.' : a4 === 'unsure-dur' ? 'You provide training but aren\'t sure of the duration. Verify your training meets the 1-hour minimum.' : 'Non-supervisory employees must receive at least 1 hour of harassment prevention training.' });
+
+  // 4. New hire 6-month deadline
+  var a5 = answers.q5;
+  items.push({ label: 'New Hire 6-Month Deadline', status: a5 === 'yes' ? 'green' : a5 === 'sometimes' ? 'yellow' : a5 === 'unsure' ? 'yellow' : 'red',
+    detail: a5 === 'yes' ? 'New hires are trained within the required 6-month window.' : a5 === 'sometimes' ? 'Inconsistent onboarding timing creates compliance gaps. Build training into your onboarding process.' : a5 === 'annual' ? 'Waiting for the next annual cycle can push new hires past the 6-month deadline. Assign training at onboarding.' : 'New employees must be trained within 6 months of hire or promotion to a supervisory role.' });
+
+  // 5. FEHA definition
+  items.push({ label: 'FEHA Definition Covered', status: unsureContent ? 'yellow' : q6.indexOf('feha') >= 0 ? 'green' : 'red',
+    detail: q6.indexOf('feha') >= 0 ? 'Your training covers the FEHA harassment definition.' : 'Training must cover the definition of sexual harassment under California\'s FEHA, including the \'severe OR pervasive\' standard.' });
+
+  // 6. Gender identity (SB 396)
+  items.push({ label: 'Gender Identity (SB 396)', status: unsureContent ? 'yellow' : q6.indexOf('gender-identity') >= 0 ? 'green' : 'red',
+    detail: q6.indexOf('gender-identity') >= 0 ? 'Your training covers gender identity and expression protections.' : 'SB 396 requires training to cover harassment based on gender identity, gender expression, and sexual orientation.' });
+
+  // 7. Abusive conduct (AB 2053)
+  items.push({ label: 'Abusive Conduct (AB 2053)', status: unsureContent ? 'yellow' : q6.indexOf('abusive-conduct') >= 0 ? 'green' : 'red',
+    detail: q6.indexOf('abusive-conduct') >= 0 ? 'Your training covers abusive conduct as required by AB 2053.' : 'AB 2053 requires training to include abusive conduct (workplace bullying) — even though it\'s not independently actionable under FEHA.' });
+
+  // 8. Remedies and complaint process
+  var hasRemedies = q6.indexOf('remedies') >= 0;
+  var hasComplaint = q6.indexOf('complaint-process') >= 0;
+  items.push({ label: 'Remedies & Complaint Process', status: unsureContent ? 'yellow' : (hasRemedies && hasComplaint) ? 'green' : (hasRemedies || hasComplaint) ? 'yellow' : 'red',
+    detail: (hasRemedies && hasComplaint) ? 'Your training covers both remedies and the complaint process.' : (hasRemedies || hasComplaint) ? 'You\'re covering one but not both. Training must include remedies available to victims AND the CRD/internal complaint process.' : 'Training must cover remedies available under FEHA and the complaint process (internal and CRD).' });
+
+  // 9. Interactive format
+  items.push({ label: 'Interactive Training Format', status: unsureContent ? 'yellow' : q6.indexOf('interactive') >= 0 ? 'green' : 'red',
+    detail: q6.indexOf('interactive') >= 0 ? 'Your training includes interactive elements as required.' : '2 CCR section 11024 requires training to be interactive — with scenarios, exercises, and opportunities to ask questions.' });
+
+  // 10. Training records (SB 513)
+  var a7 = answers.q7;
+  items.push({ label: 'Training Records (SB 513)', status: a7 === 'detailed' ? 'green' : a7 === 'dates-only' ? 'yellow' : a7 === 'unsure' ? 'yellow' : 'red',
+    detail: a7 === 'detailed' ? 'You maintain detailed training records as required by SB 513.' : a7 === 'dates-only' ? 'You have dates but not topic details. SB 513 requires records of core competencies covered.' : 'SB 513 requires employers to maintain records including employee name, training date, provider, duration, and topics covered.' });
+
+  var met = 0; var total = 0;
+  items.forEach(function(item) { if (item.status !== 'gray') { total++; if (item.status === 'green') met++; } });
+  var pct = total > 0 ? Math.round((met / total) * 100) : 0;
+  var grade = pct >= 90 ? 'Compliant' : pct >= 60 ? 'At Risk' : 'Non-Compliant';
+  var gradeColor = pct >= 90 ? 'green' : pct >= 60 ? 'yellow' : 'red';
+
+  return { items: items, met: met, total: total, pct: pct, grade: grade, gradeColor: gradeColor };
+}
+
+function showResults() {
+  var score = computeScore();
+  ga('compliance_check_complete', { score: score.met + '/' + score.total, grade: score.grade });
+
+  var html = '';
+  // Score summary
+  html += '<div class="score-summary ' + score.gradeColor + '">';
+  html += '<div class="score-number">' + score.met + '/' + score.total + '</div>';
+  html += '<div class="score-label ' + score.gradeColor + '">' + score.pct + '% — ' + score.grade + '</div>';
+  html += '</div>';
+
+  // Scorecard items
+  html += '<div class="scorecard">';
+  score.items.forEach(function(item) {
+    var statusLabel = item.status === 'green' ? 'Compliant' : item.status === 'yellow' ? 'At Risk' : item.status === 'red' ? 'Non-Compliant' : 'N/A';
+    html += '<div class="sc-item" onclick="this.classList.toggle(\'expanded\')">';
+    html += '<div class="sc-dot ' + item.status + '"></div>';
+    html += '<div><div class="sc-title">' + item.label + '</div><div class="sc-detail">' + item.detail + '</div></div>';
+    html += '<div class="sc-status ' + item.status + '">' + statusLabel + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  // CTA
+  if (score.gradeColor === 'green') {
+    html += '<div class="cta-card">';
+    html += '<h3>You\'re in great shape!</h3>';
+    html += '<p>Compliance is ongoing — training must be repeated every 2 years. Violet can help you stay compliant automatically.</p>';
+    html += '<a href="/california-training" class="btn-primary" onclick="ga(\'compliance_check_cta\',{action:\'training\'})">See Violet\'s California Training &rarr;</a>';
+    html += '</div>';
+  } else {
+    html += '<div class="cta-card">';
+    html += '<h3>You have compliance gaps</h3>';
+    html += '<p>These gaps could expose your company to liability. Violet\'s California training is built by an employment attorney and covers every SB 1343 requirement.</p>';
+    html += '<a href="/california-training" class="btn-primary" onclick="ga(\'compliance_check_cta\',{action:\'training\'})">Fix Your Compliance Gaps &rarr;</a>';
+    html += '<br><a href="/blog/california-sb-1343-requirements-2026" class="btn-link" onclick="ga(\'compliance_check_cta\',{action:\'guide\'})">Download Full Compliance Guide</a>';
+    html += '</div>';
+  }
+
+  html += '<div class="contact-line">Questions? Contact Nina at <a href="mailto:nina@violetinvestigations.com">nina@violetinvestigations.com</a></div>';
+
+  document.getElementById('step-results').innerHTML = html;
+  show('results');
+  updateProgress('results');
+}
+
+// Hamburger
+document.getElementById('hamburger').addEventListener('click', function() {
+  this.classList.toggle('active');
+  document.getElementById('navLinks').classList.toggle('open');
+});
+document.querySelectorAll('#navLinks a').forEach(function(link) {
+  link.addEventListener('click', function() {
+    document.getElementById('hamburger').classList.remove('active');
+    document.getElementById('navLinks').classList.remove('open');
+  });
+});
+</script>
+
+</body>
+</html>
