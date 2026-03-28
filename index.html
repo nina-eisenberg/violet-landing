@@ -346,8 +346,47 @@
 
   /* ---- PRICING ---- */
   .pricing-section { background: var(--white); }
+  .pricing-toggle {
+    display: inline-flex; gap: 0; background: var(--cream);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 4px; margin-bottom: 40px;
+  }
+  .pricing-toggle-btn {
+    padding: 10px 28px; border-radius: 8px; border: none;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; color: var(--warm-gray);
+    background: transparent;
+  }
+  .pricing-toggle-btn.active {
+    background: var(--white); color: var(--navy);
+    box-shadow: 0 1px 4px rgba(27, 42, 74, 0.08);
+  }
+  .pricing-toggle-btn:hover:not(.active) { color: var(--navy); }
+  .pricing-tab { display: none; }
+  .pricing-tab.active { display: block; }
+  .pricing-includes {
+    margin-top: 32px; padding: 24px;
+    background: var(--cream); border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  .pricing-includes h4 {
+    font-size: 13px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--violet); margin-bottom: 12px;
+  }
+  .pricing-includes-list {
+    display: flex; flex-wrap: wrap; gap: 8px 24px;
+    list-style: none;
+  }
+  .pricing-includes-list li {
+    font-size: 13px; color: var(--warm-gray); padding-left: 18px;
+    position: relative;
+  }
+  .pricing-includes-list li::before {
+    content: '\2713'; position: absolute; left: 0;
+    color: var(--violet); font-weight: 700; font-size: 12px;
+  }
   .pricing-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr);
+    display: grid; grid-template-columns: repeat(3, 1fr);
     gap: 24px;
   }
   .price-card {
@@ -507,6 +546,7 @@
     .feature-row.reverse .feature-text { order: 1; }
     .feature-row.reverse .feature-visual { order: 2; }
     .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+    .pricing-toggle-btn { padding: 8px 20px; font-size: 13px; }
     .steps-grid { grid-template-columns: repeat(3, 1fr); }
   }
 
@@ -835,66 +875,129 @@
     <div class="section-label">Pricing</div>
     <h2 class="section-heading">Pays for herself on the first case.</h2>
     <p class="section-desc">No enterprise sales calls. No annual contracts. Start with what you need.</p>
-    <div class="pricing-grid">
-      <div class="price-card">
-        <h3>Violet Investigator</h3>
-        <div class="price-subtitle">Solo & external investigators</div>
-        <div class="price-amount">$149<span>/mo</span></div>
-        <div class="price-per">Up to 40 cases/year</div>
-        <ul class="price-features">
-          <li>1 user</li>
-          <li>AI investigation reports</li>
-          <li>AI interview outlines</li>
-          <li>Google Drive integration</li>
-          <li>Dashboard & reporting</li>
-          <li>Coach Violet</li>
-        </ul>
-        <a href="#waitlist" class="price-cta price-cta-secondary">Get Early Access</a>
+
+    <div class="pricing-toggle" id="pricingToggle">
+      <button class="pricing-toggle-btn active" data-tab="investigators" onclick="switchPricingTab('investigators')">For Investigators</button>
+      <button class="pricing-toggle-btn" data-tab="employers" onclick="switchPricingTab('employers')">For Employers</button>
+    </div>
+
+    <!-- FOR INVESTIGATORS -->
+    <div class="pricing-tab active" id="tab-investigators">
+      <div class="pricing-grid">
+        <div class="price-card">
+          <h3>Solo</h3>
+          <div class="price-subtitle">Independent investigators</div>
+          <div class="price-amount">$179<span>/mo</span></div>
+          <div class="price-per">Up to 5 active cases</div>
+          <ul class="price-features">
+            <li>AI-powered case intake</li>
+            <li>Interview outline generation</li>
+            <li>Document analysis</li>
+            <li>Report drafting</li>
+            <li>Timeline builder</li>
+          </ul>
+          <a href="#waitlist" class="price-cta price-cta-secondary">Get Early Access</a>
+        </div>
+        <div class="price-card featured">
+          <div class="price-badge">Most Popular</div>
+          <h3>Small Firm</h3>
+          <div class="price-subtitle">Growing investigation practices</div>
+          <div class="price-amount">$499<span>/mo</span></div>
+          <div class="price-per">Up to 15 active cases</div>
+          <ul class="price-features">
+            <li>Everything in Solo</li>
+            <li>Transcription with speaker ID</li>
+            <li>Audit log</li>
+            <li>Multiple investigators</li>
+            <li>Priority support</li>
+          </ul>
+          <a href="#waitlist" class="price-cta price-cta-primary">Get Early Access</a>
+        </div>
+        <div class="price-card">
+          <h3>Firm</h3>
+          <div class="price-subtitle">Full-service investigation firms</div>
+          <div class="price-amount">$899<span>/mo</span></div>
+          <div class="price-per">Unlimited cases</div>
+          <ul class="price-features">
+            <li>Everything in Small Firm</li>
+            <li>Unlimited active cases</li>
+            <li>Custom integrations</li>
+            <li>Dedicated onboarding</li>
+            <li>Dedicated account manager</li>
+          </ul>
+          <a href="#waitlist" class="price-cta price-cta-secondary">Get Early Access</a>
+        </div>
       </div>
-      <div class="price-card">
-        <h3>Violet Team</h3>
-        <div class="price-subtitle">Small compliance teams</div>
-        <div class="price-amount">$349<span>/mo</span></div>
-        <div class="price-per">Up to 100 cases/year</div>
-        <ul class="price-features">
-          <li>2 users</li>
-          <li>Everything in Violet Investigator</li>
-          <li>Tell Violet intake</li>
-          <li>Policy drafting & gap analysis</li>
-          <li>Employee handbook</li>
-          <li>Slack integration</li>
+      <div class="pricing-includes">
+        <h4>All plans include</h4>
+        <ul class="pricing-includes-list">
+          <li>AI-powered case intake</li>
+          <li>Interview outline generation</li>
+          <li>Document analysis</li>
+          <li>Transcription with speaker ID</li>
+          <li>Report drafting</li>
+          <li>Timeline builder</li>
+          <li>Audit log</li>
         </ul>
-        <a href="#waitlist" class="price-cta price-cta-secondary">Get Early Access</a>
       </div>
-      <div class="price-card featured">
-        <div class="price-badge">Most Popular</div>
-        <h3>Violet Professional</h3>
-        <div class="price-subtitle">Established investigation teams</div>
-        <div class="price-amount">$999<span>/mo</span></div>
-        <div class="price-per">Up to 250 cases/year</div>
-        <ul class="price-features">
-          <li>5 users</li>
-          <li>Everything in Violet Team</li>
-          <li>Tell Violet phone hotline</li>
-          <li>Interactive training</li>
-          <li>Voice practice training</li>
-          <li>Quarterly benchmarking</li>
-        </ul>
-        <a href="#waitlist" class="price-cta price-cta-primary">Get Early Access</a>
+    </div>
+
+    <!-- FOR EMPLOYERS -->
+    <div class="pricing-tab" id="tab-employers">
+      <div class="pricing-grid">
+        <div class="price-card">
+          <h3>Starter</h3>
+          <div class="price-subtitle">Up to 50 employees</div>
+          <div class="price-amount">$199<span>/mo</span></div>
+          <div class="price-per">Everything to stay compliant</div>
+          <ul class="price-features">
+            <li>Multi-state compliance training</li>
+            <li>Handbook generator</li>
+            <li>Anonymous reporting hotline</li>
+            <li>Basic case tracking</li>
+            <li>Completion certificates</li>
+          </ul>
+          <a href="#waitlist" class="price-cta price-cta-secondary">Get Early Access</a>
+        </div>
+        <div class="price-card featured">
+          <div class="price-badge">Most Popular</div>
+          <h3>Growth</h3>
+          <div class="price-subtitle">Up to 250 employees</div>
+          <div class="price-amount">$599<span>/mo</span></div>
+          <div class="price-per">Full compliance platform</div>
+          <ul class="price-features">
+            <li>Everything in Starter</li>
+            <li>Full investigation platform</li>
+            <li>Policy drafter</li>
+            <li>Deadline tracking</li>
+            <li>Audit export</li>
+          </ul>
+          <a href="#waitlist" class="price-cta price-cta-primary">Get Early Access</a>
+        </div>
+        <div class="price-card">
+          <h3>Enterprise</h3>
+          <div class="price-subtitle">250+ employees</div>
+          <div class="price-amount" style="font-size: 32px;">Custom</div>
+          <div class="price-per">Tailored to your organization</div>
+          <ul class="price-features">
+            <li>Everything in Growth</li>
+            <li>Unlimited employees</li>
+            <li>Custom integrations</li>
+            <li>Dedicated onboarding</li>
+            <li>Dedicated account manager</li>
+          </ul>
+          <a href="#waitlist" class="price-cta price-cta-secondary">Contact Us</a>
+        </div>
       </div>
-      <div class="price-card">
-        <h3>Violet Enterprise</h3>
-        <div class="price-subtitle">Multi-jurisdiction orgs</div>
-        <div class="price-amount" style="font-size: 32px;">Custom</div>
-        <div class="price-per">Unlimited everything</div>
-        <ul class="price-features">
-          <li>Unlimited users & cases</li>
-          <li>Everything in Violet Professional</li>
-          <li>Dedicated onboarding</li>
-          <li>Custom integrations</li>
-          <li>Dedicated account manager</li>
+      <div class="pricing-includes">
+        <h4>All plans include</h4>
+        <ul class="pricing-includes-list">
+          <li>Compliance training (CA, NY, Federal)</li>
+          <li>Completion certificates</li>
+          <li>Audit export</li>
+          <li>Deadline tracking</li>
+          <li>More states coming</li>
         </ul>
-        <a href="#waitlist" class="price-cta price-cta-secondary">Contact Us</a>
       </div>
     </div>
   </div>
@@ -1001,6 +1104,16 @@
       document.getElementById('waitlistBtn').click();
     }
   });
+
+  // Pricing tab toggle
+  function switchPricingTab(tab) {
+    document.querySelectorAll('.pricing-toggle-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-tab') === tab);
+    });
+    document.querySelectorAll('.pricing-tab').forEach(function(t) {
+      t.classList.toggle('active', t.id === 'tab-' + tab);
+    });
+  }
 
   // Hamburger menu toggle
   document.getElementById('hamburger').addEventListener('click', function() {
