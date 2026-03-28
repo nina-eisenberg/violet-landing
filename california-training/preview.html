@@ -1814,9 +1814,16 @@ nav {
   document.getElementById('btnShowRemaining2').addEventListener('click', function() {
     revealRemaining('email', 4);
   });
+  var debriefNarrationText = "Alright, let's land on the three things to carry out of this module. First: California's FEHA is broader than federal law \u2014 more protected categories, lower thresholds, stronger remedies. That matters because the standard for what constitutes harassment in California is different from what you might have learned elsewhere. Second: the standard is severe OR pervasive \u2014 not AND. A single bad incident can be enough. Don't wait for a pattern. Third: quid pro quo harassment by a supervisor creates automatic employer liability. The company can't defend itself by pointing to its policy. If you take one thing from this module, it's this: the bar in California is lower than you think, and the consequences are higher than you'd expect.";
+  var debriefCacheKey = 'ca-ns-what-is-harassment-debrief';
+
   document.getElementById('btnArtifact2Next').addEventListener('click', function() {
+    audioManager.unlockAudio();
     showScreen('debrief');
     renderDebrief();
+    // Play debrief narration
+    audioManager._setSpeaker('Violet');
+    audioManager.generateAndPlay(debriefNarrationText, debriefCacheKey, VOICE_VIOLET).catch(function() {});
   });
 
   // Debrief to CTA
