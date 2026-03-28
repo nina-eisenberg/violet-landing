@@ -114,7 +114,7 @@ nav {
 
 /* ---- MAIN CONTENT ---- */
 .training-wrapper {
-  padding: 96px 24px 80px;
+  padding: 96px 24px 24px;
   max-width: 640px;
   margin: 0 auto;
   min-height: 100vh;
@@ -679,6 +679,79 @@ nav {
   .welcome-title { font-size: 28px; }
   .concept-card { padding: 24px 20px; }
 }
+
+/* ---- AUDIO BAR ---- */
+.audio-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 98;
+  background: rgba(250, 248, 245, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  padding: 10px 24px;
+  display: none;
+  align-items: center;
+  gap: 14px;
+  justify-content: center;
+  transition: opacity 0.3s;
+}
+.audio-bar.show { display: flex; }
+.speaker-indicator {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 500;
+  color: var(--warm-gray);
+  min-width: 180px;
+}
+.speaker-indicator .pulse-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--violet);
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+.speaker-indicator.active .pulse-dot {
+  animation: pulseDot 1.2s ease-in-out infinite;
+  opacity: 1;
+}
+.speaker-indicator.loading .pulse-dot {
+  background: var(--amber);
+  animation: pulseDot 0.6s ease-in-out infinite;
+}
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.4); opacity: 1; }
+}
+.audio-btn {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--navy);
+  flex-shrink: 0;
+}
+.audio-btn:hover {
+  border-color: var(--violet);
+  color: var(--violet);
+}
+.audio-btn.active {
+  background: var(--violet);
+  border-color: var(--violet);
+  color: var(--white);
+}
+.audio-unavailable {
+  font-size: 12px;
+  color: var(--warm-gray-light);
+  font-style: italic;
+}
+.audio-bar-spacer {
+  height: 60px;
+  display: none;
+}
+.audio-bar-spacer.show { display: block; }
 </style>
 </head>
 <body>
@@ -875,11 +948,347 @@ nav {
     </div>
   </div>
 
+  <div class="audio-bar-spacer" id="audioBarSpacer"></div>
+</div>
+
+<!-- AUDIO BAR -->
+<div class="audio-bar" id="audioBar">
+  <div class="speaker-indicator" id="speakerIndicator">
+    <div class="pulse-dot"></div>
+    <span id="speakerLabel">Audio ready</span>
+  </div>
+  <button class="audio-btn" id="btnPlayPause" aria-label="Play/Pause" title="Play/Pause">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path id="playPauseIcon" d="M4 2l10 6-10 6V2z"/></svg>
+  </button>
+  <button class="audio-btn" id="btnMute" aria-label="Mute/Unmute" title="Mute/Unmute">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path id="muteIcon" d="M8 1.5l-4 4H1v5h3l4 4V1.5zM12 4.5s1.5 1 1.5 3.5-1.5 3.5-1.5 3.5M10.5 6s.75.5.75 2-.75 2-.75 2"/></svg>
+  </button>
+  <span class="audio-unavailable" id="audioUnavailable" style="display:none;">Audio unavailable</span>
 </div>
 
 <script>
 (function() {
   'use strict';
+
+  // ---- TEXT HASH ----
+  function textHash(s) {
+    var h = 0;
+    for (var i = 0; i < s.length; i++) {
+      h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+    }
+    return (h >>> 0).toString(36);
+  }
+
+  // ---- AUDIO MANAGER ----
+  var AUDIO_API = 'https://caseforge-production.up.railway.app/api/v1/audio/generate';
+  var VOICE_VIOLET = 'DXFkLCBUTmvXpp2QwZjA';
+  var VOICE_DEREK = 'wWWn96OtTHu1sn8SRGEr';
+  var VOICE_PRIYA = 'DODLEQrClDo8wCz460ld';
+  var VOICE_MARCUS = 'xKhbyU7E3bC6T89Kn26c';
+
+  function AudioManager() {
+    this.audio = null;
+    this.state = 'idle'; // idle, loading, playing, paused, done
+    this.currentSpeaker = null;
+    this.muted = false;
+    this.audioFailed = false;
+    this._listeners = { stateChange: [], speakerChange: [] };
+    this._sequenceAbort = false;
+    this._sequenceRunning = false;
+  }
+
+  AudioManager.prototype.on = function(event, fn) {
+    if (this._listeners[event]) this._listeners[event].push(fn);
+  };
+
+  AudioManager.prototype._emit = function(event, data) {
+    (this._listeners[event] || []).forEach(function(fn) { fn(data); });
+  };
+
+  AudioManager.prototype._setState = function(s) {
+    this.state = s;
+    this._emit('stateChange', s);
+  };
+
+  AudioManager.prototype._setSpeaker = function(s) {
+    this.currentSpeaker = s;
+    this._emit('speakerChange', s);
+  };
+
+  AudioManager.prototype.generateAndPlay = function(text, cacheKey, voiceId) {
+    var self = this;
+    var fullCacheKey = cacheKey + '-' + textHash(text);
+    self._setState('loading');
+
+    return fetch(AUDIO_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text, cacheKey: fullCacheKey, voiceId: voiceId || VOICE_VIOLET })
+    })
+    .then(function(r) {
+      if (!r.ok) throw new Error('API error ' + r.status);
+      return r.json();
+    })
+    .then(function(json) {
+      if (self._sequenceAbort) throw new Error('aborted');
+      var url = json.data && json.data.audioUrl;
+      if (!url) throw new Error('No audioUrl');
+      return self._playUrl(url);
+    })
+    .catch(function(err) {
+      if (err.message === 'aborted') throw err;
+      console.warn('Audio failed:', err.message);
+      self.audioFailed = true;
+      self._setState('done');
+      self._showUnavailable();
+      throw err;
+    });
+  };
+
+  AudioManager.prototype._playUrl = function(url) {
+    var self = this;
+    return new Promise(function(resolve, reject) {
+      if (self._sequenceAbort) { reject(new Error('aborted')); return; }
+      if (self.audio) { self.audio.pause(); self.audio = null; }
+      var a = new Audio(url);
+      a.muted = self.muted;
+      self.audio = a;
+      a.addEventListener('canplaythrough', function() {
+        if (self._sequenceAbort) { a.pause(); reject(new Error('aborted')); return; }
+        a.play().then(function() {
+          self._setState('playing');
+        }).catch(function() {
+          self._setState('done');
+          resolve();
+        });
+      }, { once: true });
+      a.addEventListener('ended', function() {
+        self._setState('done');
+        resolve();
+      });
+      a.addEventListener('error', function() {
+        self.audioFailed = true;
+        self._setState('done');
+        self._showUnavailable();
+        resolve();
+      });
+      a.load();
+    });
+  };
+
+  AudioManager.prototype.playSequence = function(clips, onClipStart) {
+    var self = this;
+    self._sequenceAbort = false;
+    self._sequenceRunning = true;
+
+    function playClip(idx) {
+      if (self._sequenceAbort || idx >= clips.length) {
+        self._sequenceRunning = false;
+        self._setSpeaker(null);
+        self._setState('idle');
+        return Promise.resolve();
+      }
+      var clip = clips[idx];
+      self._setSpeaker(clip.speaker || null);
+      if (onClipStart) onClipStart(idx, clip);
+
+      return self.generateAndPlay(clip.text, clip.cacheKey, clip.voiceId)
+        .then(function() {
+          var pause = clip.pauseAfterMs || 0;
+          if (pause > 0 && !self._sequenceAbort) {
+            return new Promise(function(resolve) { setTimeout(resolve, pause); });
+          }
+        })
+        .catch(function(err) {
+          if (err.message === 'aborted') return Promise.reject(err);
+          // Audio failed for this clip, wait a fallback duration then continue
+          var fallbackMs = Math.max(1500, clip.text.length * 40) + (clip.pauseAfterMs || 0);
+          return new Promise(function(resolve) { setTimeout(resolve, fallbackMs); });
+        })
+        .then(function() {
+          return playClip(idx + 1);
+        })
+        .catch(function(err) {
+          if (err.message === 'aborted') { self._sequenceRunning = false; return; }
+        });
+    }
+
+    return playClip(0);
+  };
+
+  AudioManager.prototype.stop = function() {
+    this._sequenceAbort = true;
+    this._sequenceRunning = false;
+    if (this.audio) {
+      this.audio.pause();
+      this.audio = null;
+    }
+    this._setSpeaker(null);
+    this._setState('idle');
+  };
+
+  AudioManager.prototype.pause = function() {
+    if (this.audio && this.state === 'playing') {
+      this.audio.pause();
+      this._setState('paused');
+    }
+  };
+
+  AudioManager.prototype.resume = function() {
+    if (this.audio && this.state === 'paused') {
+      this.audio.play();
+      this._setState('playing');
+    }
+  };
+
+  AudioManager.prototype.toggleMute = function() {
+    this.muted = !this.muted;
+    if (this.audio) this.audio.muted = this.muted;
+    return this.muted;
+  };
+
+  AudioManager.prototype.getAudioTime = function() {
+    if (this.audio && !isNaN(this.audio.currentTime)) return this.audio.currentTime;
+    return 0;
+  };
+
+  AudioManager.prototype._showUnavailable = function() {
+    var el = document.getElementById('audioUnavailable');
+    if (el) el.style.display = '';
+  };
+
+  var audioManager = new AudioManager();
+
+  // ---- AUDIO BAR UI ----
+  var audioBarVisible = false;
+
+  function showAudioBar() {
+    if (audioBarVisible) return;
+    audioBarVisible = true;
+    document.getElementById('audioBar').classList.add('show');
+    document.getElementById('audioBarSpacer').classList.add('show');
+  }
+
+  function updateAudioBarUI() {
+    var indicator = document.getElementById('speakerIndicator');
+    var label = document.getElementById('speakerLabel');
+    var playPauseIcon = document.getElementById('playPauseIcon');
+    var muteIcon = document.getElementById('muteIcon');
+    var state = audioManager.state;
+    var speaker = audioManager.currentSpeaker;
+
+    // Speaker indicator
+    indicator.className = 'speaker-indicator';
+    if (state === 'loading') {
+      indicator.classList.add('loading');
+      label.textContent = speaker ? speaker + ' is loading...' : 'Loading audio...';
+    } else if (state === 'playing') {
+      indicator.classList.add('active');
+      label.textContent = speaker ? speaker + ' is narrating...' : 'Playing...';
+    } else if (state === 'paused') {
+      label.textContent = 'Paused';
+    } else {
+      label.textContent = 'Audio ready';
+    }
+
+    // Play/pause icon
+    if (state === 'playing') {
+      playPauseIcon.setAttribute('d', 'M4 2h3v12H4V2zm5 0h3v12H9V2z'); // pause icon
+    } else {
+      playPauseIcon.setAttribute('d', 'M4 2l10 6-10 6V2z'); // play icon
+    }
+
+    // Mute icon
+    if (audioManager.muted) {
+      muteIcon.setAttribute('d', 'M8 1.5l-4 4H1v5h3l4 4V1.5zM12 5l4 4M16 5l-4 4');
+    } else {
+      muteIcon.setAttribute('d', 'M8 1.5l-4 4H1v5h3l4 4V1.5zM12 4.5s1.5 1 1.5 3.5-1.5 3.5-1.5 3.5M10.5 6s.75.5.75 2-.75 2-.75 2');
+    }
+  }
+
+  audioManager.on('stateChange', updateAudioBarUI);
+  audioManager.on('speakerChange', updateAudioBarUI);
+
+  // ---- DIALOGUE AUDIO CLIPS ----
+  var scenarioClips = [
+    // Scenario 1 (Break Room)
+    [
+      { speaker: 'Dave', voiceId: VOICE_DEREK, text: "Hey, so a guy walks into a bar with his secretary \u2014 you know where this is going, right?", pauseAfterMs: 400 },
+      { speaker: 'Dave', voiceId: VOICE_DEREK, text: "I'll spare you the punchline, but let's just say it involved the copy room and a very creative use of company property.", pauseAfterMs: 400 },
+      { speaker: 'Marcus', voiceId: VOICE_MARCUS, text: "Heh... okay, Dave.", pauseAfterMs: 800 },
+      { speaker: 'Violet', voiceId: VOICE_VIOLET, text: "Did you catch what just happened? A sexual joke in a work setting. Nobody was targeted. Nobody complained. A few people laughed uncomfortably. Under California's FEHA, is this harassment? This is where the law surprises a lot of people.", pauseAfterMs: 0 }
+    ],
+    // Scenario 2 (Manager)
+    [
+      { speaker: 'Your Manager', voiceId: VOICE_DEREK, text: "You know, the people who move up here are the ones who show they're team players. After-hours events, client dinners, happy hours.", pauseAfterMs: 400 },
+      { speaker: 'Your Manager', voiceId: VOICE_DEREK, text: "Being more flexible with your time... if you know what I mean.", pauseAfterMs: 800 },
+      { speaker: 'Violet', voiceId: VOICE_VIOLET, text: "Something about the way they said 'flexible' and 'if you know what I mean' \u2014 did that make your stomach drop? It should have. This is a supervisor linking career advancement to personal availability with sexual undertones. Is this harassment? And if so \u2014 what kind?", pauseAfterMs: 0 }
+    ],
+    // Scenario 3 (Grab)
+    [
+      { speaker: 'A colleague', voiceId: VOICE_DEREK, text: "Hey, great launch! Come here, let me tell you something.", pauseAfterMs: 800 },
+      { speaker: 'Violet', voiceId: VOICE_VIOLET, text: "He grabs your arm, pulls you in close, and whispers something sexually explicit. Five seconds. Then he walks away laughing.", pauseAfterMs: 300 },
+      { speaker: 'Violet', voiceId: VOICE_VIOLET, text: "You're at your desk an hour later replaying it. It was one time. One incident. Five seconds. Can you really report one incident? Here's what California law says.", pauseAfterMs: 0 }
+    ]
+  ];
+
+  var scenarioBaseCacheKeys = [
+    'ca-ns-what-is-harassment-start-dialogue',
+    'ca-ns-what-is-harassment-quid-pro-quo-dialogue',
+    'ca-ns-what-is-harassment-severe-or-pervasive-dialogue'
+  ];
+
+  // Assign cache keys to scenario clips
+  scenarioClips.forEach(function(clips, si) {
+    clips.forEach(function(clip, ci) {
+      clip.cacheKey = scenarioBaseCacheKeys[si] + '-' + ci + '-' + clip.voiceId.slice(-6);
+    });
+  });
+
+  var redFlagDialogueClips = [
+    // Slack artifact
+    [
+      { speaker: 'Derek', voiceId: VOICE_DEREK, text: "Hey team, wrapping up the sprint review slides. Priya, can you present the metrics section? You always explain things so well.", pauseAfterMs: 400 },
+      { speaker: 'Priya', voiceId: VOICE_PRIYA, text: "Sure, happy to.", pauseAfterMs: 400 },
+      { speaker: 'Derek', voiceId: VOICE_DEREK, text: "Great. And maybe wear that dress from the client dinner \u2014 you looked amazing. The clients loved you.", pauseAfterMs: 400 },
+      { speaker: 'Jun', voiceId: VOICE_MARCUS, text: "Ha.", pauseAfterMs: 400 },
+      { speaker: 'Marcus', voiceId: VOICE_MARCUS, text: "Let's keep the channel focused on sprint work please. Priya, slides are due by four.", pauseAfterMs: 400 },
+      { speaker: 'Derek', voiceId: VOICE_DEREK, text: "Relax everyone, it was a compliment. Some people can't take a joke.", pauseAfterMs: 800 },
+      { speaker: 'Violet', voiceId: VOICE_VIOLET, text: "Now read through it again. Tap on anything you think is problematic.", pauseAfterMs: 0 }
+    ],
+    // Email artifact
+    [
+      { speaker: 'Lisa', voiceId: VOICE_PRIYA, text: "Hi Rob \u2014 wanted to follow up on the VP Engineering promotion. Carlos Vega has the most seniority and strongest performance reviews. Can you walk me through why you went with Tyler instead?", pauseAfterMs: 400 },
+      { speaker: 'Rob', voiceId: VOICE_DEREK, text: "Tyler brings fresh energy and new perspectives to the role. We need someone who can keep up with the pace of modern engineering \u2014 cloud-native, AI-first thinking. Carlos is great but he's from a different era of engineering.", pauseAfterMs: 400 },
+      { speaker: 'Lisa', voiceId: VOICE_PRIYA, text: "Can you document the specific skills or qualifications where Tyler was stronger? I need to make sure this is defensible.", pauseAfterMs: 400 },
+      { speaker: 'Rob', voiceId: VOICE_DEREK, text: "Sure \u2014 Tyler is more of a digital native, he lives and breathes the newer tech stack. Carlos is solid but you can tell he learned everything from books, not from building. It's just a different energy.", pauseAfterMs: 800 },
+      { speaker: 'Violet', voiceId: VOICE_VIOLET, text: "Read through the exchange again. Tap on any language you think could be problematic.", pauseAfterMs: 0 }
+    ]
+  ];
+
+  // Assign cache keys to red flag dialogue clips
+  redFlagDialogueClips.forEach(function(clips, ai) {
+    clips.forEach(function(clip, ci) {
+      clip.cacheKey = 'red-flag-dialogue-spot-red-flag-' + ai + '-' + ci + '-' + clip.voiceId.slice(-6);
+    });
+  });
+
+  // Red flag narration texts (keyed by flag ID)
+  var redFlagNarrations = {};
+  // These get populated from the DOM explanation text
+  function buildRedFlagNarrations() {
+    document.querySelectorAll('.redflag-explanation').forEach(function(el) {
+      var id = el.id.replace('rfExplain-', '');
+      redFlagNarrations[id] = el.textContent.trim();
+    });
+  }
+
+  // Concept intro narration
+  var conceptIntroText = "Before we jump into the scenarios, let's make sure we're on the same page about how California defines harassment \u2014 because it's different from what most people assume, and it's different from federal law. Under the Fair Employment and Housing Act \u2014 FEHA \u2014 harassment is unwelcome conduct based on a protected characteristic that's either severe or pervasive enough to create a hostile work environment. Now, here's the key California distinction: the standard is severe OR pervasive. Not AND. Under federal law, courts have sometimes required both. In California, one is enough. That means a single sufficiently severe incident \u2014 like unwanted physical contact or a graphic sexual comment \u2014 can constitute harassment all by itself. No pattern required. There are two types of harassment you need to know. Quid pro quo is when a supervisor ties job benefits to submission to unwelcome conduct \u2014 and it creates automatic employer liability. Hostile work environment is when the conduct makes it unreasonably difficult to do your job. Both are evaluated from the perspective of a reasonable person in the plaintiff's position. Let's see how these concepts play out in real scenarios.";
+  var conceptIntroCacheKey = 'ca-ns-what-is-harassment-concept-intro';
+  var conceptStartTimes = [0, 52, 64, 28, 74]; // seconds when each card starts
+  var conceptAudioPlaying = false;
+  var conceptAudioRaf = null;
 
   // ---- DATA ----
   var concepts = [
@@ -963,6 +1372,11 @@ nav {
   }
 
   function showScreen(name) {
+    // Stop any playing audio when navigating
+    audioManager.stop();
+    if (conceptAudioRaf) { cancelAnimationFrame(conceptAudioRaf); conceptAudioRaf = null; }
+    conceptAudioPlaying = false;
+
     var prev = document.querySelector('.screen.active');
     if (prev) {
       prev.classList.remove('visible');
@@ -1007,7 +1421,7 @@ nav {
       dot.addEventListener('click', function() {
         conceptIndex = parseInt(this.getAttribute('data-idx'));
         renderConcept(conceptIndex);
-        resetConceptTimer();
+        if (!conceptAudioPlaying) resetConceptTimer();
       });
     });
   }
@@ -1046,6 +1460,33 @@ nav {
       bubbles.push({ el: div, speaker: line.speaker });
     });
 
+    var clips = scenarioClips[scenarioIdx];
+    if (clips && clips.length) {
+      // Audio-driven playback
+      audioManager.playSequence(clips, function(clipIdx) {
+        // Show bubble when its audio clip starts
+        if (bubbles[clipIdx]) {
+          bubbles[clipIdx].el.classList.add('visible');
+        }
+        // Update the old speaking indicator too
+        if (bubbles[clipIdx]) {
+          indicator.innerHTML = bubbles[clipIdx].speaker + ' is speaking<span>.</span><span>.</span><span>.</span>';
+          indicator.classList.add('show');
+        }
+      }).then(function() {
+        // Ensure all bubbles are visible
+        bubbles.forEach(function(b) { b.el.classList.add('visible'); });
+        indicator.classList.remove('show');
+        indicator.textContent = '';
+        if (onComplete) onComplete();
+      });
+    } else {
+      // Fallback: text-only animation
+      playDialogueFallback(bubbles, indicator, onComplete);
+    }
+  }
+
+  function playDialogueFallback(bubbles, indicator, onComplete) {
     var i = 0;
     function showNext() {
       if (i >= bubbles.length) {
@@ -1103,13 +1544,30 @@ nav {
     fb.innerHTML = '<div class="feedback-badge ' + ch.color + '">' + ch.badge + '</div><div class="feedback-text">' + ch.feedback + '</div>';
     setTimeout(function() { fb.classList.add('visible'); }, 100);
 
+    // Play feedback audio with Violet voice
+    var nodeIds = ['start', 'quid-pro-quo', 'severe-or-pervasive'];
+    var feedbackCacheKey = 'ca-ns-what-is-harassment-' + nodeIds[scenarioIdx] + '-feedback-' + choiceIdx;
+    audioManager.stop();
+    audioManager._setSpeaker('Violet');
+    audioManager.generateAndPlay(ch.feedback, feedbackCacheKey, VOICE_VIOLET).catch(function() {});
+
     // Show continue
     var btn = document.getElementById('btnNext' + (scenarioIdx + 1));
     btn.style.display = 'block';
   }
 
   // ---- RED FLAG EXERCISE ----
+  var redFlagDialoguePlayed = [false, false]; // track per-artifact
+
   function initRedFlags() {
+    buildRedFlagNarrations();
+
+    // Play Slack artifact dialogue audio
+    if (!redFlagDialoguePlayed[0]) {
+      redFlagDialoguePlayed[0] = true;
+      audioManager.playSequence(redFlagDialogueClips[0]).catch(function() {});
+    }
+
     document.querySelectorAll('.redflag-tap').forEach(function(el) {
       el.addEventListener('click', function() {
         var key = this.getAttribute('data-rf');
@@ -1119,6 +1577,20 @@ nav {
         var expl = document.getElementById('rfExplain-' + key);
         if (expl) expl.classList.add('show');
         track('preview_redflag_found', { flag: key });
+
+        // Play narration audio for this flag
+        var narrationText = redFlagNarrations[key];
+        if (narrationText) {
+          var parts = key.split('-');
+          var artifactType = parts[0]; // slack or email
+          var flagNum = parts[1];
+          var artifactIdx = artifactType === 'slack' ? 0 : 1;
+          var narrationCacheKey = 'red-flag-narration-spot-red-flag-' + artifactIdx + '-' + (parseInt(flagNum) - 1);
+          audioManager.stop();
+          audioManager._setSpeaker('Violet');
+          audioManager.generateAndPlay(narrationText, narrationCacheKey, VOICE_VIOLET).catch(function() {});
+        }
+
         updateRfCounters();
         checkArtifactComplete();
       });
@@ -1179,27 +1651,76 @@ nav {
   // Start
   document.getElementById('btnStart').addEventListener('click', function() {
     track('preview_started');
+    showAudioBar();
     showScreen('concepts');
     renderConcept(0);
-    resetConceptTimer();
-    // Unlock continue button after 60s regardless
+
+    // Start concept intro audio
+    conceptAudioPlaying = true;
+    audioManager._setSpeaker('Violet');
+    audioManager.generateAndPlay(conceptIntroText, conceptIntroCacheKey, VOICE_VIOLET).then(function() {
+      conceptAudioPlaying = false;
+      if (conceptAudioRaf) { cancelAnimationFrame(conceptAudioRaf); conceptAudioRaf = null; }
+      // Show continue button when audio ends
+      document.getElementById('btnContinueConcepts').classList.add('show');
+    }).catch(function() {
+      conceptAudioPlaying = false;
+      if (conceptAudioRaf) { cancelAnimationFrame(conceptAudioRaf); conceptAudioRaf = null; }
+      // Audio failed — fall back to timed auto-advance
+      resetConceptTimer();
+      // Show continue button after 80s fallback
+      conceptUnlockTimer = setTimeout(function() {
+        document.getElementById('btnContinueConcepts').classList.add('show');
+      }, 80000);
+    });
+
+    // Auto-advance concept cards in sync with audio
+    var sortedTimes = conceptStartTimes.slice().map(function(t, i) { return { time: t, card: i }; });
+    sortedTimes.sort(function(a, b) { return a.time - b.time; });
+
+    function syncConcepts() {
+      if (!conceptAudioPlaying) return;
+      var t = audioManager.getAudioTime();
+      // Find which card should be showing
+      var targetCard = 0;
+      for (var j = 0; j < sortedTimes.length; j++) {
+        if (t >= sortedTimes[j].time) {
+          targetCard = sortedTimes[j].card;
+        }
+      }
+      if (targetCard !== conceptIndex) {
+        conceptIndex = targetCard;
+        renderConcept(conceptIndex);
+      }
+      conceptAudioRaf = requestAnimationFrame(syncConcepts);
+    }
+    // Wait a moment for audio to start loading, then begin syncing
+    setTimeout(function() {
+      if (conceptAudioPlaying) {
+        conceptAudioRaf = requestAnimationFrame(syncConcepts);
+      }
+    }, 500);
+
+    // Unlock continue button after 80s regardless as fallback
     conceptUnlockTimer = setTimeout(function() {
       document.getElementById('btnContinueConcepts').classList.add('show');
-    }, 60000);
+    }, 80000);
   });
 
   // Concept navigation
   document.getElementById('carouselPrev').addEventListener('click', function() {
-    if (conceptIndex > 0) { conceptIndex--; renderConcept(conceptIndex); resetConceptTimer(); }
+    if (conceptIndex > 0) { conceptIndex--; renderConcept(conceptIndex); if (!conceptAudioPlaying) resetConceptTimer(); }
   });
   document.getElementById('carouselNext').addEventListener('click', function() {
-    if (conceptIndex < concepts.length - 1) { conceptIndex++; renderConcept(conceptIndex); resetConceptTimer(); }
+    if (conceptIndex < concepts.length - 1) { conceptIndex++; renderConcept(conceptIndex); if (!conceptAudioPlaying) resetConceptTimer(); }
   });
 
   // Continue to scenarios
   document.getElementById('btnContinueConcepts').addEventListener('click', function() {
     clearInterval(conceptTimer);
     clearTimeout(conceptUnlockTimer);
+    conceptAudioPlaying = false;
+    if (conceptAudioRaf) { cancelAnimationFrame(conceptAudioRaf); conceptAudioRaf = null; }
     showScreen('scenario1');
     setTimeout(function() {
       playDialogue(0, function() { showChoices(0); });
@@ -1229,8 +1750,14 @@ nav {
     revealRemaining('slack', 3);
   });
   document.getElementById('btnArtifact1Next').addEventListener('click', function() {
+    audioManager.stop();
     document.getElementById('artifact1').style.display = 'none';
     document.getElementById('artifact2').style.display = 'block';
+    // Play email artifact dialogue audio
+    if (!redFlagDialoguePlayed[1]) {
+      redFlagDialoguePlayed[1] = true;
+      audioManager.playSequence(redFlagDialogueClips[1]).catch(function() {});
+    }
   });
   document.getElementById('btnShowRemaining2').addEventListener('click', function() {
     revealRemaining('email', 4);
@@ -1266,11 +1793,24 @@ nav {
     });
   });
 
+  // Audio bar controls
+  document.getElementById('btnPlayPause').addEventListener('click', function() {
+    if (audioManager.state === 'playing') {
+      audioManager.pause();
+    } else if (audioManager.state === 'paused') {
+      audioManager.resume();
+    }
+  });
+  document.getElementById('btnMute').addEventListener('click', function() {
+    audioManager.toggleMute();
+    updateAudioBarUI();
+  });
+
   // Keyboard: left/right arrows for concept carousel
   document.addEventListener('keydown', function(e) {
     if (currentScreen === 'concepts') {
-      if (e.key === 'ArrowLeft' && conceptIndex > 0) { conceptIndex--; renderConcept(conceptIndex); resetConceptTimer(); }
-      if (e.key === 'ArrowRight' && conceptIndex < concepts.length - 1) { conceptIndex++; renderConcept(conceptIndex); resetConceptTimer(); }
+      if (e.key === 'ArrowLeft' && conceptIndex > 0) { conceptIndex--; renderConcept(conceptIndex); if (!conceptAudioPlaying) resetConceptTimer(); }
+      if (e.key === 'ArrowRight' && conceptIndex < concepts.length - 1) { conceptIndex++; renderConcept(conceptIndex); if (!conceptAudioPlaying) resetConceptTimer(); }
     }
   });
 
