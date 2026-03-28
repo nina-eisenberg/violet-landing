@@ -995,7 +995,17 @@ nav {
     this._listeners = { stateChange: [], speakerChange: [] };
     this._sequenceAbort = false;
     this._sequenceRunning = false;
+    this._warmAudio = null; // pre-created Audio element to satisfy autoplay
   }
+
+  // Call this synchronously inside a click handler to unlock audio autoplay
+  AudioManager.prototype.unlockAudio = function() {
+    var a = new Audio();
+    a.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAABhkVCkBcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+0DEAAAB8AKf9AAAIhCg1n8wAAQAAAANIAAAABAACAwGBx8HwfB8HwfB8HwfPh+D5/8uD4Pg/ygIAmD/8oCAIHygP/lAfKAgCAPg+f/+XB8HwAAAA0gAAABN//tAxAGAAADSAAAAAIAAANIAAAAATEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV';
+    a.volume = 0;
+    try { a.play().then(function() { a.pause(); }).catch(function() {}); } catch(e) {}
+    this._warmAudio = a;
+  };
 
   AudioManager.prototype.on = function(event, fn) {
     if (this._listeners[event]) this._listeners[event].push(fn);
@@ -1050,14 +1060,23 @@ nav {
     return new Promise(function(resolve, reject) {
       if (self._sequenceAbort) { reject(new Error('aborted')); return; }
       if (self.audio) { self.audio.pause(); self.audio = null; }
-      var a = new Audio(url);
+      // Reuse the warmed Audio element if available (preserves autoplay permission)
+      var a;
+      if (self._warmAudio) {
+        a = self._warmAudio;
+        self._warmAudio = null;
+      } else {
+        a = new Audio();
+      }
       a.muted = self.muted;
+      a.volume = 1;
       self.audio = a;
       a.addEventListener('canplaythrough', function() {
         if (self._sequenceAbort) { a.pause(); reject(new Error('aborted')); return; }
         a.play().then(function() {
           self._setState('playing');
-        }).catch(function() {
+        }).catch(function(err) {
+          console.warn('Audio play blocked:', err.message);
           self._setState('done');
           resolve();
         });
@@ -1072,6 +1091,7 @@ nav {
         self._showUnavailable();
         resolve();
       });
+      a.src = url;
       a.load();
     });
   };
@@ -1651,6 +1671,8 @@ nav {
   // Start
   document.getElementById('btnStart').addEventListener('click', function() {
     track('preview_started');
+    // Unlock browser autoplay during this user gesture (synchronous)
+    audioManager.unlockAudio();
     showAudioBar();
     showScreen('concepts');
     renderConcept(0);
@@ -1721,6 +1743,7 @@ nav {
     clearTimeout(conceptUnlockTimer);
     conceptAudioPlaying = false;
     if (conceptAudioRaf) { cancelAnimationFrame(conceptAudioRaf); conceptAudioRaf = null; }
+    audioManager.unlockAudio(); // Re-unlock for scenario audio
     showScreen('scenario1');
     setTimeout(function() {
       playDialogue(0, function() { showChoices(0); });
