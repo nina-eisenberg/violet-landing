@@ -191,6 +191,17 @@ nav {
   padding: 36px 32px;
   box-shadow: 0 2px 16px rgba(27, 42, 74, 0.04);
 }
+.concept-img {
+  width: 100%; max-width: 320px; height: 140px;
+  object-fit: cover; object-position: top center;
+  border-radius: 12px; margin: 0 auto 16px; display: block;
+}
+.scene-img-wrap { margin-bottom: 16px; }
+.scene-img-wrap img {
+  width: 100%; max-height: 280px;
+  object-fit: cover; object-position: top center;
+  border-radius: 12px;
+}
 .concept-icon {
   font-size: 36px; margin-bottom: 16px;
 }
@@ -809,6 +820,7 @@ nav {
   <!-- SCREEN 3: SCENARIO 1 -->
   <div class="screen" id="screen-scenario1">
     <div class="scenario-progress">Scenario 1 of 3</div>
+    <div class="scene-img-wrap" id="sceneImg1"></div>
     <h2 class="scenario-heading">Dave tells a sexual joke at lunch. Nobody complains. Is this harassment under California law?</h2>
     <div class="dialogue-area" id="dialogue1"></div>
     <div class="speaking-indicator" id="speaker1"><span>.</span><span>.</span><span>.</span></div>
@@ -820,6 +832,7 @@ nav {
   <!-- SCREEN 4: SCENARIO 2 -->
   <div class="screen" id="screen-scenario2">
     <div class="scenario-progress">Scenario 2 of 3</div>
+    <div class="scene-img-wrap" id="sceneImg2"></div>
     <h2 class="scenario-heading">Your manager links career advancement to "being more flexible." What kind of harassment is this?</h2>
     <div class="dialogue-area" id="dialogue2"></div>
     <div class="speaking-indicator" id="speaker2"><span>.</span><span>.</span><span>.</span></div>
@@ -831,6 +844,7 @@ nav {
   <!-- SCREEN 5: SCENARIO 3 -->
   <div class="screen" id="screen-scenario3">
     <div class="scenario-progress">Scenario 3 of 3</div>
+    <div class="scene-img-wrap" id="sceneImg3"></div>
     <h2 class="scenario-heading">A colleague grabbed you and whispered something explicit. One time. Five seconds. Is that enough?</h2>
     <div class="dialogue-area" id="dialogue3"></div>
     <div class="speaking-indicator" id="speaker3"><span>.</span><span>.</span><span>.</span></div>
@@ -980,6 +994,7 @@ nav {
   }
 
   // ---- AUDIO MANAGER ----
+  var IMG_BASE = 'https://app.violetinvestigations.com/training-illustrations/';
   var AUDIO_API = 'https://caseforge-production.up.railway.app/api/v1/audio/generate';
   var VOICE_VIOLET = 'DXFkLCBUTmvXpp2QwZjA';
   var VOICE_DEREK = 'wWWn96OtTHu1sn8SRGEr';
@@ -1313,10 +1328,10 @@ nav {
 
   // ---- DATA ----
   var concepts = [
-    { icon: '\u2696\uFE0F', title: 'No complaint needed', hook: 'One crude joke at lunch. No complaint filed. Still harassment under California law.', def: 'Under FEHA, harassment is unwelcome conduct based on a protected characteristic that is severe or pervasive enough to create a hostile work environment. No formal complaint is required.', takeaway: 'One incident can be enough under California law.' },
-    { icon: '\uD83D\uDD11', title: 'Quid pro quo', hook: '"Be more flexible with your time, if you know what I mean." That\'s quid pro quo.', def: 'Quid pro quo harassment occurs when a supervisor conditions job benefits \u2014 promotion, assignments, continued employment \u2014 on submission to unwelcome conduct. It creates automatic employer liability.', takeaway: "'Do this or else' \u2014 supervisor conditions job benefits on submission." },
-    { icon: '\uD83C\uDF21\uFE0F', title: 'Hostile environment', hook: 'It doesn\'t have to be directed at you to poison your work environment.', def: 'A hostile work environment exists when unwelcome conduct based on a protected characteristic unreasonably interferes with work performance or creates an intimidating, hostile, or offensive atmosphere \u2014 even for bystanders.', takeaway: 'Conduct that poisons the workplace \u2014 even for bystanders.' },
-    { icon: '1\uFE0F\u20E3', title: 'Severe OR pervasive', hook: 'Federal law says "severe AND pervasive." California says "OR." One word changes everything.', def: 'California\'s FEHA only requires severity OR pervasiveness \u2014 not both. A single sufficiently severe incident, like unwanted physical contact, can constitute harassment on its own.', takeaway: "California's lower threshold: either one is enough." },
+    { icon: '\u2696\uFE0F', title: 'No complaint needed', hook: 'One crude joke at lunch. No complaint filed. Still harassment under California law.', def: 'Under FEHA, harassment is unwelcome conduct based on a protected characteristic that is severe or pervasive enough to create a hostile work environment. No formal complaint is required.', takeaway: 'One incident can be enough under California law.', image: 'concept-no-complaint.png' },
+    { icon: '\uD83D\uDD11', title: 'Quid pro quo', hook: '"Be more flexible with your time, if you know what I mean." That\'s quid pro quo.', def: 'Quid pro quo harassment occurs when a supervisor conditions job benefits \u2014 promotion, assignments, continued employment \u2014 on submission to unwelcome conduct. It creates automatic employer liability.', takeaway: "'Do this or else' \u2014 supervisor conditions job benefits on submission.", image: 'concept-quid-pro-quo.png' },
+    { icon: '\uD83C\uDF21\uFE0F', title: 'Hostile environment', hook: 'It doesn\'t have to be directed at you to poison your work environment.', def: 'A hostile work environment exists when unwelcome conduct based on a protected characteristic unreasonably interferes with work performance or creates an intimidating, hostile, or offensive atmosphere \u2014 even for bystanders.', takeaway: 'Conduct that poisons the workplace \u2014 even for bystanders.', image: 'concept-hostile-environment.png' },
+    { icon: '1\uFE0F\u20E3', title: 'Severe OR pervasive', hook: 'Federal law says "severe AND pervasive." California says "OR." One word changes everything.', def: 'California\'s FEHA only requires severity OR pervasiveness \u2014 not both. A single sufficiently severe incident, like unwanted physical contact, can constitute harassment on its own.', takeaway: "California's lower threshold: either one is enough.", image: 'concept-severity-scale.png' },
     { icon: '\uD83D\uDC64', title: 'Reasonable person standard', hook: 'The question isn\'t "did anyone complain?" It\'s "would a reasonable person be offended?"', def: 'Harassment is evaluated from the perspective of a reasonable person in the plaintiff\'s position \u2014 considering the frequency, severity, and context of the conduct. Silence doesn\'t mean consent.', takeaway: 'Would a reasonable person find this offensive? That\'s the test.' }
   ];
 
@@ -1334,7 +1349,8 @@ nav {
         { text: 'Yes \u2014 even one incident can qualify if a reasonable person would find the environment hostile', color: 'green', badge: 'Exactly right', feedback: 'Correct. Under FEHA, the "reasonable person" standard applies, and severity OR pervasiveness \u2014 not both \u2014 can establish a hostile environment.' }
       ],
       shortTitle: 'Break Room Joke',
-      debriefTakeaway: 'Harassment doesn\'t require a complaint or a specific target. Under FEHA, a single severe incident judged by the reasonable person standard can qualify.'
+      debriefTakeaway: 'Harassment doesn\'t require a complaint or a specific target. Under FEHA, a single severe incident judged by the reasonable person standard can qualify.',
+      sceneImage: 'scene-break-room.png'
     },
     {
       dialogue: [
@@ -1348,7 +1364,8 @@ nav {
         { text: 'Yes \u2014 quid pro quo with automatic employer liability. I should document and report it.', color: 'green', badge: 'Best practice', feedback: 'Best answer. Identifying it, understanding the automatic liability for supervisor quid pro quo, and knowing to document and report \u2014 that\'s the complete response.' }
       ],
       shortTitle: 'Manager\'s Flexibility Hint',
-      debriefTakeaway: 'Quid pro quo doesn\'t require an explicit demand. Linking career advancement to personal availability with sexual undertones creates automatic employer liability.'
+      debriefTakeaway: 'Quid pro quo doesn\'t require an explicit demand. Linking career advancement to personal availability with sexual undertones creates automatic employer liability.',
+      sceneImage: 'scene-managers-office.png'
     },
     {
       dialogue: [
@@ -1362,7 +1379,8 @@ nav {
         { text: 'Yes \u2014 severe enough on its own. I should document it now and report it.', color: 'green', badge: 'Best practice', feedback: 'Best answer \u2014 correct legal analysis plus the critical action step of contemporaneous documentation and knowing your reporting options.' }
       ],
       shortTitle: 'Five-Second Grab',
-      debriefTakeaway: 'A single severe incident is enough under California law. Physical contact with sexual comments meets the severity threshold. Document immediately and report.'
+      debriefTakeaway: 'A single severe incident is enough under California law. Physical contact with sexual comments meets the severity threshold. Document immediately and report.',
+      sceneImage: 'scene-elevator.png'
     }
   ];
 
@@ -1417,7 +1435,9 @@ nav {
   // ---- CONCEPT CAROUSEL ----
   function renderConcept(idx) {
     var c = concepts[idx];
+    var imgHtml = c.image ? '<img src="' + IMG_BASE + c.image + '" alt="' + c.title + '" class="concept-img" loading="lazy">' : '';
     var html = '<div class="concept-card">' +
+      imgHtml +
       '<div class="concept-icon">' + c.icon + '</div>' +
       '<div class="concept-title">' + c.title + '</div>' +
       '<div class="concept-hook">' + c.hook + '</div>' +
@@ -1666,6 +1686,14 @@ nav {
     });
     document.getElementById('debriefScenarios').innerHTML = html;
   }
+
+  // ---- POPULATE SCENE IMAGES ----
+  scenarios.forEach(function(s, i) {
+    if (s.sceneImage) {
+      var wrap = document.getElementById('sceneImg' + (i + 1));
+      if (wrap) wrap.innerHTML = '<img src="' + IMG_BASE + s.sceneImage + '" alt="' + s.shortTitle + '" loading="lazy">';
+    }
+  });
 
   // ---- EVENT LISTENERS ----
 
