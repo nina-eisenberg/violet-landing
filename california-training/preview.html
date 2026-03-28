@@ -1027,6 +1027,7 @@ nav {
 
   AudioManager.prototype.generateAndPlay = function(text, cacheKey, voiceId) {
     var self = this;
+    self._sequenceAbort = false; // Reset abort flag so _playUrl doesn't bail
     var fullCacheKey = cacheKey + '-' + textHash(text);
     self._setState('loading');
 
