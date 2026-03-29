@@ -789,33 +789,43 @@ function buildEmailCapture(allStates) {
   var wrap = document.createElement('div');
   wrap.className = 'email-capture';
   wrap.innerHTML = '<h4>Want a PDF of your state requirements?</h4>' +
-    '<p>Enter your email and we\u2019ll send a summary.</p>' +
-    '<form class="email-form" id="emailForm" action="https://formspree.io/f/xgolgawr" method="POST">' +
-    '<input type="hidden" name="states" value="' + allStates.join(',') + '">' +
-    '<input type="hidden" name="employee_count" value="' + selectedEmpCount + '">' +
-    '<input type="hidden" name="source" value="compliance-checker">' +
+    '<p>Enter your email and we\u2019ll send a branded summary with statute details, deadlines, and next steps.</p>' +
+    '<form class="email-form" id="emailForm">' +
     '<input type="email" name="email" class="email-field" placeholder="you@company.com" required>' +
     '<button type="submit" class="email-submit">Send PDF</button>' +
     '</form>' +
-    '<div class="email-success" id="emailSuccess">Sent! Check your inbox.</div>';
+    '<div class="email-success" id="emailSuccess">Sent! Check your inbox for the PDF.</div>' +
+    '<div class="email-error" id="emailError" style="display:none;color:var(--red);font-size:13px;margin-top:8px;"></div>';
 
-  // Attach form handler after adding to DOM
+  // Attach form handler — sends to backend which generates PDF + emails via Resend
   setTimeout(function() {
     var form = document.getElementById('emailForm');
     if (form) {
       form.addEventListener('submit', function(e) {
         e.preventDefault();
-        var formData = new FormData(form);
-        fetch(form.action, {
+        var emailInput = form.querySelector('input[name="email"]');
+        var email = emailInput ? emailInput.value.trim() : '';
+        if (!email) return;
+        var btn = form.querySelector('button');
+        if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+        fetch('https://caseforge-production.up.railway.app/api/v1/public/compliance-pdf', {
           method: 'POST',
-          body: formData,
-          headers: { 'Accept': 'application/json' }
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, stateCode: allStates[0], employeeCount: selectedEmpCount })
         }).then(function(resp) {
           if (resp.ok) {
             form.style.display = 'none';
             document.getElementById('emailSuccess').style.display = 'block';
-            gtag('event', 'checker_email_captured');
+            gtag('event', 'checker_email_captured', { state: allStates[0] });
+          } else {
+            var errEl = document.getElementById('emailError');
+            if (errEl) { errEl.textContent = 'Failed to send. Try again or email nina@violetinvestigations.com'; errEl.style.display = 'block'; }
+            if (btn) { btn.disabled = false; btn.textContent = 'Send PDF'; }
           }
+        }).catch(function() {
+          var errEl = document.getElementById('emailError');
+          if (errEl) { errEl.textContent = 'Failed to send. Try again or email nina@violetinvestigations.com'; errEl.style.display = 'block'; }
+          if (btn) { btn.disabled = false; btn.textContent = 'Send PDF'; }
         });
       });
     }
