@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Anti-Harassment Policy Checker | Violet</title>
+<meta name="description" content="Is your anti-harassment policy compliant? Free AI-powered analysis against California FEHA, federal Title VII, and your state's specific requirements.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://violetinvestigations.com/policy-check">
+<meta property="og:title" content="Free Anti-Harassment Policy Checker | Violet">
+<meta property="og:description" content="Is your anti-harassment policy compliant? Free AI-powered analysis against your state's requirements.">
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAy0lEQVR4nNWVQRaCMAxEkz5O4HH0arDybB5Hr6CrogytaZuSktlRwsufSQCer08CvfGgs/j3Ihg33/UIuRtWEAEPrCHCoOYrBO6AuSap4P647M6W26tb/fAERIAUfcpl7vyf+yKAo1UEILnQPOcjgZRw3rm96AZQO4bSel8jQFcxdoy/Ji1fCZwCQIq3dlnVCbS+fiqAnMuWL6a/HTgNAMbd+sPymwDR13WrezVAD6kBNO4jAItVx4ljAiMgmGg7AkuItRfugAXEpscHkgU2YVRz7iUAAAAASUVORK5CYII=">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6QQX43BVH5"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-6QQX43BVH5');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root { --violet: #7C3AED; --violet-light: #A78BFA; --navy: #1B2A4A; --cream: #FAF8F5; --warm-gray: #6B6570; --border: rgba(27,42,74,0.08); --white: #FFFFFF; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'DM Sans', -apple-system, sans-serif; color: var(--navy); background: var(--cream); -webkit-font-smoothing: antialiased; line-height: 1.6; }
+
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(250,248,245,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 0 48px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--violet); text-decoration: none; }
+.nav-links { display: flex; gap: 32px; align-items: center; }
+.nav-links a { font-size: 14px; font-weight: 500; color: var(--warm-gray); text-decoration: none; }
+.nav-links a:hover { color: var(--navy); }
+.nav-cta { background: var(--violet) !important; color: var(--white) !important; padding: 8px 20px !important; border-radius: 6px; font-weight: 600 !important; font-size: 13px !important; }
+
+.container { max-width: 720px; margin: 0 auto; padding: 120px 24px 80px; }
+h1 { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--navy); margin-bottom: 8px; }
+.subtitle { color: var(--warm-gray); font-size: 16px; margin-bottom: 40px; }
+
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+.form-group select, .form-group input, .form-group textarea { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--white); color: var(--navy); }
+.form-group textarea { min-height: 200px; resize: vertical; }
+.form-group select:focus, .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--violet); box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+
+.btn-primary { background: var(--violet); color: white; border: none; padding: 14px 32px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; font-family: inherit; transition: background 0.2s; }
+.btn-primary:hover { background: #6D28D9; }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Loading */
+.loading { text-align: center; padding: 60px 0; }
+.loading-text { color: var(--violet); font-size: 16px; font-weight: 500; margin-bottom: 16px; }
+.loading-bar { width: 200px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto; overflow: hidden; }
+.loading-bar-fill { height: 100%; background: var(--violet); border-radius: 2px; animation: load 2s ease-in-out infinite; }
+@keyframes load { 0% { width: 0; } 50% { width: 80%; } 100% { width: 100%; } }
+
+/* Results */
+.results { display: none; }
+.score-card { text-align: center; margin-bottom: 32px; }
+.score-number { font-size: 64px; font-weight: 700; line-height: 1; }
+.score-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-top: 8px; }
+.summary-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 32px; }
+.summary-card { text-align: center; padding: 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--white); }
+.summary-card .num { font-size: 28px; font-weight: 700; }
+.summary-card .label { font-size: 11px; color: var(--warm-gray); text-transform: uppercase; letter-spacing: 1px; }
+
+.req-list { margin-bottom: 32px; }
+.req-item { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.req-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+.req-name { font-weight: 600; font-size: 14px; color: var(--navy); }
+.req-explanation { font-size: 13px; color: var(--warm-gray); margin-top: 2px; }
+
+.cta-card { padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 16px; }
+.cta-card h3 { font-size: 16px; margin-bottom: 8px; }
+.cta-card p { font-size: 13px; color: var(--warm-gray); margin-bottom: 12px; }
+.cta-card a { display: inline-block; padding: 10px 24px; border-radius: 6px; font-weight: 600; font-size: 13px; text-decoration: none; }
+
+.disclaimer { font-size: 11px; color: #9ca3af; text-align: center; margin-top: 32px; }
+
+@media (max-width: 640px) {
+  .container { padding: 100px 16px 60px; }
+  h1 { font-size: 28px; }
+  .summary-cards { grid-template-columns: 1fr; }
+  nav { padding: 0 16px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Violet</a>
+  <div class="nav-links">
+    <a href="/about">About</a>
+    <a href="/training">Training</a>
+    <a href="https://app.violetinvestigations.com/demo" class="nav-cta">Demo</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- Form -->
+  <div id="form-section">
+    <h1>Is Your Anti-Harassment Policy Compliant?</h1>
+    <p class="subtitle">Free AI-powered analysis against your state's specific requirements. Results in under 60 seconds.</p>
+
+    <div class="form-group">
+      <label>State</label>
+      <select id="state">
+        <option value="California">California</option>
+        <option value="New York">New York</option>
+        <option value="Illinois">Illinois</option>
+        <option value="Connecticut">Connecticut</option>
+        <option value="Delaware">Delaware</option>
+        <option value="Maine">Maine</option>
+        <option value="Texas">Texas</option>
+        <option value="Florida">Florida</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Other">Other State</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Number of Employees</label>
+      <select id="employeeCount">
+        <option value="1-4">1–4</option>
+        <option value="5-14">5–14</option>
+        <option value="15-49" selected>15–49</option>
+        <option value="50-249">50–249</option>
+        <option value="250+">250+</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Paste Your Anti-Harassment Policy</label>
+      <textarea id="policyText" placeholder="Paste your company's anti-harassment policy text here..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Email (for your full report)</label>
+      <input type="email" id="email" placeholder="you@company.com">
+    </div>
+
+    <button class="btn-primary" id="analyzeBtn" onclick="analyze()">Analyze My Policy</button>
+  </div>
+
+  <!-- Loading -->
+  <div id="loading-section" style="display:none">
+    <div class="loading">
+      <p class="loading-text">Violet is reviewing your policy against <span id="loading-state"></span> requirements...</p>
+      <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div id="results-section" class="results">
+    <div class="score-card">
+      <div class="score-number" id="score-number">—</div>
+      <div class="score-badge" id="score-badge">Analyzing</div>
+      <p style="color:var(--warm-gray);font-size:13px;margin-top:8px;" id="score-context"></p>
+    </div>
+
+    <div class="summary-cards">
+      <div class="summary-card"><div class="num" id="pass-count" style="color:#16a34a">0</div><div class="label">Passed</div></div>
+      <div class="summary-card"><div class="num" id="partial-count" style="color:#d97706">0</div><div class="label">Partial</div></div>
+      <div class="summary-card"><div class="num" id="missing-count" style="color:#dc2626">0</div><div class="label">Missing</div></div>
+    </div>
+
+    <div class="req-list" id="req-list"></div>
+
+    <div class="cta-card" style="background:#7C3AED10;">
+      <h3 style="color:var(--navy);">Want a compliant policy?</h3>
+      <p>Violet can generate a fully compliant anti-harassment policy tailored to your state, company size, and industry.</p>
+      <a href="https://violetinvestigations.com" style="background:var(--violet);color:white;">Learn More →</a>
+    </div>
+
+    <div class="cta-card" style="background:#f0fdf4;">
+      <h3 style="color:var(--navy);">Need training too?</h3>
+      <p>Your state may also require harassment prevention training.</p>
+      <a href="/training" style="background:var(--navy);color:white;">Check Training Requirements →</a>
+    </div>
+
+    <p id="email-confirm" style="text-align:center;font-size:13px;color:var(--warm-gray);margin-top:16px;"></p>
+
+    <p class="disclaimer">This analysis is generated by AI and is not legal advice. Consult with employment counsel for your specific situation. Policy text is analyzed but not stored by Violet.</p>
+  </div>
+
+</div>
+
+<script>
+const API = "https://caseforge-production.up.railway.app";
+
+async function analyze() {
+  const state = document.getElementById("state").value;
+  const employeeCount = document.getElementById("employeeCount").value;
+  const policyText = document.getElementById("policyText").value;
+  const email = document.getElementById("email").value;
+
+  if (!policyText || policyText.length < 50) { alert("Please paste your policy text (at least 50 characters)."); return; }
+  if (!email || !email.includes("@")) { alert("Please enter a valid email address."); return; }
+
+  // GA event
+  gtag("event", "policy_check_started", { state, employeeCount });
+
+  document.getElementById("form-section").style.display = "none";
+  document.getElementById("loading-section").style.display = "block";
+  document.getElementById("loading-state").textContent = state;
+  document.getElementById("analyzeBtn").disabled = true;
+
+  try {
+    const res = await fetch(API + "/api/v1/policy-check/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ state, employeeCount, policyText, email }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || "Analysis failed");
+    }
+
+    const { data } = await res.json();
+    showResults(data, email);
+
+    gtag("event", "policy_check_completed", { score: data.score, rating: data.rating });
+    gtag("event", "policy_check_score", { value: data.score });
+
+  } catch (err) {
+    alert("Analysis failed: " + err.message + ". Please try again.");
+    document.getElementById("form-section").style.display = "block";
+    document.getElementById("loading-section").style.display = "none";
+    document.getElementById("analyzeBtn").disabled = false;
+  }
+}
+
+function showResults(data, email) {
+  document.getElementById("loading-section").style.display = "none";
+  document.getElementById("results-section").style.display = "block";
+
+  const scoreEl = document.getElementById("score-number");
+  const badgeEl = document.getElementById("score-badge");
+
+  scoreEl.textContent = data.score + "%";
+  scoreEl.style.color = data.score >= 80 ? "#16a34a" : data.score >= 50 ? "#d97706" : "#dc2626";
+
+  const labels = { compliant: "Compliant", needs_improvement: "Needs Improvement", significant_gaps: "Significant Gaps" };
+  const colors = { compliant: "#16a34a", needs_improvement: "#d97706", significant_gaps: "#dc2626" };
+  badgeEl.textContent = labels[data.rating] || data.rating;
+  badgeEl.style.background = (colors[data.rating] || "#7C3AED") + "15";
+  badgeEl.style.color = colors[data.rating] || "#7C3AED";
+
+  document.getElementById("score-context").textContent = data.state + " · " + data.employeeCount + " employees · " + data.summary.total + " requirements checked";
+  document.getElementById("pass-count").textContent = data.summary.pass;
+  document.getElementById("partial-count").textContent = data.summary.partial;
+  document.getElementById("missing-count").textContent = data.summary.missing;
+
+  const list = document.getElementById("req-list");
+  list.innerHTML = data.requirements.map(r => {
+    const icon = r.status === "pass" ? "✅" : r.status === "partial" ? "⚠️" : "❌";
+    return `<div class="req-item"><span class="req-icon">${icon}</span><div><div class="req-name">${r.name}</div><div class="req-explanation">${r.explanation}</div></div></div>`;
+  }).join("");
+
+  document.getElementById("email-confirm").textContent = "We've emailed a detailed report to " + email + ".";
+}
+
+// CTA tracking
+document.addEventListener("click", function(e) {
+  const a = e.target.closest(".cta-card a");
+  if (a) gtag("event", "policy_check_cta_clicked", { label: a.textContent.trim() });
+});
+</script>
+
+</body>
+</html>
