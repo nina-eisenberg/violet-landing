@@ -686,6 +686,16 @@ function showResults() {
   // CTA card
   container.appendChild(buildCTA(mandateStates, allStates));
 
+  // Policy check CTA
+  var policyCard = document.createElement('div');
+  policyCard.className = 'cta-card';
+  policyCard.style.background = '#f0f9ff';
+  policyCard.style.marginTop = '12px';
+  policyCard.innerHTML = '<h3>Is your anti-harassment policy compliant?</h3>' +
+    '<p>Free AI-powered analysis of your policy against ' + STATE_DATA[selectedPrimary].name + '\u2019s specific requirements. Results in under 60 seconds.</p>' +
+    '<a href="/policy-check" class="btn-primary" style="background:var(--navy);" onclick="gtag(\'event\',\'checker_cta_clicked\',{action:\'policy_check\'})">Check My Policy Free &rarr;</a>';
+  container.appendChild(policyCard);
+
   // Contact line
   var contact = document.createElement('div');
   contact.className = 'contact-line';
