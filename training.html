@@ -8,7 +8,7 @@
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://demo.violetinvestigations.com/training">
+<meta property="og:url" content="https://violetinvestigations.com/training">
 <meta property="og:title" content="Anti-Harassment Training That Actually Works | Violet Investigations">
 <meta property="og:description" content="AI-narrated, scenario-based compliance training with real choices, real consequences, and a live practice conversation.">
 <meta property="og:image" content="https://img.youtube.com/vi/pyDB3GQPFvI/maxresdefault.jpg">
@@ -567,7 +567,7 @@
   <div class="footer-links">
     <a href="https://violetinvestigations.com/privacy">Privacy</a>
     <a href="https://violetinvestigations.com/terms">Terms</a>
-    <a href="mailto:nina@violetinvestigations.com">Contact</a>
+    <a href="/#waitlist">Contact</a>
     <a href="/about">About</a>
     <a href="https://app.violetinvestigations.com">Sign In</a>
     <a href="https://www.linkedin.com/in/nina-eisenberg-01513728/" target="_blank">LinkedIn</a>
@@ -581,20 +581,63 @@
     document.getElementById('navLinks').classList.toggle('open');
   });
 
-  // Waitlist handler
+  // Waitlist handler -- real submission to Formspree (never a mailto:, which
+  // silently does nothing for visitors with no desktop mail client)
   function submitWaitlist(state, inputId) {
     var input = document.getElementById(inputId);
     var email = input.value.trim();
+    var btn = input.nextElementSibling;
     if (!email || !email.includes('@')) {
       input.style.borderColor = '#EF4444';
       return;
     }
-    window.location.href = 'mailto:nina@violetinvestigations.com?subject=Waitlist: ' + state.charAt(0).toUpperCase() + state.slice(1) + ' Training&body=Please add me to the waitlist for ' + state + ' training.%0A%0AEmail: ' + encodeURIComponent(email);
-    input.value = '';
     input.style.borderColor = 'var(--violet)';
-    var btn = input.nextElementSibling;
-    btn.textContent = 'Sent!';
-    setTimeout(function() { btn.textContent = 'Notify Me'; }, 2000);
+    var original = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://formspree.io/f/xgolgawr');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('Accept', 'application/json');
+    xhr.onload = function() {
+      btn.disabled = false;
+      if (xhr.status >= 200 && xhr.status < 300) {
+        // only claim success once the request actually succeeded
+        input.value = '';
+        btn.textContent = 'Sent!';
+        setTimeout(function() { btn.textContent = original; }, 3000);
+      } else {
+        waitlistError(btn, original);
+      }
+    };
+    xhr.onerror = function() {
+      btn.disabled = false;
+      waitlistError(btn, original);
+    };
+    xhr.send(JSON.stringify({
+      email: email,
+      state: state,
+      interest: 'training waitlist: ' + state,
+      form: 'training-waitlist',
+      page: window.location.pathname
+    }));
+  }
+
+  // Keep the visitor's email in the box and show a route that works
+  function waitlistError(btn, original) {
+    btn.textContent = 'Try again';
+    var note = document.getElementById('waitlistErrorNote');
+    if (!note) {
+      note = document.createElement('p');
+      note.id = 'waitlistErrorNote';
+      note.style.cssText = 'margin-top:10px;font-size:13px;color:#EF4444;';
+      btn.parentNode.parentNode.appendChild(note);
+    }
+    note.innerHTML = 'That didn\'t send. Please email ' +
+      '<a href="mailto:nina@violetinvestigations.com" style="color:#EF4444;text-decoration:underline;">nina@violetinvestigations.com</a> ' +
+      'and we\'ll add you.';
+    setTimeout(function() { btn.textContent = original; }, 3000);
   }
 </script>
 
