@@ -891,7 +891,7 @@
             <li>Report drafting</li>
             <li>Timeline builder</li>
           </ul>
-          <a href="mailto:nina@violetinvestigations.com?subject=Violet%20%E2%80%94%20Solo%20plan" class="price-cta price-cta-primary">Get started</a>
+          <a href="#waitlist" onclick="selectPlan('Solo','investigators')" class="price-cta price-cta-primary">Get started</a>
         </div>
         <div class="price-card">
           <h3>Enterprise</h3>
@@ -904,7 +904,7 @@
             <li>Organization-wide case management</li>
             <li>Custom onboarding</li>
           </ul>
-          <a href="mailto:nina@violetinvestigations.com?subject=Violet%20%E2%80%94%20Enterprise" class="price-cta price-cta-secondary">Contact us</a>
+          <a href="#waitlist" onclick="selectPlan('Enterprise (investigators)','investigators')" class="price-cta price-cta-secondary">Contact us</a>
         </div>
       </div>
       <div class="pricing-includes">
@@ -933,7 +933,7 @@
             <li>50+ languages, 24/7</li>
             <li>Triaged reports land in your inbox</li>
           </ul>
-          <a href="mailto:nina@violetinvestigations.com?subject=Violet%20%E2%80%94%20Hotline%20plan" class="price-cta price-cta-secondary">Get started</a>
+          <a href="#waitlist" onclick="selectPlan('Hotline','employers')" class="price-cta price-cta-secondary">Get started</a>
         </div>
         <div class="price-card featured">
           <div class="price-badge">Most Popular</div>
@@ -947,7 +947,7 @@
             <li>Up to 5 concurrent active cases</li>
             <li>Full report-to-investigation workflow</li>
           </ul>
-          <a href="mailto:nina@violetinvestigations.com?subject=Violet%20%E2%80%94%20Hotline%20%2B%20Investigations%20plan" class="price-cta price-cta-primary">Get started</a>
+          <a href="#waitlist" onclick="selectPlan('Hotline + Investigations','employers')" class="price-cta price-cta-primary">Get started</a>
         </div>
         <div class="price-card">
           <h3>Enterprise</h3>
@@ -960,7 +960,7 @@
             <li>Organization-wide case management</li>
             <li>Custom onboarding</li>
           </ul>
-          <a href="mailto:nina@violetinvestigations.com?subject=Violet%20%E2%80%94%20Enterprise" class="price-cta price-cta-secondary">Contact us</a>
+          <a href="#waitlist" onclick="selectPlan('Enterprise (employers)','employers')" class="price-cta price-cta-secondary">Contact us</a>
         </div>
       </div>
       <div class="pricing-includes">
@@ -1023,6 +1023,8 @@
   <h2>Ready to simplify your<br>compliance program?</h2>
   <p>Multi-state training. Employee handbooks. Anonymous hotline. AI investigations. One platform.</p>
   <div id="waitlistForm" style="max-width:480px;margin:0 auto 16px;">
+    <div id="planNote" style="display:none;margin-bottom:12px;font-size:14px;color:var(--violet);font-weight:600;"></div>
+    <input type="hidden" id="planInput" value="">
     <div style="display:flex;gap:16px;margin-bottom:12px;justify-content:center;">
       <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:15px;color:var(--navy);font-weight:500;">
         <input type="radio" name="interest" value="investigators" checked style="accent-color:#7C3AED;width:16px;height:16px;cursor:pointer;">
@@ -1046,6 +1048,7 @@
     <div class="built-by-dot"></div>
     No spam. We'll get back to you personally.
   </div>
+  <p style="margin-top:12px;font-size:14px;color:var(--warm-gray);">Prefer email? Write to <a href="mailto:nina@violetinvestigations.com" style="color:var(--violet);font-weight:600;">nina@violetinvestigations.com</a></p>
   <p id="waitlistSuccess" style="display:none;color:var(--violet);font-size:20px;font-weight:600;margin-top:16px;">&#10003; Thanks — we'll be in touch shortly.</p>
 </section>
 
@@ -1069,7 +1072,7 @@
     xhr.onerror = function() {
       alert('Something went wrong. Please try again.');
     };
-    xhr.send(JSON.stringify({ email: email, name: document.getElementById('nameInput').value, organization: document.getElementById('orgInput').value, interest: selectedInterest }));
+    xhr.send(JSON.stringify({ email: email, name: document.getElementById('nameInput').value, organization: document.getElementById('orgInput').value, interest: selectedInterest, plan: document.getElementById('planInput').value || 'not specified' }));
   });
 
   document.getElementById('emailInput').addEventListener('keydown', function(e) {
@@ -1077,6 +1080,17 @@
       document.getElementById('waitlistBtn').click();
     }
   });
+
+  // Plan selection from the pricing cards
+  function selectPlan(plan, audience) {
+    document.getElementById('planInput').value = plan;
+    var note = document.getElementById('planNote');
+    note.textContent = 'Plan selected: ' + plan;
+    note.style.display = 'block';
+    var radio = document.querySelector('input[name="interest"][value="' + audience + '"]');
+    if (radio) { radio.checked = true; }
+    setTimeout(function() { document.getElementById('nameInput').focus(); }, 400);
+  }
 
   // Pricing tab toggle
   function switchPricingTab(tab) {
