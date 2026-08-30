@@ -313,7 +313,7 @@
     <a href="/blog">Blog</a>
     <a href="/#faq">FAQ</a>
     <a href="https://app.violetinvestigations.com" class="nav-signin">Sign In</a>
-    <a href="/#waitlist" class="nav-cta">Get Early Access</a>
+    <a href="/#waitlist" class="nav-cta">Talk to us</a>
   </div>
 </nav>
 
@@ -781,7 +781,7 @@ function buildCTA(mandateStates, allStates) {
   if (hasAvailable) {
     card.innerHTML = '<h3>Your state requires training.</h3>' +
       '<p>Get compliant with Violet\u2019s interactive, state-specific harassment prevention training.</p>' +
-      '<a href="/#waitlist" class="btn-primary" onclick="gtag(\'event\',\'checker_cta_clicked\',{action:\'get_early_access\'})">Get Early Access &rarr;</a>';
+      '<a href="/#waitlist" class="btn-primary" onclick="gtag(\'event\',\'checker_cta_clicked\',{action:\'get_started\'})">Get started &rarr;</a>';
   } else if (hasComingSoon) {
     var comingNames = mandateStates.filter(function(a) { return STATE_DATA[a].violetStatus === 'coming-soon'; }).map(function(a) { return STATE_DATA[a].name; });
     card.innerHTML = '<h3>' + comingNames.join(', ') + ' training is coming soon.</h3>' +
@@ -791,7 +791,7 @@ function buildCTA(mandateStates, allStates) {
     var primaryName = STATE_DATA[selectedPrimary].name;
     card.innerHTML = '<h3>Training not required by ' + primaryName + ', but recommended under federal law.</h3>' +
       '<p>The EEOC recommends regular anti-harassment training. Violet offers federal/EEOC-aligned training for all employers.</p>' +
-      '<a href="/#waitlist" class="btn-primary" onclick="gtag(\'event\',\'checker_cta_clicked\',{action:\'federal_training\'})">Get Early Access for Federal/EEOC Training &rarr;</a>';
+      '<a href="/#waitlist" class="btn-primary" onclick="gtag(\'event\',\'checker_cta_clicked\',{action:\'federal_training\'})">Get Federal/EEOC Training &rarr;</a>';
   }
 
   return card;
