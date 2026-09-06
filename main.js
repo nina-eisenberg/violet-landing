@@ -21,7 +21,7 @@ function showReport(){clearTimeout(reportTimer);$('#generation-panel').hidden=tr
 function runGeneration(){clearTimeout(reportTimer);$('#generation-panel').hidden=false;$('#inline-report').hidden=true;reportTimer=setTimeout(showReport,reduced.matches?0:5200)}
 function stopSpeech(){}
 function stopRecordingTimer(){clearInterval(recordTimer);recordTimer=null}
-function setStage(index){if(current===index)return;const previous=current;current=index;const ch=chapters[index];$('.chapter-copy .eyebrow').textContent=`${pad(index+1)} / ${ch[0]}`;$('#chapter-title').innerHTML=ch[1];$('#chapter-description').textContent=ch[2];$('#chapter-detail').textContent=ch[3];$('#chapter-count').textContent=`${pad(index+1)} — ${pad(chapters.length)}`;$('#stage-status').textContent=ch[4];workspace.dataset.stage=index;scenes.forEach((scene,i)=>{scene.classList.toggle('active',i===index);scene.inert=i!==index||(mobile.matches&&!mobileDialog.open);scene.setAttribute('aria-hidden',String(i!==index||(mobile.matches&&!mobileDialog.open)))});steps.forEach((step,i)=>{step.classList.toggle('selected',i===index);step.classList.toggle('passed',i<index);step.setAttribute('aria-current',i===index?'step':'false')});$('#previous').disabled=index===0;$('#next').disabled=index===chapters.length-1;updateMobileView();{if(index===7)runGeneration();else clearTimeout(reportTimer);if(previous===8)stopSpeech();if(previous===3&&recordTimer){recordPaused=true;stopRecordingTimer();$('#record-state').textContent='Paused';$('#record-pause').textContent='Resume'}}}
+function setStage(index){if(current===index)return;const previous=current;current=index;const ch=chapters[index];$('.chapter-copy .eyebrow').textContent=`${pad(index+1)} / ${ch[0]}`;$('#chapter-title').innerHTML=ch[1];$('#chapter-description').textContent=ch[2];$('#chapter-detail').textContent=ch[3];$('#chapter-count').textContent=`${pad(index+1)} — ${pad(chapters.length)}`;$('#stage-status').textContent=ch[4];workspace.dataset.stage=index;scenes.forEach((scene,i)=>{scene.classList.toggle('active',i===index);scene.inert=i!==index||(mobile.matches&&!mobileDialog.open);scene.setAttribute('aria-hidden',String(i!==index||(mobile.matches&&!mobileDialog.open)))});steps.forEach((step,i)=>{step.classList.toggle('selected',i===index);step.classList.toggle('passed',i<index);step.setAttribute('aria-current',i===index?'step':'false')});$('#previous').disabled=index===0;$('#next').disabled=index===chapters.length-1;updateMobileView();requestScrollCueUpdate();{if(index===7)runGeneration();else clearTimeout(reportTimer);if(previous===8)stopSpeech();if(previous===3&&recordTimer){recordPaused=true;stopRecordingTimer();$('#record-state').textContent='Paused';$('#record-pause').textContent='Resume'}}}
 function render(){scheduled=false;if(mobile.matches){if(current<0)setStage(0);return}const distance=journey.offsetHeight-innerHeight;const p=Math.min(1,Math.max(0,-journey.getBoundingClientRect().top/distance));setStage(Math.min(chapters.length-1,Math.floor(p*chapters.length)));document.documentElement.style.setProperty('--progress',`${p*100}%`)}
 function requestRender(){if(!scheduled){scheduled=true;requestAnimationFrame(render)}}
 function go(index){index=Math.min(chapters.length-1,Math.max(0,index));if(mobile.matches){transitionMobileStage(index);return}const y=journey.getBoundingClientRect().top+scrollY+(journey.offsetHeight-innerHeight)*(index/chapters.length+.012);scrollTo({top:y,behavior:reduced.matches?'instant':'smooth'})}
@@ -90,7 +90,7 @@ function updateMobileView(){
 function openMobileDetail(){
  if(!mobile.matches)return;
  mobileFadeVersion++;mobileFade?.cancel();
- mobileDialog.showModal();updateMobileView();
+ mobileDialog.showModal();updateMobileView();requestScrollCueUpdate();
  mobileDialog.querySelector('.mobile-detail-close').focus({preventScroll:true});
 }
 $('.mobile-explore').addEventListener('click',openMobileDetail);
@@ -117,4 +117,46 @@ workspace.addEventListener('pointerdown',e=>{if(mobile.matches)swipeStart={x:e.c
 workspace.addEventListener('pointercancel',()=>swipeStart=null);
 workspace.addEventListener('pointerup',e=>{if(!swipeStart)return;const dx=e.clientX-swipeStart.x,dy=e.clientY-swipeStart.y;swipeStart=null;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)go(current+(dx<0?1:-1));});
 
-render();
+// Keep the cue outside the scrolling content so it remains discoverable.
+function makeScrollCue(parent){
+ const button=document.createElement('button');
+ button.type='button';button.className='screen-scroll-cue';button.hidden=true;
+ button.innerHTML='More below <span aria-hidden="true">↓</span>';
+ button.setAttribute('aria-label','Scroll down within this screen');
+ parent.append(button);return button;
+}
+const desktopScrollCue=makeScrollCue(workspace),mobileScrollCue=makeScrollCue(mobileDialog);
+let cueFrame=0,desktopScrollTarget=null;
+function hasMoreBelow(element){return element.clientHeight>0&&element.scrollHeight-element.clientHeight-element.scrollTop>8;}
+function findScreenScrollTarget(){
+ const scene=scenes[current];if(!scene)return null;
+ // Prefer the outer screen, then any independently scrolling panel within it.
+ return [scene,...scene.querySelectorAll('*')].find(element=>{
+  if(!hasMoreBelow(element))return false;
+  const style=getComputedStyle(element);
+  if(!/auto|scroll/.test(style.overflowY))return false;
+  const rect=element.getBoundingClientRect(),frame=workspace.getBoundingClientRect();
+  return rect.bottom>frame.top&&rect.top<frame.bottom;
+ })||null;
+}
+function setCueVisible(button,visible){if(button.hidden===visible)button.hidden=!visible;}
+function updateScrollCues(){
+ cueFrame=0;
+ desktopScrollTarget=mobile.matches?null:findScreenScrollTarget();
+ setCueVisible(desktopScrollCue,!!desktopScrollTarget);
+ setCueVisible(mobileScrollCue,mobile.matches&&mobileDialog.open&&hasMoreBelow(mobileContent));
+}
+function requestScrollCueUpdate(){if(!cueFrame)cueFrame=requestAnimationFrame(updateScrollCues);}
+function scrollScreen(target){if(target)target.scrollBy({top:Math.max(160,target.clientHeight*.7),behavior:reduced.matches?'instant':'smooth'});}
+desktopScrollCue.addEventListener('click',()=>scrollScreen(desktopScrollTarget));
+mobileScrollCue.addEventListener('click',()=>scrollScreen(mobileContent));
+workspace.addEventListener('scroll',requestScrollCueUpdate,true);
+mobileContent.addEventListener('scroll',requestScrollCueUpdate,{passive:true});
+addEventListener('resize',requestScrollCueUpdate);
+mobileDialog.addEventListener('close',requestScrollCueUpdate);
+const screenResizeObserver=new ResizeObserver(requestScrollCueUpdate);
+[workspace,mobileContent,...scenes].forEach(element=>screenResizeObserver.observe(element));
+const screenMutationObserver=new MutationObserver(requestScrollCueUpdate);
+[workspace,mobileContent].forEach(element=>screenMutationObserver.observe(element,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['hidden','open','class']}));
+document.fonts.ready.then(requestScrollCueUpdate);
+render();requestScrollCueUpdate();

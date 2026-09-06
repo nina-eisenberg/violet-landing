@@ -72,3 +72,9 @@
   .hero em.headline-line{animation-delay:.6s!important}
 }
 @keyframes headline-fade{from{opacity:0}to{opacity:1}}
+
+.screen-scroll-cue{position:absolute;right:16px;bottom:16px;z-index:20;display:flex;align-items:center;gap:10px;min-height:44px;padding:10px 16px;border:1px solid #c4b5fd;border-radius:28px;background:#fff;color:#6940bd;box-shadow:0 4px 18px #31204b24;font:600 14px/1.2 var(--sans);cursor:pointer}
+.screen-scroll-cue[hidden]{display:none}
+.screen-scroll-cue span{font-size:20px}
+.screen-scroll-cue:hover{background:#f5f3ff}
+.mobile-stage-dialog .screen-scroll-cue{bottom:max(16px,env(safe-area-inset-bottom));right:16px}
