@@ -23,3 +23,9 @@ header nav{gap:24px}footer{gap:26px;flex-wrap:wrap}footer nav{display:flex;flex-
   .primary:hover .cta-arrow,.price-cta:hover .cta-arrow,.mobile-explore:hover .cta-arrow{transform:translate(2px,-2px)}
   .hero .primary:hover .cta-arrow{transform:translateY(3px)}
 }
+
+.header-actions{display:flex;align-items:center;gap:20px;flex-shrink:0}
+.header-signin{display:inline-flex;align-items:center;min-height:44px;font-size:14px;font-weight:600;color:var(--violet);white-space:nowrap}
+.header-signin:hover{text-decoration:underline;text-underline-offset:4px}
+@media(max-width:650px){.header-actions{gap:12px}.header-actions .header-cta{padding:10px 12px}}
+@media(max-width:360px){body>header{padding-left:16px;padding-right:16px}.header-actions{gap:10px}.header-actions .header-cta{padding:10px;font-size:12px}}
