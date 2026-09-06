@@ -24,7 +24,7 @@ function stopRecordingTimer(){clearInterval(recordTimer);recordTimer=null}
 function setStage(index){if(current===index)return;const previous=current;current=index;const ch=chapters[index];$('.chapter-copy .eyebrow').textContent=`${pad(index+1)} / ${ch[0]}`;$('#chapter-title').innerHTML=ch[1];$('#chapter-description').textContent=ch[2];$('#chapter-detail').textContent=ch[3];$('#chapter-count').textContent=`${pad(index+1)} — ${pad(chapters.length)}`;$('#stage-status').textContent=ch[4];workspace.dataset.stage=index;scenes.forEach((scene,i)=>{scene.classList.toggle('active',i===index);scene.inert=i!==index||(mobile.matches&&!mobileDialog.open);scene.setAttribute('aria-hidden',String(i!==index||(mobile.matches&&!mobileDialog.open)))});steps.forEach((step,i)=>{step.classList.toggle('selected',i===index);step.classList.toggle('passed',i<index);step.setAttribute('aria-current',i===index?'step':'false')});$('#previous').disabled=index===0;$('#next').disabled=index===chapters.length-1;updateMobileView();{if(index===7)runGeneration();else clearTimeout(reportTimer);if(previous===8)stopSpeech();if(previous===3&&recordTimer){recordPaused=true;stopRecordingTimer();$('#record-state').textContent='Paused';$('#record-pause').textContent='Resume'}}}
 function render(){scheduled=false;if(mobile.matches){if(current<0)setStage(0);return}const distance=journey.offsetHeight-innerHeight;const p=Math.min(1,Math.max(0,-journey.getBoundingClientRect().top/distance));setStage(Math.min(chapters.length-1,Math.floor(p*chapters.length)));document.documentElement.style.setProperty('--progress',`${p*100}%`)}
 function requestRender(){if(!scheduled){scheduled=true;requestAnimationFrame(render)}}
-function go(index){index=Math.min(chapters.length-1,Math.max(0,index));if(mobile.matches){setStage(index);return}const y=journey.getBoundingClientRect().top+scrollY+(journey.offsetHeight-innerHeight)*(index/chapters.length+.012);scrollTo({top:y,behavior:reduced.matches?'instant':'smooth'})}
+function go(index){index=Math.min(chapters.length-1,Math.max(0,index));if(mobile.matches){transitionMobileStage(index);return}const y=journey.getBoundingClientRect().top+scrollY+(journey.offsetHeight-innerHeight)*(index/chapters.length+.012);scrollTo({top:y,behavior:reduced.matches?'instant':'smooth'})}
 steps.forEach(step=>step.addEventListener('click',()=>go(Number(step.dataset.step))));$('#previous').addEventListener('click',()=>go(current-1));$('#next').addEventListener('click',()=>go(current+1));document.querySelectorAll('[data-go]').forEach(button=>button.addEventListener('click',()=>go(Number(button.dataset.go))));addEventListener('scroll',requestRender,{passive:true});addEventListener('resize',requestRender);mobile.addEventListener('change',()=>{if(mobileDialog.open)mobileDialog.close();restoreMobileScene();current=-1;requestRender()});
 const dialog=$('#source-dialog'),productDialog=$('#product-dialog'),productContent=$('#product-dialog-content');
 for(const dlg of [dialog,productDialog]){dlg.querySelector('.close-dialog').addEventListener('click',()=>dlg.close());dlg.addEventListener('click',e=>{if(e.target===dlg){const r=dlg.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dlg.close()}})}
@@ -67,7 +67,7 @@ $('.report-page-preview').innerHTML='<button class="app-button" id="expand-repor
 // recordings, filters, findings, and report controls retain their event handlers.
 const mobileControls=document.createElement('div');
 mobileControls.className='mobile-journey-controls';
-mobileControls.innerHTML='<button type="button" class="mobile-explore">Explore this step ↗</button><div class="mobile-step-navigation"><button type="button" class="mobile-previous">← Back</button><span class="mobile-step-count" role="status" aria-live="polite" aria-atomic="true"></span><button type="button" class="mobile-next">Next →</button></div><a href="#pricing" class="mobile-skip">See pricing ↓</a>';
+mobileControls.innerHTML='<button type="button" class="mobile-explore">Explore this step <span class="cta-arrow" aria-hidden="true">↗</span></button><div class="mobile-step-navigation"><button type="button" class="mobile-previous">← Back</button><span class="mobile-step-count" role="status" aria-live="polite" aria-atomic="true"></span><button type="button" class="mobile-next">Next →</button></div><a href="#pricing" class="mobile-skip">See pricing ↓</a>';
 $('.visual-wrap').after(mobileControls);
 const mobileDialog=document.createElement('dialog');
 mobileDialog.className='mobile-stage-dialog';
@@ -89,6 +89,7 @@ function updateMobileView(){
 }
 function openMobileDetail(){
  if(!mobile.matches)return;
+ mobileFadeVersion++;mobileFade?.cancel();
  mobileDialog.showModal();updateMobileView();
  mobileDialog.querySelector('.mobile-detail-close').focus({preventScroll:true});
 }
@@ -97,6 +98,20 @@ $('.mobile-previous').addEventListener('click',()=>go(current-1));
 $('.mobile-next').addEventListener('click',()=>go(current+1));
 mobileDialog.querySelector('.mobile-detail-close').addEventListener('click',()=>mobileDialog.close());
 mobileDialog.addEventListener('close',()=>{restoreMobileScene();if(mobile.matches){scenes[current].inert=true;scenes[current].setAttribute('aria-hidden','true');workspace.setAttribute('aria-hidden','true');$('.mobile-explore').focus({preventScroll:true});}if(recordTimer){recordPaused=true;stopRecordingTimer();$('#record-state').textContent='Paused';$('#record-pause').textContent='Resume';}});
+let mobileFade=null,mobileFadeVersion=0;
+async function transitionMobileStage(index){
+ const version=++mobileFadeVersion;
+ mobileFade?.cancel();
+ if(mobileDialog.open||index===current){setStage(index);return;}
+ // Fade through the change instead of stacking screenshots or duplicate controls.
+ const duration=reduced.matches?80:110;
+ mobileFade=workspace.animate([{opacity:1},{opacity:0}],{duration,fill:'forwards'});
+ try{await mobileFade.finished;}catch{return;}
+ if(version!==mobileFadeVersion||!mobile.matches){mobileFade.cancel();return;}
+ setStage(index);
+ mobileFade.cancel();
+ mobileFade=workspace.animate([{opacity:0},{opacity:1}],{duration:reduced.matches?120:180,easing:'ease-out'});
+}
 let swipeStart=null;
 workspace.addEventListener('pointerdown',e=>{if(mobile.matches)swipeStart={x:e.clientX,y:e.clientY};});
 workspace.addEventListener('pointercancel',()=>swipeStart=null);

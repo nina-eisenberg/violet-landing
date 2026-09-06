@@ -6,3 +6,20 @@ header nav{gap:24px}footer{gap:26px;flex-wrap:wrap}footer nav{display:flex;flex-
 .delivery-stage{position:fixed;z-index:1000;top:50%;left:50%;transform:translate(-50%,-50%);width:min(580px,94vw);height:min(560px,92svh);min-height:0;background:#292232;border:1px solid #8d71aa;border-radius:24px;box-shadow:0 0 0 100vmax #100b1bcc,0 28px 100px #0008;color:white}.delivery-caption button{visibility:visible}.delivery-stage .delivery-caption{top:auto;bottom:35px}.delivery-stage:not(.delivered) .delivery-caption{opacity:1;transform:none}.delivery-stage:not(.delivered) .delivery-caption strong,.delivery-stage:not(.delivered) .delivery-caption p{visibility:hidden}.delivery-stage .delivery-note{top:70px}.delivery-stage .delivery-plane{top:135px}@media(max-height:550px){.delivery-stage .delivery-note{top:25px;height:150px;padding:15px}.delivery-stage .delivery-plane{top:75px}.delivery-stage .delivery-caption{bottom:16px}.delivery-caption strong{font-size:28px}.delivery-caption p{margin:5px auto 10px}}
 /* Clicking Preview or Replay is explicit consent to watch this brief animation. */
 .explicit-motion-preview.in-flight .delivery-note{display:block!important;animation:note-fold 1.5s .4s ease-in forwards!important}.explicit-motion-preview.in-flight .delivery-plane{display:block!important;animation:plane-depart 2.2s 1.7s cubic-bezier(.45,0,.3,1) forwards!important}.explicit-motion-preview.in-flight .delivery-inbox{animation:inbox-receive .5s 3.6s ease both!important}.delivery-caption .replay-flight{margin-left:12px}.delivery-stage:not(.delivered) .replay-flight{visibility:hidden}.delivery-stage.delivered .delivery-inbox:after{content:'Received ✓';position:absolute;top:75px;right:-15px;white-space:nowrap;color:#dcc4ff;font:14px var(--sans)}
+
+/* Small responses to intentional interaction, with no continuous motion. */
+.price-card{transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease}
+.price-card:focus-within{border-color:var(--violet);box-shadow:0 12px 30px #6940bd18}
+.price-cta{display:flex;justify-content:center;align-items:center;gap:10px}
+.cta-arrow{display:inline-block;transition:transform .2s ease}
+@media(hover:hover){.price-card:hover{border-color:var(--violet);box-shadow:0 12px 30px #6940bd18}}
+@media(prefers-reduced-motion:no-preference){
+  .price-card:focus-within{transform:translateY(-4px)}
+  .primary:focus-visible .cta-arrow,.price-cta:focus-visible .cta-arrow,.mobile-explore:focus-visible .cta-arrow{transform:translate(2px,-2px)}
+  .hero .primary:focus-visible .cta-arrow{transform:translateY(3px)}
+}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+  .price-card:hover{transform:translateY(-4px)}
+  .primary:hover .cta-arrow,.price-cta:hover .cta-arrow,.mobile-explore:hover .cta-arrow{transform:translate(2px,-2px)}
+  .hero .primary:hover .cta-arrow{transform:translateY(3px)}
+}
