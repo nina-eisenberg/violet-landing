@@ -23,3 +23,8 @@ header nav{gap:24px}footer{gap:26px;flex-wrap:wrap}footer nav{display:flex;flex-
   .primary:hover .cta-arrow,.price-cta:hover .cta-arrow,.mobile-explore:hover .cta-arrow{transform:translate(2px,-2px)}
   .hero .primary:hover .cta-arrow{transform:translateY(3px)}
 }
+
+.header-signin{display:inline-flex;align-items:center;justify-content:center;min-height:44px;font-size:14px;font-weight:600;color:var(--violet);white-space:nowrap}
+.header-signin:hover{background:#f5f3ff;border-color:var(--violet)}
+@media(max-width:800px){body>header nav{gap:clamp(12px,3.5vw,25px)}body>header nav a{white-space:nowrap}}
+@media(max-width:360px){body>header{padding-left:16px;padding-right:16px}body>header nav{gap:14px;font-size:13px}}
