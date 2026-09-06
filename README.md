@@ -12,7 +12,8 @@ Run `npm run build` to generate `dist/`; preview it with `npx vite preview`.
 The build bundles the homepage, preserves the existing static HTML routes and
 assets, and links content pages to the generated shared stylesheet. It fails if
 a local stylesheet is missing. Edit content pages in their existing root or
-`blog/` locations; shared marketing assets live in `public/`.
+`blog/` locations; shared marketing assets live at the repository root so the existing static
+hosting setup and Vite both serve the same URLs.
 
 `vercel.json` retains the existing clean URLs, training redirect, and state
 rewrites. The prototype's Git repository and Sites hosting configuration are
