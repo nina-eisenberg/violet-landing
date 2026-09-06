@@ -1,7 +1,7 @@
 # Violet marketing site
 
 The homepage includes the nine-stage fictional case journey, pricing, FAQ, and
-contact form with a paper-airplane preview. About, Blog and its two articles,
+contact form with a paper-airplane confirmation animation. About, Blog and its two articles,
 Privacy, and Terms use the same marketing styles.
 
 ## Local development and production build
@@ -21,7 +21,8 @@ not part of this import. Deployment remains a separate review/approval step.
 
 ## Contact verification
 
-Use **Preview send animation** to test the airplane without sending an inquiry.
-It preserves form contents and the pricing selection. The actual submit button
-sends valid inquiries to the existing Formspree endpoint; do not use it with
-valid test data. Test success and failure with a mocked network instead.
+The submit button sends valid inquiries to the existing Formspree endpoint and
+plays the paper-airplane animation after a successful response. The form asks
+for name, email, optional organization, and audience/plan interest. Do not submit
+valid test details to the real endpoint; verify success and failure with a mocked
+network instead.

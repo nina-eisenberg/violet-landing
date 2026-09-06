@@ -58,3 +58,11 @@
   .mobile-stage-dialog .scene *{animation-play-state:running}
 }
 @media(max-width:650px){.closing{display:none}}
+
+/* A quiet introduction on page load; content stays visible without motion. */
+.hero .headline-line{display:inline-block}
+@media(prefers-reduced-motion:no-preference){
+  .hero .headline-line{animation:headline-intro .7s cubic-bezier(.2,.7,.2,1) both}
+  .hero em.headline-line{animation-delay:.16s}
+}
+@keyframes headline-intro{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}

@@ -31,7 +31,7 @@ async function verify(directory) {
       // Vite now bundles both root CSS files into the homepage stylesheet.
       // Content pages need that same bundle, without a second marketing link.
       const html = (await readFile(file, 'utf8'))
-        .replaceAll('href="/style.css"', `href="${stylesheet}"`)
+        .replace(/href="\/style\.css(?:\?[^"]*)?"/g, `href="${stylesheet}"`)
         .replace(/<link\b[^>]*href="\/marketing\.css(?:\?[^\"]*)?"[^>]*>/g, '');
       await writeFile(file, html);
       for (const tag of html.matchAll(/<link\b[^>]*>/gi)) {
