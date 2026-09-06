@@ -20,3 +20,49 @@
 
 /* Keep the interview document primary and intake readable. */
 .interview-columns{grid-template-columns:minmax(0,1fr)!important}.outline-sheet{width:100%;min-width:0}.intake-transcript{margin-top:18px}.intake-turn{padding:14px 0;border-top:1px solid #eceaf0}.intake-turn strong{font-size:14px;color:#6945a0}.intake-turn p{margin:6px 0 0;line-height:1.65;font-size:14px}#record-transcript{margin-top:18px;padding:20px;background:#f8f7fc;border-radius:8px}.practice-buttons{justify-content:flex-end}
+
+/* A compact, optional-depth walkthrough for phones. */
+.mobile-journey-controls{display:none}
+.mobile-stage-dialog{padding:0;border:0}
+@media(max-width:650px){
+  .journey{padding:36px 20px}
+  .chapter-copy{margin:0;padding:0 0 22px;min-height:205px}
+  .chapter-copy h2{font-size:36px;line-height:1.08;margin:14px 0}
+  .chapter-copy>p{font-size:16px;line-height:1.5}
+  .visual-wrap{width:100%;max-width:none}
+  .stage-top{font-size:10px;margin-bottom:10px}
+  .stage-bottom{display:none}
+  .journey .workspace{position:relative;height:260px!important;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:#fff!important;touch-action:pan-y}
+  .journey .workspace:after{content:'';position:absolute;inset:0;z-index:10;background:linear-gradient(transparent 72%,#f7f6f2c9);pointer-events:none}
+  .journey .scene{position:absolute;inset:0;width:142.858%;height:372px;min-height:0;max-height:372px;margin:0;overflow:hidden!important;transform:scale(.7);transform-origin:top left;border:0;border-radius:0;box-shadow:none;pointer-events:none}
+  .journey .scene:not(.active){display:none}
+  .journey .real-call{padding:20px;min-height:0}
+  .journey .voice-logo{width:48px;height:48px;font-size:28px}
+  .journey .real-call h3{margin:8px 0}
+  .journey .voice-transcript{margin-top:12px}
+  .mobile-journey-controls{display:grid;gap:16px;width:100%;margin-top:16px}
+  .mobile-explore{min-height:48px;border:0;border-radius:28px;background:var(--violet);color:#fff;font-size:16px;padding:12px 18px}
+  .mobile-step-navigation{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .mobile-step-navigation button{min-height:44px;min-width:80px;border:1px solid #c8c2d0;border-radius:24px;padding:10px 14px;background:transparent;font-size:14px;color:var(--ink)}
+  .mobile-step-navigation button:disabled{opacity:.4;cursor:default}
+  .mobile-step-count{font-size:14px;color:var(--muted)}
+  .mobile-skip{text-align:center;font-size:14px;text-decoration:underline;text-underline-offset:4px;padding:6px}
+  html.mobile-detail-open{overflow:hidden}
+  .mobile-stage-dialog[open]{display:flex;flex-direction:column;position:fixed;inset:0;margin:0;width:100%;max-width:100%;height:100dvh;max-height:100dvh;border-radius:0;background:var(--paper);overflow:hidden}
+  .mobile-detail-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:max(12px,env(safe-area-inset-top)) 16px 12px;border-bottom:1px solid var(--line);flex-shrink:0}
+  .mobile-detail-header h2{font:600 12px/1.4 var(--sans);letter-spacing:1px;margin:0;color:var(--violet)}
+  .mobile-detail-close{min-height:44px;padding:10px 16px;border:1px solid #c8c2d0;border-radius:24px;background:transparent;color:var(--ink);font-size:14px;flex-shrink:0}
+  .mobile-detail-content{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding-bottom:env(safe-area-inset-bottom)}
+  .mobile-stage-dialog .scene{display:block;position:relative;inset:auto;opacity:1;visibility:visible;transform:none;filter:none;width:100%;height:auto;max-height:none;min-height:0;margin:0;border:0;border-radius:0;box-shadow:none;overflow:visible;pointer-events:auto}
+  .mobile-stage-dialog .real-call{min-height:540px}
+  .mobile-stage-dialog .scene *{animation-play-state:running}
+}
+@media(max-width:650px){.closing{display:none}}
+
+/* A quiet introduction on page load; content stays visible without motion. */
+.hero .headline-line{display:inline-block}
+@media(prefers-reduced-motion:no-preference){
+  .hero .headline-line{animation:headline-intro .7s cubic-bezier(.2,.7,.2,1) both}
+  .hero em.headline-line{animation-delay:.16s}
+}
+@keyframes headline-intro{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
