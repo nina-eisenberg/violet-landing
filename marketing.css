@@ -46,4 +46,7 @@ header nav{gap:24px}footer{gap:26px;flex-wrap:wrap}footer nav{display:flex;flex-
 .hero-bottom .scroll-cue,.hero-bottom>span:last-child{font-size:12px;letter-spacing:1px}
 .hero-bottom .scroll-cue:hover{text-decoration:underline;text-underline-offset:4px}
 @media(max-width:650px){.hero-bottom{flex-direction:row;justify-content:space-between;align-items:center;gap:16px}.hero-bottom>span:last-child{text-align:right}}
-.review-proof .hero-bottom{margin-top:28px;padding-top:24px;border-top:1px solid var(--line)}
+.journey-intro{padding:24px 5vw 0;color:var(--muted)}
+.journey-intro .scroll-cue{width:fit-content;font-size:12px;letter-spacing:1px}
+.journey-intro .scroll-cue:hover{text-decoration:underline;text-underline-offset:4px}
+@media(max-width:650px){.journey-intro{padding:0 0 24px}}
