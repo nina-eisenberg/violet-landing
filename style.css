@@ -59,10 +59,22 @@
 }
 @media(max-width:650px){.closing{display:none}}
 
-/* A quiet introduction on page load; content stays visible without motion. */
+/* A quiet introduction; reduced motion uses opacity only, with no travel. */
 .hero .headline-line{display:inline-block}
 @media(prefers-reduced-motion:no-preference){
-  .hero .headline-line{animation:headline-intro .7s cubic-bezier(.2,.7,.2,1) both}
-  .hero em.headline-line{animation-delay:.16s}
+  .hero .headline-line{animation:headline-intro 1s cubic-bezier(.2,.7,.2,1) .25s both}
+  .hero em.headline-line{animation-delay:.6s}
 }
 @keyframes headline-intro{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+@media(prefers-reduced-motion:reduce){
+  .hero .headline-line{animation:headline-fade 1.2s ease .25s both!important}
+  .hero em.headline-line{animation-delay:.6s!important}
+}
+@keyframes headline-fade{from{opacity:0}to{opacity:1}}
+
+.screen-scroll-cue{position:absolute;right:16px;bottom:16px;z-index:20;display:flex;align-items:center;gap:10px;min-height:44px;padding:10px 16px;border:1px solid #c4b5fd;border-radius:28px;background:#fff;color:#6940bd;box-shadow:0 4px 18px #31204b24;font:600 14px/1.2 var(--sans);cursor:pointer}
+.screen-scroll-cue[hidden]{display:none}
+.screen-scroll-cue span{font-size:20px}
+.screen-scroll-cue:hover{background:#f5f3ff}
+.mobile-stage-dialog .screen-scroll-cue{bottom:max(16px,env(safe-area-inset-bottom));right:16px}
