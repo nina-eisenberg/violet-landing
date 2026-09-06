@@ -24,8 +24,7 @@ header nav{gap:24px}footer{gap:26px;flex-wrap:wrap}footer nav{display:flex;flex-
   .hero .primary:hover .cta-arrow{transform:translateY(3px)}
 }
 
-.header-actions{display:flex;align-items:center;gap:20px;flex-shrink:0}
-.header-signin{display:inline-flex;align-items:center;min-height:44px;font-size:14px;font-weight:600;color:var(--violet);white-space:nowrap}
-.header-signin:hover{text-decoration:underline;text-underline-offset:4px}
-@media(max-width:650px){.header-actions{gap:12px}.header-actions .header-cta{padding:10px 12px}}
-@media(max-width:360px){body>header{padding-left:16px;padding-right:16px}.header-actions{gap:10px}.header-actions .header-cta{padding:10px;font-size:12px}}
+.header-signin{display:inline-flex;align-items:center;justify-content:center;min-height:44px;font-size:14px;font-weight:600;color:var(--violet);white-space:nowrap}
+.header-signin:hover{background:#f5f3ff;border-color:var(--violet)}
+@media(max-width:800px){body>header nav{gap:clamp(12px,3.5vw,25px)}body>header nav a{white-space:nowrap}}
+@media(max-width:360px){body>header{padding-left:16px;padding-right:16px}body>header nav{gap:14px;font-size:13px}}
