@@ -50,3 +50,10 @@ header nav{gap:24px}footer{gap:26px;flex-wrap:wrap}footer nav{display:flex;flex-
 .journey-intro .scroll-cue{width:fit-content;font-size:12px;letter-spacing:1px}
 .journey-intro .scroll-cue:hover{text-decoration:underline;text-underline-offset:4px}
 @media(max-width:650px){.journey-intro{padding:0 0 24px}}
+
+/* Keep the delivery illustration visible without travel or rotation when motion is reduced. */
+@keyframes delivery-plane-fade{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){
+  .delivery-stage.in-flight .delivery-plane{display:block;animation:delivery-plane-fade .6s ease both!important;transform:none}
+  .delivery-stage.delivered .delivery-plane{opacity:1}
+}
