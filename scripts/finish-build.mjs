@@ -19,6 +19,7 @@ async function preserve(directory = root) {
   }
 }
 await preserve();
+await copyFile(path.join(root, 'polish.css'), path.join(output, 'polish.css'));
 const home = await readFile(path.join(output, 'index.html'), 'utf8');
 const stylesheet = home.match(/href="(\/assets\/[^"\s]+\.css)"/)?.[1];
 if (!stylesheet) throw new Error('Built shared stylesheet was not found');
