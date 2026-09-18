@@ -132,3 +132,9 @@ body>footer nav{font-size:12px;gap:22px}
 /* Keep the hero mascot secondary to the headline. */
 .hero-with-violet>.violet-mascot{width:82%;justify-self:center}
 @media(max-width:800px){.hero-with-violet>.violet-mascot{width:205px}}
+
+/* Writing portrait stays within the original hero's secondary column. */
+.hero-with-violet>.violet-mascot{width:100%;border-radius:16px;align-self:center;max-width:560px;justify-self:center}
+.violet-mascot img{display:block;width:100%;height:auto}
+.violet-mascot .violet-gaze{display:none;position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+@media(max-width:800px){.hero-with-violet>.violet-mascot{width:min(100%,440px);margin:24px auto 0}}
