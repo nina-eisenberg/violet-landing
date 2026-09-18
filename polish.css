@@ -138,3 +138,12 @@ body>footer nav{font-size:12px;gap:22px}
 .violet-mascot img{display:block;width:100%;height:auto}
 .violet-mascot .violet-gaze{display:none;position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 @media(max-width:800px){.hero-with-violet>.violet-mascot{width:min(100%,440px);margin:24px auto 0}}
+
+/* Feather only the empty margins, including the studio surface below the books.
+   Mask the image and gaze together so their overlapping edges stay identical. */
+.violet-artwork{position:relative;display:block;
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 4%,#000 96%,transparent),linear-gradient(to bottom,transparent,#000 3%,#000 89%,transparent);
+  -webkit-mask-composite:source-in;
+  mask-image:linear-gradient(to right,transparent,#000 4%,#000 96%,transparent),linear-gradient(to bottom,transparent,#000 3%,#000 89%,transparent);
+  mask-composite:intersect;
+}
