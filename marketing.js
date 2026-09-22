@@ -29,17 +29,3 @@ document.querySelectorAll('.price-cta').forEach(link => {
   arrow.textContent = '↗';
   link.append(arrow);
 });
-
-function openLinkedFaq() {
-  if (!location.hash) return;
-  const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
-  if (!(target instanceof HTMLDetailsElement) || !target.classList.contains('faq-item')) return;
-  target.open = true;
-  requestAnimationFrame(() => target.scrollIntoView({block: 'start'}));
-}
-
-openLinkedFaq();
-window.addEventListener('hashchange', openLinkedFaq);
-document.querySelectorAll('.usage-link').forEach(link => {
-  link.addEventListener('click', () => requestAnimationFrame(openLinkedFaq));
-});
