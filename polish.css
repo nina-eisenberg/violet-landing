@@ -202,3 +202,6 @@ body>footer nav{font-size:12px;gap:22px}
 /* Employer plans: no quoted number, priced by organization size. */
 .price-amount.price-sized{display:flex;flex-direction:column;gap:6px;font-size:32px;letter-spacing:-.6px}
 .price-amount.price-sized span{font-size:13px;margin:0}
+.pricing-larger{margin:22px 0 0;font-size:14px;line-height:1.7;color:#69666c}
+.pricing-larger a{color:var(--violet);border-bottom:1px solid #c7b6e8;white-space:nowrap}
+.pricing-larger a:hover{border-color:var(--violet)}
