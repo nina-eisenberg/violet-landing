@@ -181,3 +181,24 @@ body>footer nav{font-size:12px;gap:22px}
   .mobile-start{display:flex;position:fixed;z-index:900;left:16px;right:16px;bottom:14px;min-height:50px;align-items:center;justify-content:center;border-radius:999px;background:var(--violet);color:white;font-size:14px;font-weight:700;box-shadow:0 12px 36px #29113c44}
   body>footer{padding-bottom:92px}
 }
+
+/* Voice intake demo — mirrors the live Tell Violet call screen (Sept 2026 paper redesign):
+   paper background, mascot, serif name, violet waveform, white transcript card, Violet's lines in violet. */
+.workspace[data-stage="0"]{background:#f8f7f3}
+.real-call{background:#f8f7f3;color:#29262e}
+.voice-logo{width:48px;height:48px;border-radius:0;background:none;object-fit:contain}
+.real-call h3{font:400 22px/1.2 var(--serif);color:#29262e;letter-spacing:-.3px;margin:8px 0 22px}
+.voice-status{color:#69666c}
+.voice-status i{background:#22c55e}
+.real-call .wave i{background:#6940bd}
+.voice-transcript{background:#fff;border:1px solid #e1dce5;border-radius:16px}
+.voice-transcript p{color:#29262e}
+.voice-transcript b{color:inherit}
+.voice-transcript p.agent{color:#6940bd}
+.voice-controls{border-top:1px solid #e1dce5;align-items:center}
+.voice-mute{height:43px;width:43px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#69666c;box-shadow:inset 0 0 0 1px #e1dce5}
+.end-call{display:inline-flex;align-items:center;gap:8px;padding:11px 24px;font-weight:500}
+.simulation-label{color:#8d8197}
+/* Employer plans: no quoted number, priced by organization size. */
+.price-amount.price-sized{display:flex;flex-direction:column;gap:6px;font-size:32px;letter-spacing:-.6px}
+.price-amount.price-sized span{font-size:13px;margin:0}
