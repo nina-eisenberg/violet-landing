@@ -223,3 +223,7 @@ body>footer nav{font-size:12px;gap:22px}
 .solo-page .faq-grid{grid-template-columns:1fr}
 @media(max-width:800px){.hero-copy .trial-terms{margin:16px auto 0}.solo-workflow{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:480px){.solo-workflow{grid-template-columns:1fr}.solo-hero h1{font-size:60px}}
+
+.onboarding-layout .section-lede{margin-bottom:18px}
+.onboarding-solo-link{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;color:var(--violet);font-size:16px;min-height:44px}
+.onboarding-solo-link:hover{text-decoration:underline;text-underline-offset:4px}
