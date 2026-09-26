@@ -205,3 +205,21 @@ body>footer nav{font-size:12px;gap:22px}
 .pricing-larger{margin:22px 0 0;font-size:14px;line-height:1.7;color:#69666c}
 .pricing-larger a{color:var(--violet);border-bottom:1px solid #c7b6e8;white-space:nowrap}
 .pricing-larger a:hover{border-color:var(--violet)}
+/* Solo trial offers: readable terms adjacent to each sign-up action. */
+.trial-offer-heading{font:400 30px/1.2 var(--serif);margin:0 0 12px}
+.hero-copy .trial-terms,.closing .trial-terms,.trial-terms{font:400 14px/1.65 var(--sans);color:var(--ink);max-width:440px;margin:16px 0 0;letter-spacing:0}
+.trial-terms strong{font-weight:600}
+.closing .trial-terms{margin:16px auto 24px}
+.price-card .trial-terms{margin-bottom:20px}
+.price-card .trial-limits{margin-top:18px}
+.solo-hero h1{font:400 clamp(64px,7.3vw,108px)/1.02 var(--serif);letter-spacing:-3px;margin:24px 0}
+.solo-hero h1 em{color:var(--violet);font-weight:400}
+.solo-hero .section-desc{max-width:610px}
+.solo-workflow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;list-style:none;padding:0;margin:36px 0 48px}
+.solo-workflow li{border-top:1px solid var(--line);padding-top:20px}
+.solo-workflow span{color:var(--violet);font-size:13px}
+.solo-workflow h3{font-size:18px;font-weight:600;margin:16px 0 8px}
+.solo-workflow p,.solo-page .price-card p{color:#625d69;line-height:1.65}
+.solo-page .faq-grid{grid-template-columns:1fr}
+@media(max-width:800px){.hero-copy .trial-terms{margin:16px auto 0}.solo-workflow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.solo-workflow{grid-template-columns:1fr}.solo-hero h1{font-size:60px}}
