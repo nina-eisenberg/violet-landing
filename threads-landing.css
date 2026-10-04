@@ -5,3 +5,22 @@ body{background:#f9f8f5}.threads-hero{max-width:1280px;margin:auto;padding:65px 
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
 .threads-intro .violet-mascot{width:100%;max-width:480px;margin:16px auto 0;border-radius:16px}.threads-hero{padding-top:45px;padding-bottom:35px}.threads-trial{margin-top:40px}.threads-trial h2{font:400 29px 'Instrument Serif',Georgia,serif;margin:0 0 14px}.threads-trial p{font:400 11px/1.7 'DM Sans',sans-serif;color:#81738d}.threads-intro{padding-top:5px}@media(max-width:580px){.threads-trial{margin-top:25px}.threads-intro{padding-top:30px}.threads-intro .violet-mascot{max-width:350px;margin:15px auto 0}}
+
+/* One opening composition: shared alignment, one action group, one type scale. */
+.threads-hero { max-width:1200px; padding:72px 36px 52px; grid-template-columns:1.08fr 1fr; gap:64px; align-items:start; }
+.threads-hero h1 { font-size:clamp(76px,8vw,108px); line-height:1; letter-spacing:-3px; }
+.threads-eyebrow { font-size:10px; letter-spacing:1.3px; margin-bottom:22px; }
+.threads-intro { padding-top:36px; }
+.threads-intro>p:first-child { font:400 32px/1.15 'Instrument Serif',Georgia,serif; letter-spacing:0; margin-bottom:18px; }
+.threads-detail { font-size:15px; line-height:1.75; margin-bottom:0; max-width:420px; }
+.threads-intro .violet-mascot { display:block; width:100%; max-width:460px; margin:12px 0 0; }
+.threads-trial { margin-top:36px; }
+.threads-trial h2 { font:500 16px/1.5 'DM Sans',sans-serif; margin-bottom:14px; color:#554b61; }
+.threads-actions { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.threads-actions .primary,.threads-play { min-height:48px; padding:13px 21px; font:500 13px/1.5 'DM Sans',sans-serif; border-radius:28px; box-shadow:none; }
+.threads-play { background:transparent; color:#6640b3; border-color:#d8cbea; gap:9px; }
+.threads-play:hover { color:#503183; background:#eee7f6; }
+.threads-trial p { margin-top:16px; font-size:11px; line-height:1.65; }
+.threads-tour { max-width:1200px; padding-top:32px; border-top:1px solid #e6dfec; }
+@media(max-width:900px) { .threads-hero { gap:36px; padding:52px 28px 36px; } .threads-hero h1 { font-size:80px; } .threads-intro>p:first-child { font-size:29px; } .threads-detail { font-size:14px; } }
+@media(max-width:650px) { .threads-hero { display:grid; grid-template-columns:1fr; gap:28px; padding:38px 24px 24px; } .threads-hero h1 { font-size:clamp(66px,15vw,90px); letter-spacing:-2px; } .threads-intro { padding-top:0; } .threads-intro>p:first-child { font-size:30px; } .threads-trial { margin-top:24px; } .threads-intro .violet-mascot { max-width:380px; margin:8px auto 0; } .threads-tour { margin:0 14px; padding:28px 0 0; } }
