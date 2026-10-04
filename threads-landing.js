@@ -1,0 +1,3 @@
+const frame=document.querySelector('#violet-tour');
+window.addEventListener('message',event=>{if(event.origin!==location.origin||event.source!==frame.contentWindow||event.data?.type!=='violet:demo-height')return;const height=Number(event.data.height);if(Number.isFinite(height)&&height>300&&height<5000)frame.style.height=Math.ceil(height)+'px';});
+document.querySelector('#tour-play').addEventListener('click',()=>{document.querySelector('#journey').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});frame.contentWindow.postMessage({type:'violet:play'},location.origin);});

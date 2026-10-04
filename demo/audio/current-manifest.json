@@ -1,0 +1,14 @@
+[
+  {
+    "id": "violet-fixed-current",
+    "role": "violet",
+    "text": "Fixed. There's one step left for you, below.",
+    "bytes": 54379
+  },
+  {
+    "id": "user-home-natural",
+    "role": "investigator",
+    "text": "Summarize Marcus Doyle’s interview, and add a note to Maya’s case: I need to review the draft plan.",
+    "bytes": 108296
+  }
+]

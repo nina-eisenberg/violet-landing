@@ -1,0 +1,56 @@
+{
+  "model": "eleven_v4_turbo",
+  "investigatorVoice": "George (stock ElevenLabs voice)",
+  "violetVoice": "Configured production Violet voice",
+  "clips": [
+    {
+      "id": "user-plan",
+      "role": "investigator",
+      "text": "Draft the investigation plan.",
+      "file": "user-plan.mp3",
+      "bytes": 35153
+    },
+    {
+      "id": "violet-proposal",
+      "role": "violet",
+      "text": "All four interviews are already done, so the plan will be built around the record you have. I've put up the card to draft the plan.",
+      "file": "violet-proposal.mp3",
+      "bytes": 114565
+    },
+    {
+      "id": "violet-drafted",
+      "role": "violet",
+      "text": "The plan is drafted: 4 allegations. Click anything to change it, then finalize it.",
+      "file": "violet-drafted.mp3",
+      "bytes": 96593
+    },
+    {
+      "id": "violet-finalized",
+      "role": "violet",
+      "text": "Plan finalized: 4 allegations. Next, the analysis: build the evidence matrix, the timeline, or go straight to the report.",
+      "file": "violet-finalized.mp3",
+      "bytes": 151764
+    },
+    {
+      "id": "user-timeline",
+      "role": "investigator",
+      "text": "Build the timeline.",
+      "file": "user-timeline.mp3",
+      "bytes": 26376
+    },
+    {
+      "id": "violet-building",
+      "role": "violet",
+      "text": "Building the timeline from the record.",
+      "file": "violet-building.mp3",
+      "bytes": 36407
+    },
+    {
+      "id": "violet-timeline",
+      "role": "violet",
+      "text": "The timeline is built: 20 events. Build the evidence matrix too, or go on to the report.",
+      "file": "violet-timeline.mp3",
+      "bytes": 105788
+    }
+  ]
+}

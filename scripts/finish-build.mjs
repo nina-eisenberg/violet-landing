@@ -1,10 +1,10 @@
-import { access, copyFile, mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { access, copyFile, cp, mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 // Keep the existing static routes and assets alongside Vite's bundled homepage.
 const root = process.cwd();
 const output = path.join(root, 'dist');
-const excluded = new Set(['dist', 'node_modules', 'public', 'scripts']);
+const excluded = new Set(['dist', 'node_modules', 'public', 'scripts', 'demo']);
 async function preserve(directory = root) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     if (entry.name.startsWith('.') || excluded.has(entry.name)) continue;
@@ -19,6 +19,7 @@ async function preserve(directory = root) {
   }
 }
 await preserve();
+await cp(path.join(root, 'demo'), path.join(output, 'demo'), { recursive: true });
 await copyFile(path.join(root, 'polish.css'), path.join(output, 'polish.css'));
 const home = await readFile(path.join(output, 'index.html'), 'utf8');
 const stylesheet = home.match(/href="(\/assets\/[^"\s]+\.css)"/)?.[1];
