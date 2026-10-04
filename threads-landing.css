@@ -24,3 +24,17 @@ body{background:#f9f8f5}.threads-hero{max-width:1280px;margin:auto;padding:65px 
 .threads-tour { max-width:1200px; padding-top:32px; border-top:1px solid #e6dfec; }
 @media(max-width:900px) { .threads-hero { gap:36px; padding:52px 28px 36px; } .threads-hero h1 { font-size:80px; } .threads-intro>p:first-child { font-size:29px; } .threads-detail { font-size:14px; } }
 @media(max-width:650px) { .threads-hero { display:grid; grid-template-columns:1fr; gap:28px; padding:38px 24px 24px; } .threads-hero h1 { font-size:clamp(66px,15vw,90px); letter-spacing:-2px; } .threads-intro { padding-top:0; } .threads-intro>p:first-child { font-size:30px; } .threads-trial { margin-top:24px; } .threads-intro .violet-mascot { max-width:380px; margin:8px auto 0; } .threads-tour { margin:0 14px; padding:28px 0 0; } }
+
+/* The illustration leads the right side; its caption stays subordinate to the headline. */
+.threads-hero { max-width:1120px; padding:54px 36px 48px; gap:28px; grid-template-columns:1.12fr 1fr; align-items:center; }
+.threads-hero h1 { font-size:clamp(76px,8vw,104px); }
+.threads-intro { padding:0; display:flex; flex-direction:column; }
+.threads-intro .violet-mascot { width:100%; max-width:none; margin:0; }
+.threads-caption { padding:12px 18px 0; }
+.threads-caption .threads-conversation { font:500 19px/1.4 'DM Sans',sans-serif; letter-spacing:-.25px; color:#42344e; margin:0 0 8px; }
+.threads-caption .threads-detail { font:400 14px/1.65 'DM Sans',sans-serif; color:#756b7e; margin:0; max-width:390px; }
+.threads-trial { margin-top:30px; }
+.threads-trial h2 { font-size:14px; }
+.threads-tour { max-width:1120px; }
+@media(max-width:900px) { .threads-hero { padding:40px 28px; gap:20px; } .threads-hero h1 { font-size:78px; } .threads-caption { padding:10px 8px 0; } }
+@media(max-width:650px) { .threads-hero { grid-template-columns:1fr; gap:20px; padding:32px 24px; } .threads-hero h1 { font-size:clamp(66px,16vw,90px); } .threads-intro { max-width:420px; margin:auto; } .threads-intro .violet-mascot { margin:0; } .threads-caption { padding:8px 0 0; } }
