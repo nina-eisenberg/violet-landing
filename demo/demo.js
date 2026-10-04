@@ -67,7 +67,7 @@
     {step:7,id:'violet-report',speaker:'VIOLET',text:reportReply},
     {step:7,mode:'redraft-request',id:'user-redraft',speaker:'INVESTIGATOR',text:redraftRequest},
     {step:7,mode:'redraft',id:'violet-redraft',speaker:'VIOLET',text:redraftReply},
-    {step:8,mode:'question',id:null,speaker:'INVESTIGATOR · TYPED REQUEST',text:'Where did my upload go? I just added Jordan Kim’s witness statement.',duration:3500},
+    {step:8,mode:'question',id:'user-upload-question',speaker:'INVESTIGATOR',text:'Where did my upload go? I just added Jordan Kim’s witness statement.'},
     {step:8,mode:'ticket',id:'violet-support',speaker:'VIOLET',text:supportSent},
     {step:8,mode:'fixed',id:'violet-fixed-current',speaker:'VIOLET',text:supportFixed,note:'Later · support resolution returned to the same conversation'}
   ];
