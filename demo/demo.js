@@ -67,7 +67,7 @@
   ];
   const caseHeader=$('.case-header').innerHTML;
   const caseRail=$('.app-sidebar').innerHTML;
-  const homeOverview=`<div class="home-intro"><small>SATURDAY, OCTOBER 3</small><h3>Good evening, friend.</h3><p>Your work, across cases.</p><div class="home-start"><strong>Start a case</strong><p>Tell me what you have: files, a complaint you can describe, or just a name. I'll ask you what I need and set it up with you. Drop files here any time.</p></div><div class="home-today"><div><span>Inbox</span><p>42 reports are waiting in the inbox<small>Through Tell Violet</small></p></div><div><span>Plan</span><p>Maya Lindgren — Mock Case 6: the plan is waiting for review<small>Drafted, not finalized</small></p></div></div></div>`;
+  const homeOverview=`<div class="home-intro"><small>SATURDAY, OCTOBER 3</small><h3>Good evening, friend.</h3><p>Your work, across cases.</p><div class="home-start vt-start"><div><strong>Start a case</strong><p>Tell me what you have: files, a complaint you can describe, or just a name. I'll ask you what I need and set it up with you. Drop files here any time.</p></div></div><div class="home-today"><div><span>Inbox</span><p>42 reports are waiting in the inbox<small>Through Tell Violet</small></p></div><div><span>Plan</span><p>Maya Lindgren — Mock Case 6: the plan is waiting for review<small>Drafted, not finalized</small></p></div></div></div>`;
   function render(next,nextMode){
     closeSource();
     step=Math.max(0,Math.min(8,next));mode=nextMode||(step===0?'home':step===1?'proposal':step===2?'final':'built');
@@ -76,7 +76,7 @@
     $('.case-header').innerHTML=step===0?'<div><h3>Home</h3><p>Across your cases</p></div><span class="case-status">Actual Home · selected items</span>':caseHeader;
     $('.composer>span').textContent=step===0?'Ask about your cases, or tell Violet what you need…':step===7?'Ask, or say what to change…':'Ask about Marcus Doyle, or tell Violet what to do…';
     let html='';
-    if(step===0){html=homeOverview;if(mode==='actions'){html=bubble(homePrompt)+name+`<p class="plan-readonly-note">After selecting “The one at Resolution” from three Marcus Doyle cases.</p><div class="vt-card"><div class="vt-card-head"><span class="vt-card-title">Summarize Marcus Doyle’s interview</span></div><div class="vt-card-body"><div class="vt-card-row"><span class="k">Case</span><span>Marcus Doyle</span></div><div class="vt-card-row"><span class="k">Format</span><span>Quick bullets</span></div></div></div>`+reply('Summary card is up for the Resolution-stage case.')+extra.homeNote+`<button class="vt-btn" data-step="3">Inspect Marcus’s interview summary →</button>`;}else html+=`<div class="home-prompt-preview">${icon('wave')}<p>${homePrompt}</p><button class="vt-btn" id="home-actions">See the actual response →</button></div>`;
+    if(step===0){html=homeOverview;if(mode==='actions'){html=bubble(homePrompt)+name+`<p class="plan-readonly-note">After selecting “The one at Resolution” from three Marcus Doyle cases.</p><div class="vt-card"><div class="vt-card-head"><span class="vt-card-title">Summarize Marcus Doyle’s interview</span></div><div class="vt-card-body"><div class="vt-card-row"><span class="k">Case</span><span>Marcus Doyle</span></div><div class="vt-card-row"><span class="k">Format</span><span>Quick bullets</span></div></div></div>`+reply('Summary card is up for the Resolution-stage case.')+extra.homeNote+`<button class="vt-btn" data-step="3">Inspect Marcus’s interview summary →</button>`;};
     }else if(step===1){
       html=bubble('Draft the investigation plan');
       if(mode!=='prompt')html+=name+(mode==='drafted'?capture.action:proposedCard)+reply('All four interviews are already done, so the plan will be built around the record you have.')+reply("I've put up the card to draft the plan.");
@@ -104,12 +104,38 @@
     $('#sound-toggle').textContent=muted?'Sound off':'Sound on';$('#sound-toggle').setAttribute('aria-pressed',String(!muted));
     audio.muted=muted;
   }
-  function stop(){playing=false;playToken++;clearTimeout(timer);timer=null;audio.pause();content.classList.remove('active-speaking');updatePlayback();}
+  function stop(){$('.composer').classList.remove('is-typing','is-submitting');$('#talk-button').innerHTML=icon('wave');playing=false;playToken++;clearTimeout(timer);timer=null;audio.pause();content.classList.remove('active-speaking');updatePlayback();}
   function showCue(){const current=cues[cue];if(!current){stop();$('#speaker-label').textContent='REPLAY COMPLETE';$('#voice-caption').textContent='Explore the interview, evidence, findings and report, or replay from Home.';return;}
-    render(current.step,current.mode);if(current.note)$('#capture-caption').textContent=current.note;
+    render(current.step,current.mode);if(cue===0){typeOpening();return;}if(current.note)$('#capture-caption').textContent=current.note;
     $('#speaker-label').textContent=current.speaker;$('#voice-caption').textContent=current.text;content.classList.toggle('active-speaking',current.speaker==='VIOLET');
     audio.src=`audio/${current.id}.mp3`;audio.muted=muted;const token=playToken;
     audio.play().catch(()=>{if(token!==playToken)return;stop();$('#speaker-label').textContent='AUDIO COULD NOT PLAY';$('#voice-caption').textContent='Press play to retry, or turn sound off and explore the scenes.';});
+  }
+  function typeOpening(){
+    const token=playToken, field=$('.composer>span'), composer=$('.composer');
+    const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let n=0; composer.classList.add('is-typing'); field.textContent='';
+    $('#talk-button').innerHTML='↵';
+    $('#speaker-label').textContent='INVESTIGATOR · TYPING';
+    $('#voice-caption').textContent='The investigator types a request across two cases.';
+    function tick(){
+      if(!playing||token!==playToken)return;
+      n=Math.min(homePrompt.length,n+(reduced?homePrompt.length:2));field.textContent=homePrompt.slice(0,n);
+      if(n<homePrompt.length){timer=setTimeout(tick,45);return;}
+      timer=setTimeout(()=>{
+        if(!playing||token!==playToken)return;
+        composer.classList.remove('is-typing');composer.classList.add('is-submitting');
+        $('#speaker-label').textContent='INVESTIGATOR · ENTER';$('#voice-caption').textContent='Presses Enter to send the request.';
+        timer=setTimeout(()=>{
+          if(!playing||token!==playToken)return;
+          composer.classList.remove('is-submitting');$('#talk-button').innerHTML=icon('wave');
+          field.textContent='Ask about your cases, or tell Violet what you need…';
+          content.innerHTML=bubble(homePrompt);$('#voice-caption').textContent='Violet is working on the request…';
+          timer=setTimeout(()=>{if(playing&&token===playToken){cue=1;showCue();}},900);
+        },450);
+      },650);
+    }
+    tick();
   }
   function play(){if(playing){stop();return;}playing=true;playToken++;if(cue>=cues.length)cue=0;showCue();updatePlayback();}
   audio.addEventListener('ended',()=>{if(!playing)return;cue++;const token=playToken;timer=setTimeout(()=>{if(playing&&token===playToken)showCue();},cue===4?1800:cue===5?1500:1800);if(cue===4){const b=$('#confirm-draft');b?.classList.add('click-cue');$('#speaker-label').textContent='INVESTIGATOR ACTION';$('#voice-caption').textContent='Clicks “Draft the plan.” Processing time is shortened in this replay.';}});
