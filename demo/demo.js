@@ -60,6 +60,7 @@
     {step:5,id:'user-matrix',speaker:'INVESTIGATOR',text:'Build the evidence matrix.'},
     {step:5,id:'violet-matrix',speaker:'VIOLET',text:"Building the evidence matrix from the plan's allegations, the interviews and the documents."},
     {step:6,id:'violet-findings',speaker:'VIOLET',text:findingReply},
+    {step:6,mode:'check',id:null,speaker:'INVESTIGATOR ACTION',text:'Reviews the confidence check and chooses the evidence-supported finding.'},
     {step:7,id:'user-report',speaker:'INVESTIGATOR',text:'Start the report.'},
     {step:7,id:'violet-report',speaker:'VIOLET',text:reportReply},
     {step:8,mode:'ticket',id:'violet-support',speaker:'VIOLET',text:supportSent},
@@ -92,7 +93,7 @@
   const homeOverview=`<div class="home-intro"><small>SATURDAY, OCTOBER 3</small><h3>Good evening, friend.</h3><p>Your work, across cases.</p><div class="home-start vt-start"><div><strong>Start a case</strong><p>Tell me what you have: files, a complaint you can describe, or just a name. I'll ask you what I need and set it up with you. Drop files here any time.</p></div></div><div class="home-today"><div><span>Inbox</span><p>42 reports are waiting in the inbox<small>Through Tell Violet</small></p></div><div><span>Plan</span><p>Maya Lindgren — Mock Case 6: the plan is waiting for review<small>Drafted, not finalized</small></p></div></div></div>`;
   function render(next,nextMode){
     closeSource();
-    step=Math.max(0,Math.min(8,next));mode=nextMode||(step===0?'home':step===1?'proposal':step===2?'final':'built');
+    step=Math.max(0,Math.min(8,next));if(step===6)findingAligned=false;mode=nextMode||(step===0?'home':step===1?'proposal':step===2?'final':'built');
     $('#demo-panel').classList.toggle('is-home',step===0);$('#demo-panel').classList.toggle('is-report',step===7);
     $('.app-sidebar').innerHTML=step===0?`<span class="rail-brand">Violet.</span><button class="home-nav-active" data-step="0">${icon('home')} Home</button><span class="home-nav-static">${icon('folder')} Inbox <small>42</small></span><small class="home-cases-label">SELECTED DEMO CASES</small><button class="home-case-link" data-step="1">Marcus Doyle<small>INV-2026-0096</small></button><span class="home-case-link">Maya Lindgren<small>Mock Case 6</small></span><span class="rail-bottom">NE　 Nina Eisenberg</span>`:caseRail;
     $('.case-header').innerHTML=step===0?'<div><h3>Home</h3><p>Across your cases</p></div><span class="case-status">Actual Home · selected items</span>':caseHeader;
@@ -108,7 +109,7 @@
     }else if(step===3){html=bubble("Summarize Marcus Doyle's interview")+name+reply("The summary card for Marcus Doyle's interview is up.")+`<p class="plan-readonly-note">Selected interview summary excerpts · shortened for this demo.</p>`+interviewView()+`<button class="vt-btn" data-open="transcript">Read the source transcript</button>`;
     }else if(step===4){html=bubble('Build the timeline');if(mode!=='prompt')html+=name+reply(texts.building);if(mode==='built')html+=`<div class="open-timeline"><h4>Timeline <small>6 selected events from the 20-event timeline</small></h4>${timelineBody()}</div>`;
     }else if(step===5){html=bubble('Build the evidence matrix')+name+reply("Building the evidence matrix from the plan's allegations, the interviews and the documents.")+matrixView();
-    }else if(step===6){html=name+reply(findingReply)+`<p class="plan-readonly-note">Current saved decisions · the investigator makes these selections. Read-only replay.</p>`+extra.findings+confidenceView();
+    }else if(step===6){html=name+reply(findingReply)+`<p class="plan-readonly-note">Staged decision for this fictional demo · the investigator reviews and chooses.</p>`+findingView()+confidenceView();
     }else if(step===7){html=bubble(mode==='edit'?'make the summary of findings section shorter':'Start the report')+name+reply(mode==='edit'?"Rewriting “II. Summary of Findings”. Violet's version will show in that section, to use or not.":reportReply)+`<p class="plan-readonly-note">The fictional case report, alongside the conversation.</p><button class="vt-btn" data-open="report">Read report excerpts →</button>`;}else{html=`<div class="uploaded-demo-file">${icon('file')} Jordan Kim - witness statement (protected).pdf</div>`+name+reply("Here's what I found.")+window.VIOLET_SUPPORT+reply(supportSent);if(mode==='fixed'||mode==='built')html+=`<div class="later-divider">LATER · SUPPORT FOLLOW-UP</div>`+reply(supportFixed)+refined.support;}
     content.innerHTML=`<div class="actual-exchange">${html}</div>`;content.scrollTop=mode==='fixed'?content.scrollHeight:0;
     let reportPanel=$('#report-preview');if(!reportPanel){reportPanel=document.createElement('aside');reportPanel.id='report-preview';$('.workspace-body').append(reportPanel);}reportPanel.hidden=step!==7;
@@ -128,7 +129,7 @@
   }
   function stop(){$('.composer').classList.remove('is-typing','is-submitting');$('#talk-button').innerHTML=icon('wave');playing=false;playToken++;clearTimeout(timer);timer=null;audio.pause();content.classList.remove('active-speaking');updatePlayback();}
   function showCue(){const current=cues[cue];if(!current){stop();$('#speaker-label').textContent='REPLAY COMPLETE';$('#voice-caption').textContent='Explore the interview, evidence, findings and report, or replay from Home.';return;}
-    render(current.step,current.mode);if(cue===0){typeOpening();return;}if(current.note)$('#capture-caption').textContent=current.note;
+    render(current.step,current.mode);if(cue===0){typeOpening();return;}if(current.mode==='check'){animateFinding(()=>{cue++;showCue();});return;}if(current.note)$('#capture-caption').textContent=current.note;
     $('#speaker-label').textContent=current.speaker;$('#voice-caption').textContent=current.text;content.classList.toggle('active-speaking',current.speaker==='VIOLET');
     if(!current.id){const token=playToken;timer=setTimeout(()=>{if(playing&&token===playToken){cue++;showCue();}},4500);return;}
     audio.src=`audio/${current.id}.mp3`;audio.muted=muted;const token=playToken;
@@ -175,7 +176,33 @@
     return '<p class="plan-readonly-note">Selected report sections · shortened for this demo.</p>'+template.innerHTML;
   }
   function matrixView(){return `<div class="matrix-by-allegation"><div class="matrix-heading">Evidence matrix <span>Selected excerpts · by allegation</span></div>${refined.groups.map((g,i)=>`<details class="matrix-allegation" name="matrix-allegation" ${i===0?'open':''}><summary>${escape(g.title)}</summary>${g.entries.slice(0,3).map(e=>`<div class="matrix-account"><strong>${escape(e.source.replace(/(Complainant|Subject|Witness)$/,' · $1'))}</strong><p>${escape(shortExcerpt(e.text))}</p></div>`).join('')}</details>`).join('')}</div>`;}
-  function confidenceView(){return `<div class="vt-ccheck"><p class="vt-ccheck-head is-ok"><b>✓ The evidence agrees with all 3 findings</b></p><ul class="vt-ccheck-rows">${refined.confidence.map(c=>`<li class="is-ok"><details><summary><span class="vt-ccheck-q">${escape(c.title)}</span><span class="vt-ccheck-v">${escape(c.finding)} · evidence agrees (${c.confidence})</span></summary><div class="vt-ccheck-more"><b>Limitations</b><p>${escape(c.detail)}</p></div></details></li>`).join('')}</ul><div class="vt-ccheck-foot"><button class="vt-chip is-next" data-step="7">Start the report →</button></div></div>`;}
+  let findingAligned=false;
+  function findingView(){return `<div class="finding-demo vt-card"><div class="vt-card-head">Overall finding · Religious Accommodation Policy</div><div class="vt-card-body"><div class="finding-options" role="radiogroup" aria-label="Overall finding for Religious Accommodation Policy"><button role="radio" aria-checked="${!findingAligned}" class="vt-btn ${!findingAligned?'is-p':''}" data-finding="original">Not substantiated</button><button role="radio" aria-checked="${findingAligned}" class="vt-btn ${findingAligned?'is-p':''}" data-finding="aligned">Substantiated</button></div></div></div>`;}
+  function confidenceView(){return `<div class="vt-ccheck"><p class="vt-ccheck-head"><b>${findingAligned?'✓ Finding updated by the investigator':'Confidence check · 1 finding differs'}</b></p><p><strong>Religious Accommodation Policy</strong></p><p>Your finding: <strong>${findingAligned?'Substantiated':'Not substantiated'}</strong><br>Evidence suggests: <strong>Substantiated · high confidence</strong></p><p>Doyle acknowledged seeing the shift-swap offer but did not pursue it. The policy required consideration of alternatives and HR consultation before denial.</p><details><summary>Assessment limitations</summary><p>${escape(refined.confidence[0].detail)}</p></details><p class="plan-readonly-note">The other two policy findings agree with the evidence.</p><div class="vt-ccheck-foot">${findingAligned?'<button class="vt-chip is-next" data-step="7">Start the report →</button><button class="vt-btn" data-watch-finding>Replay decision</button>':'<button class="vt-btn" data-watch-finding>Watch the investigator review →</button><button class="vt-btn" data-finding="aligned">Use evidence-supported finding</button>'}</div><p class="finding-action" aria-live="polite"></p></div>`;}
+  function updateFinding(){
+    const card=content.querySelector('.finding-demo'),check=content.querySelector('.vt-ccheck');
+    if(card)card.outerHTML=findingView();if(check)check.outerHTML=confidenceView();
+  }
+  function animateFinding(done=()=>{}){
+    findingAligned=false;updateFinding();const token=playToken;
+    const card=content.querySelector('.finding-demo');if(card)content.scrollTop+=card.getBoundingClientRect().top-content.getBoundingClientRect().top;
+    content.querySelector('.finding-action').textContent='Investigator reviews the evidence and limitations…';
+    timer=setTimeout(()=>{
+      if(token!==playToken||step!==6)return;
+      const option=content.querySelector('[data-finding="aligned"]');option.classList.add('decision-cue');
+      content.querySelector('.finding-action').textContent='Investigator chooses “Substantiated”.';
+      timer=setTimeout(()=>{
+        if(token!==playToken||step!==6)return;
+        findingAligned=true;updateFinding();
+        content.querySelector('.finding-action').textContent='Investigator updated the finding. Violet did not change it automatically.';
+        timer=setTimeout(()=>{if(token===playToken&&step===6)done();},2200);
+      },1000);
+    },2600);
+  }
+  document.addEventListener('click',event=>{
+    if(event.target.closest('[data-watch-finding]')){stop();animateFinding();}
+    const choice=event.target.closest('[data-finding]');if(choice){stop();findingAligned=choice.dataset.finding==='aligned';updateFinding();}
+  });
   let citeFocus=null;
   function alignSource(){
     const panel=$('#source-panel');if(!panel||dialog.open)return;

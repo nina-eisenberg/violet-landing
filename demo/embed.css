@@ -4,3 +4,5 @@ body{background:#f9f8f5}.experience{padding:0;max-width:none;margin:0}.demo-disc
 .play-control{border-radius:999px!important}
 
 .workspace-body>.demo-source{align-self:flex-start;border:1px solid #e1d8ea;border-radius:12px;overflow:hidden}.demo-source header{flex-shrink:0}.source-lines{min-height:0}
+
+.finding-options{display:flex;gap:10px;flex-wrap:wrap}.finding-demo{margin:16px 0}.decision-cue{outline:3px solid #aa86db;outline-offset:5px;box-shadow:0 0 0 9px #eee5fa}.finding-action{color:#60428a;font-size:12px!important}.vt-ccheck-foot{display:flex;gap:10px;flex-wrap:wrap}
