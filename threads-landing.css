@@ -45,3 +45,9 @@ body{background:#f9f8f5}.threads-hero{max-width:1280px;margin:auto;padding:65px 
 .restored-hero .threads-caption .threads-conversation { font:500 19px/1.4 'DM Sans',sans-serif; margin:0 0 8px; }
 .restored-hero .threads-caption .threads-detail { font:400 14px/1.65 'DM Sans',sans-serif; margin:0 0 18px; max-width:390px; }
 @media(max-width:800px) { .restored-hero .threads-intro { max-width:440px; margin-top:24px; } .restored-hero .threads-caption { text-align:left; } }
+
+/* Shared body typography and a single, quiet transition into the tour. */
+.restored-hero .threads-caption .threads-detail { font:400 16px/1.55 var(--sans); color:#69666c; max-width:440px; margin:0; text-wrap:pretty; }
+.hero-tour-arrow { grid-column:1/-1; justify-self:center; display:grid; place-items:center; width:48px; height:56px; margin:24px 0 -32px; color:var(--violet); text-decoration:none; }
+.hero-tour-arrow:hover { color:#43267b; }
+@media(max-width:800px) { .hero-tour-arrow { margin:24px 0 0; } }
