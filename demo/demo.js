@@ -29,12 +29,12 @@
   const texts = {
     proposal:"All four interviews are already done, so the plan will be built around the record you have. I've put up the card to draft the plan.",
     drafted:'The plan is drafted: 4 allegations. Click anything to change it, then finalize it.',
-    finalized:'Plan finalized: 4 allegations. Next, the analysis: build the evidence matrix, the timeline, or go straight to the report.',
+    finalized:'Plan finalized: 4 allegations. Next, prepare interview outlines, conduct interviews, and review the summaries.',
     building:'Building the timeline from the record.',
     timeline:'The timeline is built: 20 events. Build the evidence matrix too, or go on to the report.'
   };
   const proposedCard = `<div class="vt-card"><div class="vt-card-head"><span class="vt-card-title">Draft the investigation plan</span></div><div class="vt-card-body"><div class="vt-card-row"><span class="k">What</span><span>Allegations first, then what to gather and who to interview</span></div><div class="vt-card-row"><span class="k">Takes</span><span>About a minute. You review and finalize it.</span></div></div><div class="vt-card-foot"><button class="vt-btn is-p" id="confirm-draft">✓ Draft the plan</button><button class="vt-btn is-ghost" id="dismiss-draft">× Not now</button><span class="vt-card-hint">Nothing is saved until you confirm</span></div></div>`;
-  const nextSteps = refined.next;
+  const nextSteps = `<div class="vt-stagecard"><div class="vt-stagecard-head">What next</div><div class="vt-flow-choice"><button class="vt-flow-option" disabled title="Read-only preview"><strong>Generate interview outlines</strong><span>Prepare questions for each person in the plan.</span></button><button class="vt-flow-option" disabled title="Read-only preview"><strong>Conduct interviews</strong><span>Work through the interviews and capture the record.</span></button><button class="vt-flow-option" data-step="3"><strong>Interview summaries</strong><span>Review each account with links to the transcript.</span></button></div></div>`;
   const timelineCard = `<div class="timeline-result"><div>Timeline<span>BUILT</span></div><section>The timeline is built.<button class="vt-btn" data-open="timeline">Open it</button></section></div>`;
   let step=0,mode='proposal',playing=false,muted=false,cue=0,timer=null,previousFocus=null,playToken=0;
   const content=$('#conversation-content'),audio=$('#narration'),dialog=$('#detail-dialog');
@@ -51,7 +51,7 @@
     {step:1,mode:'prompt',id:'user-plan',speaker:'INVESTIGATOR',text:'Draft the investigation plan.'},
     {step:1,mode:'proposal',id:'violet-proposal',speaker:'VIOLET',text:texts.proposal},
     {step:1,mode:'drafted',id:'violet-drafted',speaker:'VIOLET',text:texts.drafted,note:'After clicking “Draft the plan” · processing time shortened'},
-    {step:2,mode:'final',id:'violet-finalized',speaker:'VIOLET',text:texts.finalized,note:'After investigator review and finalization · current case artifact'},
+    {step:2,mode:'final',id:null,speaker:'VIOLET',text:texts.finalized,note:'After investigator review and finalization · current case artifact'},
     {step:3,id:'user-interview',speaker:'INVESTIGATOR',text:"Summarize Marcus Doyle's interview."},
     {step:3,id:'violet-interview',speaker:'VIOLET',text:"The summary card for Marcus Doyle's interview is up."},
     {step:4,mode:'prompt',id:'user-timeline',speaker:'INVESTIGATOR',text:'Build the timeline.'},
@@ -108,6 +108,7 @@
   function showCue(){const current=cues[cue];if(!current){stop();$('#speaker-label').textContent='REPLAY COMPLETE';$('#voice-caption').textContent='Explore the interview, evidence, findings and report, or replay from Home.';return;}
     render(current.step,current.mode);if(cue===0){typeOpening();return;}if(current.note)$('#capture-caption').textContent=current.note;
     $('#speaker-label').textContent=current.speaker;$('#voice-caption').textContent=current.text;content.classList.toggle('active-speaking',current.speaker==='VIOLET');
+    if(!current.id){const token=playToken;timer=setTimeout(()=>{if(playing&&token===playToken){cue++;showCue();}},4500);return;}
     audio.src=`audio/${current.id}.mp3`;audio.muted=muted;const token=playToken;
     audio.play().catch(()=>{if(token!==playToken)return;stop();$('#speaker-label').textContent='AUDIO COULD NOT PLAY';$('#voice-caption').textContent='Press play to retry, or turn sound off and explore the scenes.';});
   }
