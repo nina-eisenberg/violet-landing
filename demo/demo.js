@@ -114,11 +114,13 @@
     }else if(step===4){html=bubble('Build the timeline');if(mode!=='prompt')html+=name+reply(texts.building);if(mode==='built')html+=`<div class="open-timeline"><h4>Timeline <small>6 selected events from the 20-event timeline</small></h4>${timelineBody()}</div>`;
     }else if(step===5){html=bubble('Build the evidence matrix')+name+reply("Building the evidence matrix from the plan's allegations, the interviews and the documents.")+matrixView();
     }else if(step===6){html=name+reply(findingReply)+`<p class="plan-readonly-note">Staged decision for this fictional demo · the investigator reviews and chooses.</p>`+findingView()+confidenceView();
-    }else if(step===7){html=bubble('Start the report')+name+reply(reportReply)+(mode==='built'||mode==='redraft'?bubble(redraftRequest)+name+reply(redraftReply):'')+`<p class="plan-readonly-note">Illustrative redraft · fictional case. The investigator’s finding stays unchanged.</p>`;}else{html=`<div class="uploaded-demo-file">${icon('file')} Jordan Kim - witness statement (protected).pdf</div>`+bubble('Where did my upload go? I just added Jordan Kim’s witness statement.');if(mode!=='question')html+=name+reply("I found the upload, but I couldn't read its contents. Here's what went wrong.")+window.VIOLET_SUPPORT+reply(supportSent);if(mode==='fixed'||mode==='built')html+=`<div class="later-divider">LATER · SUPPORT FOLLOW-UP</div>`+reply(supportFixed)+refined.support;}
+    }else if(step===7){html=bubble('Start the report')+name+reply(reportReply)+(mode==='built'||mode==='redraft'?bubble(redraftRequest)+name+reply(redraftReply):'')+`<p class="plan-readonly-note">Illustrative redraft · fictional case. The investigator’s finding stays unchanged.</p><div class="report-review-demo">${reportReview()}</div>`;}else{html=`<div class="uploaded-demo-file">${icon('file')} Jordan Kim - witness statement (protected).pdf</div>`+bubble('Where did my upload go? I just added Jordan Kim’s witness statement.');if(mode!=='question')html+=name+reply("I found the upload, but I couldn't read its contents. Here's what went wrong.")+window.VIOLET_SUPPORT+reply(supportSent);if(mode==='fixed'||mode==='built')html+=`<div class="later-divider">LATER · SUPPORT FOLLOW-UP</div>`+reply(supportFixed)+refined.support;}
 
     content.innerHTML=`<div class="actual-exchange">${html}</div>`;content.scrollTop=mode==='fixed'?content.scrollHeight:0;
     let reportPanel=$('#report-preview');if(!reportPanel){reportPanel=document.createElement('aside');reportPanel.id='report-preview';$('.workspace-body').append(reportPanel);}reportPanel.hidden=step!==7;
-    if(step===7)reportPanel.innerHTML=`<div class="report-toolbar"><strong>Investigation report</strong><small>INV-2026-0096 · Marcus Doyle</small><span>1 Draft　　2 Review & finalize</span><p>Showing 2 of 8 drafted sections · demo excerpt</p></div>${mode==='built'||mode==='redraft'?redraftView():''}<div class="report-review-demo">${reportReview()}</div><details class="report-draft-excerpt"><summary>Read the draft excerpts</summary><div class="report-paper">${reportExcerpt()}</div></details>`;
+    if(step===7)reportPanel.innerHTML=`<div class="report-toolbar"><strong>Investigation report</strong><small>INV-2026-0096 · Marcus Doyle</small><span>1 Draft　　2 Review & finalize</span><p>Full report · 8 drafted sections</p><button class="vt-btn" data-jump-revision>Jump to revised section ↓</button></div><div class="report-paper">${fullReport(mode==='built'||mode==='redraft')}</div>`;
+
+    if(step===7)reportPanel.scrollTop=0;
     document.querySelectorAll('.stage-tabs button').forEach((el,i)=>{el.setAttribute('aria-selected',String(i===step));el.tabIndex=i===step?0:-1;});
     $('#demo-panel').setAttribute('aria-labelledby',`tab-${step}`);$('#scene-label').textContent=`0${step+1} / 09 · ${sceneNames[step]}`;
     $('#capture-caption').textContent=step===0?'Home · across cases':step===2?'Actual finalized plan':step===3?'Interview summary · actual captured artifact':step===7?'Conversation + report workspace':'Selected moments · actual case';
@@ -175,7 +177,7 @@
       const section=event.target.closest('.redraft-section');section.querySelector('.redraft-highlight').classList.add('is-kept');section.querySelector('.redraft-status').textContent='Investigator kept the revised wording. Finding unchanged.';
     }
     if(event.target.closest('[data-redraft-undo]')){
-      const section=event.target.closest('.redraft-section');section.remove();const draft=$('.report-draft-excerpt');if(draft)draft.open=true;
+      const section=event.target.closest('.redraft-section');const original=section.previousElementSibling;if(original?.classList.contains('original-harassment-analysis'))original.hidden=false;section.remove();
     }
   });
   function reportReview(){return `<p class="plan-readonly-note">Compact review example · fictional case</p><section class="report-review-card"><h3>1. Flag review</h3><p><strong>Keep the conclusion within the evidence.</strong></p><p>“Not substantiated” does not prove retaliation did not occur. The record does not establish Doyle’s knowledge of the HR complaint before the removal.</p><p class="review-note">Review the limitation before finalizing the wording.</p><button class="vt-btn" data-review-flag>Mark addressed</button><span class="review-status" aria-live="polite"></span></section><section class="report-review-card"><h3>2. Citation review</h3><p><strong>Report statement</strong><br>Doyle acknowledged seeing Kim’s shift-swap offer but did not pursue it.</p><details><summary>Inspect cited passage · INT-1, lines 43–47</summary><blockquote>“I saw it. I didn’t think swaps were allowed during the Q4 rollout, so I didn’t pursue it.”</blockquote><p>Marcus Doyle · interview transcript</p><button class="vt-btn" data-open="transcript">Open full transcript</button></details><button class="vt-btn" data-review-citation>Mark reviewed</button><span class="review-status" aria-live="polite"></span></section><p class="review-note">These controls record the investigator’s review in this demo. No report is finalized.</p>`;}
@@ -189,12 +191,26 @@
     const end=text.lastIndexOf('. ',340);
     return text.slice(0,end>100?end+1: text.lastIndexOf(' ',340))+' …';
   }
-  function reportExcerpt(){
+  function fullReport(revised=false){
     const template=document.createElement('template');template.innerHTML=extra.report;
-    const headings=Array.from(template.content.querySelectorAll('h2'));
-    if(headings[2]){let node=headings[2];while(node){const next=node.nextSibling;node.remove();node=next;}}
-    return '<p class="plan-readonly-note">Selected report sections · shortened for this demo.</p>'+template.innerHTML;
+    if(revised){
+      const heading=Array.from(template.content.querySelectorAll('h3')).find(el=>el.textContent==='Application of the Policy');
+      if(heading){
+        const original=document.createElement('div');original.className='original-harassment-analysis';original.hidden=true;
+        let next=heading.nextSibling;heading.after(original);
+        while(next&&next.nodeName!=='H2'){const following=next.nextSibling;original.append(next);next=following;}
+        original.insertAdjacentHTML('afterend',redraftView());
+      }
+    }
+    return template.innerHTML;
   }
+  function reportExcerpt(){return fullReport();}
+  document.addEventListener('click',event=>{
+    if(event.target.closest('[data-jump-revision]')){
+      const panel=$('#report-preview'),section=panel.querySelector('.redraft-section');
+      if(section)panel.scrollTop+=section.getBoundingClientRect().top-panel.getBoundingClientRect().top-16;
+    }
+  });
   function matrixView(){return `<div class="matrix-by-allegation"><div class="matrix-heading">Evidence matrix <span>Selected excerpts · by allegation</span></div>${refined.groups.map((g,i)=>`<details class="matrix-allegation" name="matrix-allegation" ${i===0?'open':''}><summary>${escape(g.title)}</summary>${g.entries.slice(0,3).map(e=>`<div class="matrix-account"><strong>${escape(e.source.replace(/(Complainant|Subject|Witness)$/,' · $1'))}</strong><p>${escape(shortExcerpt(e.text))}</p></div>`).join('')}</details>`).join('')}</div>`;}
   let findingAligned=false;
   function findingView(){return `<div class="finding-demo vt-card"><div class="vt-card-head">Overall finding · Religious Accommodation Policy</div><div class="vt-card-body"><div class="finding-options" role="radiogroup" aria-label="Overall finding for Religious Accommodation Policy"><button role="radio" aria-checked="${!findingAligned}" class="vt-btn ${!findingAligned?'is-p':''}" data-finding="original">Not substantiated</button><button role="radio" aria-checked="${findingAligned}" class="vt-btn ${findingAligned?'is-p':''}" data-finding="aligned">Substantiated</button></div></div></div>`;}
