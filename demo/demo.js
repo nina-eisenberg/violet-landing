@@ -165,11 +165,22 @@
   function matrixView(){return `<div class="matrix-by-allegation"><div class="matrix-heading">Evidence matrix <span>By allegation</span></div>${refined.groups.map((g,i)=>`<details class="matrix-allegation" name="matrix-allegation" ${i===0?'open':''}><summary>${escape(g.title)}</summary>${g.entries.map(e=>`<div class="matrix-account"><strong>${escape(e.source.replace(/(Complainant|Subject|Witness)$/,' · $1'))}</strong><p>${escape(e.text)}</p></div>`).join('')}</details>`).join('')}</div>`;}
   function confidenceView(){return `<div class="vt-ccheck"><p class="vt-ccheck-head is-ok"><b>✓ The evidence agrees with all 3 findings</b></p><ul class="vt-ccheck-rows">${refined.confidence.map(c=>`<li class="is-ok"><details><summary><span class="vt-ccheck-q">${escape(c.title)}</span><span class="vt-ccheck-v">${escape(c.finding)} · evidence agrees (${c.confidence})</span></summary><div class="vt-ccheck-more"><b>Limitations</b><p>${escape(c.detail)}</p></div></details></li>`).join('')}</ul><div class="vt-ccheck-foot"><button class="vt-chip is-next" data-step="7">Start the report →</button></div></div>`;}
   let citeFocus=null;
+  function alignSource(){
+    const panel=$('#source-panel');if(!panel||dialog.open)return;
+    if(matchMedia('(max-width:580px)').matches){panel.style.marginTop='';panel.style.height='';return;}
+    const summary=content.querySelector('.vt-summary');if(!summary)return;
+    const workspace=$('.workspace-body').getBoundingClientRect(), viewport=content.getBoundingClientRect();
+    const top=Math.max(viewport.top,summary.getBoundingClientRect().top);
+    panel.style.marginTop=Math.max(0,top-workspace.top)+'px';
+    panel.style.height=Math.max(280,viewport.bottom-top)+'px';
+  }
+  content.addEventListener('scroll',alignSource);
+  window.addEventListener('resize',alignSource);
   function closeSource(){const source=$('#source-panel');if(source){source.remove();$('#demo-panel').classList.remove('source-open');citeFocus?.focus();}}
   function openSource(id){const c=refined.citations[id];if(!c)return;stop();closeSource();citeFocus=document.activeElement;
     const panel=document.createElement('aside');panel.id='source-panel';panel.className='demo-source';panel.setAttribute('aria-label','Cited interview transcript');
     panel.innerHTML=`<header><strong>${escape(c.title)}</strong><button type="button" id="close-source" aria-label="Close source">×</button><small>${escape(c.meta)}</small></header><div class="source-lines">${c.lines.filter(l=>l.text.trim()).map(l=>`<div class="source-line ${l.on?'is-on':''}"><span>${l.n}</span><p>${escape(l.text)}</p></div>`).join('')}</div>`;
-    const target=dialog.open?$('#detail-body'):$('.workspace-body');target.append(panel);$('#demo-panel').classList.add('source-open');$('#close-source').focus({preventScroll:true});const hit=panel.querySelector('.is-on');if(hit)panel.querySelector('.source-lines').scrollTop=hit.offsetTop-panel.querySelector('header').offsetHeight-35;
+    const target=dialog.open?$('#detail-body'):$('.workspace-body');target.append(panel);$('#demo-panel').classList.add('source-open');if(!dialog.open){const summary=content.querySelector('.vt-summary');if(summary)content.scrollTop+=summary.getBoundingClientRect().top-content.getBoundingClientRect().top;alignSource();}$('#close-source').focus({preventScroll:true});const hit=panel.querySelector('.is-on');if(hit)panel.querySelector('.source-lines').scrollTop=hit.offsetTop-panel.querySelector('header').offsetHeight-35;
   }
   function timelineBody(){return `<label class="timeline-filter"><input type="checkbox" id="flagged-only"> Flagged only</label><ol class="timeline-list">${capture.events.map(e=>`<li data-flagged="${e.flags.length>0}"><time>${escape(e.date)}</time><h4>${escape(e.title)}</h4><p>${escape(e.description)}</p><small>${escape(e.source)}</small>${e.flags.map(f=>`<span class="timeline-flag">${escape(f)}</span>`).join('')}</li>`).join('')}</ol>`;}
   const originalFiles=[['01_Complaint_Email_Goldberg.docx','Complaint · Leah Goldberg','complaint'],['06_Exhibit_A_Emails_and_Chat.pdf','Emails and team chat','email'],['07_Exhibit_B_WFM_and_Training_Records.docx','Workforce Management and certification','records'],['08_Religious_Accommodation_Policy.pdf','Religious Accommodation Policy','policy']];
