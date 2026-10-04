@@ -67,6 +67,27 @@
   ];
   const caseHeader=$('.case-header').innerHTML;
   const caseRail=$('.app-sidebar').innerHTML;
+  document.addEventListener('click',event=>{
+    const toggle=event.target.closest('[data-summary-format]');if(!toggle)return;
+    summaryFormat=toggle.dataset.summaryFormat;
+    const card=toggle.closest('.vt-summary');card.outerHTML=interviewView();
+    document.querySelectorAll(`[data-summary-format="${summaryFormat}"]`).forEach(button=>{if(button.closest('#detail-dialog')?.open||!button.closest('#detail-dialog'))button.focus();});
+  });
+  let summaryFormat='bullets';
+  function interviewView(){
+    const template=document.createElement('template');template.innerHTML=extra.interview;
+    template.content.querySelectorAll('.vt-mode button').forEach((button,i)=>{
+      const format=i===0?'bullets':'narrative';button.removeAttribute('disabled');
+      button.dataset.summaryFormat=format;button.setAttribute('aria-checked',String(summaryFormat===format));
+      button.classList.toggle('is-on',summaryFormat===format);
+    });
+    if(summaryFormat==='narrative')template.content.querySelectorAll('.vt-summary-body ul,.vt-summary-body ol').forEach(list=>{
+      const paragraph=document.createElement('p');
+      paragraph.innerHTML=Array.from(list.children).map(item=>item.innerHTML).join(' ');
+      list.replaceWith(paragraph);
+    });
+    return template.innerHTML;
+  }
   const homeOverview=`<div class="home-intro"><small>SATURDAY, OCTOBER 3</small><h3>Good evening, friend.</h3><p>Your work, across cases.</p><div class="home-start vt-start"><div><strong>Start a case</strong><p>Tell me what you have: files, a complaint you can describe, or just a name. I'll ask you what I need and set it up with you. Drop files here any time.</p></div></div><div class="home-today"><div><span>Inbox</span><p>42 reports are waiting in the inbox<small>Through Tell Violet</small></p></div><div><span>Plan</span><p>Maya Lindgren — Mock Case 6: the plan is waiting for review<small>Drafted, not finalized</small></p></div></div></div>`;
   function render(next,nextMode){
     closeSource();
@@ -83,7 +104,7 @@
       if(mode==='drafted')html+=reply(texts.drafted)+`<button class="vt-btn" data-step="2">Review the case’s plan →</button>`;
       if(mode==='dismissed')html=bubble('Draft the investigation plan')+name+reply('Not now');
     }else if(step===2){html=name+reply(texts.finalized)+`<p class="plan-readonly-note">Selected plan content · three example documents. Expand sections to inspect.</p>`+capture.plan+nextSteps;
-    }else if(step===3){html=bubble("Summarize Marcus Doyle's interview")+name+reply("The summary card for Marcus Doyle's interview is up.")+`<p class="plan-readonly-note">Actual interview summary · captured from the Summary tab.</p>`+extra.interview+`<button class="vt-btn" data-open="transcript">Read the source transcript</button>`;
+    }else if(step===3){html=bubble("Summarize Marcus Doyle's interview")+name+reply("The summary card for Marcus Doyle's interview is up.")+`<p class="plan-readonly-note">Actual interview summary · captured from the Summary tab.</p>`+interviewView()+`<button class="vt-btn" data-open="transcript">Read the source transcript</button>`;
     }else if(step===4){html=bubble('Build the timeline');if(mode!=='prompt')html+=name+reply(texts.building);if(mode==='built')html+=`<div class="open-timeline"><h4>Timeline <small>20 events · 5 flagged</small></h4>${timelineBody()}</div>`;
     }else if(step===5){html=bubble('Build the evidence matrix')+name+reply("Building the evidence matrix from the plan's allegations, the interviews and the documents.")+matrixView();
     }else if(step===6){html=name+reply(findingReply)+`<p class="plan-readonly-note">Current saved decisions · the investigator makes these selections. Read-only replay.</p>`+extra.findings+confidenceView();
@@ -157,7 +178,7 @@
     timeline:['Timeline · Marcus Doyle',timelineBody],
     files:['Documents · Marcus Doyle',()=>`<p>These are the four original case documents. The four interview records appear separately under Interviews. Later file-upload tests are omitted from this replay.</p>${originalFiles.map(([file,label,key])=>`<div class="document-row">${icon('file')}<div><strong>${file}</strong><small>${label}</small></div><button data-open="${key}">Read excerpt</button></div>`).join('')}`],
     intake:['Intake · Marcus Doyle',()=>`<h3>At a glance · exact case synopsis</h3><p>Leah Goldberg, a Member Services Representative II in the Contact Center, filed a complaint on September 15, 2026, alleging that her supervisor Marcus Doyle denied her request for religious accommodation to avoid Friday evening shifts for Shabbat observance, failed to consider a coworker's offered shift swap, and made comments suggesting disrespect for her religious practice.</p>`],
-    interviews:['Interview summary · Marcus Doyle',()=>`<div class="vt">${extra.interview}</div><button class="button" data-open="transcript">Read source transcript</button>`],
+    interviews:['Interview summary · Marcus Doyle',()=>`<div class="vt">${interviewView()}</div><button class="button" data-open="transcript">Read source transcript</button>`],
     transcript:['Marcus Doyle · source transcript',()=>`<pre class="transcript-source">${escape(window.VIOLET_TRANSCRIPT)}</pre>`],
     complaint:['Complaint email · selected excerpt',()=>`<p>September 15, 2026 · Leah Goldberg to Priya Anand</p><blockquote>“On September 4 I emailed Marcus asking not to be scheduled on Friday evenings past 5 PM because I observe Shabbat. The new Q4 rotation puts everyone on a Friday 2–10 PM shift starting September 18. My coworker Jordan offered to swap Fridays with me.”</blockquote><p class="source-review-note">Exact excerpt from the supplied fictional complaint.</p>`],
     email:['Exhibit A · selected email',()=>`<div class="source-meta"><b>From</b><span>Jordan Pierce, Regional Operations Manager</span><b>To</b><span>Contact Center Supervisors</span><b>Date</b><span>Monday, August 24, 2026 · 4:05 PM</span><b>Subject</b><span>Q4 rotation approved</span></div><blockquote>Team, the Q4 rotation is approved: every Member Services Rep works one Friday 2–10 PM shift per week starting September 18. Team supervisors may approve individual shift swaps between reps with the same skills; please log swaps with Workforce Management.</blockquote><p class="source-review-note">Exact text from the supplied fictional Exhibit A.</p>`],
