@@ -65,7 +65,8 @@
     {step:6,mode:'check',id:null,speaker:'INVESTIGATOR ACTION',text:'Reviews the confidence check and chooses the evidence-supported finding.'},
     {step:7,id:'user-report',speaker:'INVESTIGATOR',text:'Start the report.'},
     {step:7,id:'violet-report',speaker:'VIOLET',text:reportReply},
-    {step:7,mode:'redraft',id:null,speaker:'INVESTIGATOR · TYPED REQUEST',text:redraftRequest,duration:10000},
+    {step:7,mode:'redraft-request',id:'user-redraft',speaker:'INVESTIGATOR',text:redraftRequest},
+    {step:7,mode:'redraft',id:'violet-redraft',speaker:'VIOLET',text:redraftReply},
     {step:8,mode:'question',id:null,speaker:'INVESTIGATOR · TYPED REQUEST',text:'Where did my upload go? I just added Jordan Kim’s witness statement.',duration:3500},
     {step:8,mode:'ticket',id:'violet-support',speaker:'VIOLET',text:supportSent},
     {step:8,mode:'fixed',id:'violet-fixed-current',speaker:'VIOLET',text:supportFixed,note:'Later · support resolution returned to the same conversation'}
@@ -114,7 +115,7 @@
     }else if(step===4){html=bubble('Build the timeline');if(mode!=='prompt')html+=name+reply(texts.building);if(mode==='built')html+=`<div class="open-timeline"><h4>Timeline <small>6 selected events from the 20-event timeline</small></h4>${timelineBody()}</div>`;
     }else if(step===5){html=bubble('Build the evidence matrix')+name+reply("Building the evidence matrix from the plan's allegations, the interviews and the documents.")+matrixView();
     }else if(step===6){html=name+reply(findingReply)+`<p class="plan-readonly-note">Staged decision for this fictional demo · the investigator reviews and chooses.</p>`+findingView()+confidenceView();
-    }else if(step===7){html=bubble('Start the report')+name+reply(reportReply)+(mode==='built'||mode==='redraft'?bubble(redraftRequest)+name+reply(redraftReply):'')+`<p class="plan-readonly-note">Illustrative redraft · fictional case. The investigator’s finding stays unchanged.</p>`;}else{html=`<div class="uploaded-demo-file">${icon('file')} Jordan Kim - witness statement (protected).pdf</div>`+bubble('Where did my upload go? I just added Jordan Kim’s witness statement.');if(mode!=='question')html+=name+reply("I found the upload, but I couldn't read its contents. Here's what went wrong.")+window.VIOLET_SUPPORT+reply(supportSent);if(mode==='fixed'||mode==='built')html+=`<div class="later-divider">LATER · SUPPORT FOLLOW-UP</div>`+reply(supportFixed)+refined.support;}
+    }else if(step===7){html=bubble('Start the report')+name+reply(reportReply)+(mode==='redraft-request'?bubble(redraftRequest):mode==='built'||mode==='redraft'?bubble(redraftRequest)+name+reply(redraftReply):'')+`<p class="plan-readonly-note">Illustrative redraft · fictional case. The investigator’s finding stays unchanged.</p><button class="vt-btn" data-play-redraft>▶ Hear the redraft exchange</button>`;}else{html=`<div class="uploaded-demo-file">${icon('file')} Jordan Kim - witness statement (protected).pdf</div>`+bubble('Where did my upload go? I just added Jordan Kim’s witness statement.');if(mode!=='question')html+=name+reply("I found the upload, but I couldn't read its contents. Here's what went wrong.")+window.VIOLET_SUPPORT+reply(supportSent);if(mode==='fixed'||mode==='built')html+=`<div class="later-divider">LATER · SUPPORT FOLLOW-UP</div>`+reply(supportFixed)+refined.support;}
 
     content.innerHTML=`<div class="actual-exchange">${html}</div>`;content.scrollTop=mode==='fixed'?content.scrollHeight:0;
     let reportPanel=$('#report-preview');if(!reportPanel){reportPanel=document.createElement('aside');reportPanel.id='report-preview';$('.workspace-body').append(reportPanel);}reportPanel.hidden=step!==7;
@@ -285,6 +286,7 @@
   function closeDetail(){closeSource();dialog.close();previousFocus?.focus();}
   function selectScene(index){stop();cue=Math.max(0,cues.findIndex(c=>c.step===index));render(index);$('#speaker-label').textContent='VOICE REENACTMENT';$('#voice-caption').textContent='Press play to hear this part of the actual exchange.';}
   document.addEventListener('click',e=>{
+    if(e.target.closest('[data-play-redraft]')){stop();cue=cues.findIndex(c=>c.mode==='redraft-request');muted=false;play();return;}
     if(e.target.closest('[data-start-demo]')){stop();cue=0;muted=false;play();return;}
     const cite=e.target.closest('[data-cite]');if(cite)return openSource(cite.dataset.cite);
     if(e.target.closest('#close-source'))return closeSource();
