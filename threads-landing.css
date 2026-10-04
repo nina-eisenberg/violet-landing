@@ -38,3 +38,10 @@ body{background:#f9f8f5}.threads-hero{max-width:1280px;margin:auto;padding:65px 
 .threads-tour { max-width:1120px; }
 @media(max-width:900px) { .threads-hero { padding:40px 28px; gap:20px; } .threads-hero h1 { font-size:78px; } .threads-caption { padding:10px 8px 0; } }
 @media(max-width:650px) { .threads-hero { grid-template-columns:1fr; gap:20px; padding:32px 24px; } .threads-hero h1 { font-size:clamp(66px,16vw,90px); } .threads-intro { max-width:420px; margin:auto; } .threads-intro .violet-mascot { margin:0; } .threads-caption { padding:8px 0 0; } }
+
+/* Original hero-copy markup uses the original site typography and entrance motion. */
+.restored-hero .threads-intro { width:100%; max-width:560px; justify-self:center; }
+.restored-hero .threads-caption { padding:12px 24px 0; }
+.restored-hero .threads-caption .threads-conversation { font:500 19px/1.4 'DM Sans',sans-serif; margin:0 0 8px; }
+.restored-hero .threads-caption .threads-detail { font:400 14px/1.65 'DM Sans',sans-serif; margin:0 0 18px; max-width:390px; }
+@media(max-width:800px) { .restored-hero .threads-intro { max-width:440px; margin-top:24px; } .restored-hero .threads-caption { text-align:left; } }
