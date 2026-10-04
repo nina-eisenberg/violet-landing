@@ -76,6 +76,7 @@
   let summaryFormat='bullets';
   function interviewView(){
     const template=document.createElement('template');template.innerHTML=extra.interview;
+    template.content.querySelectorAll('.vt-summary-body h2').forEach(heading=>{if(/Background|Response to the allegations|Documents and follow-up/.test(heading.textContent)){let next=heading.nextElementSibling;while(next&&next.tagName!=='H2'){const following=next.nextElementSibling;next.remove();next=following;}heading.remove();}});
     template.content.querySelectorAll('.vt-mode button').forEach((button,i)=>{
       const format=i===0?'bullets':'narrative';button.removeAttribute('disabled');
       button.dataset.summaryFormat=format;button.setAttribute('aria-checked',String(summaryFormat===format));
@@ -104,14 +105,14 @@
       if(mode==='drafted')html+=reply(texts.drafted)+`<button class="vt-btn" data-step="2">Review the case’s plan →</button>`;
       if(mode==='dismissed')html=bubble('Draft the investigation plan')+name+reply('Not now');
     }else if(step===2){html=name+reply(texts.finalized)+`<p class="plan-readonly-note">Selected plan content · three example documents. Expand sections to inspect.</p>`+capture.plan+nextSteps;
-    }else if(step===3){html=bubble("Summarize Marcus Doyle's interview")+name+reply("The summary card for Marcus Doyle's interview is up.")+`<p class="plan-readonly-note">Actual interview summary · captured from the Summary tab.</p>`+interviewView()+`<button class="vt-btn" data-open="transcript">Read the source transcript</button>`;
-    }else if(step===4){html=bubble('Build the timeline');if(mode!=='prompt')html+=name+reply(texts.building);if(mode==='built')html+=`<div class="open-timeline"><h4>Timeline <small>20 events · 5 flagged</small></h4>${timelineBody()}</div>`;
+    }else if(step===3){html=bubble("Summarize Marcus Doyle's interview")+name+reply("The summary card for Marcus Doyle's interview is up.")+`<p class="plan-readonly-note">Selected interview summary excerpts · shortened for this demo.</p>`+interviewView()+`<button class="vt-btn" data-open="transcript">Read the source transcript</button>`;
+    }else if(step===4){html=bubble('Build the timeline');if(mode!=='prompt')html+=name+reply(texts.building);if(mode==='built')html+=`<div class="open-timeline"><h4>Timeline <small>6 selected events from the 20-event timeline</small></h4>${timelineBody()}</div>`;
     }else if(step===5){html=bubble('Build the evidence matrix')+name+reply("Building the evidence matrix from the plan's allegations, the interviews and the documents.")+matrixView();
     }else if(step===6){html=name+reply(findingReply)+`<p class="plan-readonly-note">Current saved decisions · the investigator makes these selections. Read-only replay.</p>`+extra.findings+confidenceView();
-    }else if(step===7){html=bubble(mode==='edit'?'make the summary of findings section shorter':'Start the report')+name+reply(mode==='edit'?"Rewriting “II. Summary of Findings”. Violet's version will show in that section, to use or not.":reportReply)+`<p class="plan-readonly-note">The fictional case report, alongside the conversation.</p><button class="vt-btn" data-open="report">Read the captured report →</button>`;}else{html=`<div class="uploaded-demo-file">${icon('file')} Jordan Kim - witness statement (protected).pdf</div>`+name+reply("Here's what I found.")+window.VIOLET_SUPPORT+reply(supportSent);if(mode==='fixed'||mode==='built')html+=`<div class="later-divider">LATER · SUPPORT FOLLOW-UP</div>`+reply(supportFixed)+refined.support;}
+    }else if(step===7){html=bubble(mode==='edit'?'make the summary of findings section shorter':'Start the report')+name+reply(mode==='edit'?"Rewriting “II. Summary of Findings”. Violet's version will show in that section, to use or not.":reportReply)+`<p class="plan-readonly-note">The fictional case report, alongside the conversation.</p><button class="vt-btn" data-open="report">Read report excerpts →</button>`;}else{html=`<div class="uploaded-demo-file">${icon('file')} Jordan Kim - witness statement (protected).pdf</div>`+name+reply("Here's what I found.")+window.VIOLET_SUPPORT+reply(supportSent);if(mode==='fixed'||mode==='built')html+=`<div class="later-divider">LATER · SUPPORT FOLLOW-UP</div>`+reply(supportFixed)+refined.support;}
     content.innerHTML=`<div class="actual-exchange">${html}</div>`;content.scrollTop=mode==='fixed'?content.scrollHeight:0;
     let reportPanel=$('#report-preview');if(!reportPanel){reportPanel=document.createElement('aside');reportPanel.id='report-preview';$('.workspace-body').append(reportPanel);}reportPanel.hidden=step!==7;
-    if(step===7)reportPanel.innerHTML=`<div class="report-toolbar"><strong>Investigation report</strong><small>INV-2026-0096 · Marcus Doyle</small><span>1 Draft　　2 Review & finalize</span><p>Report sections · 8 of 8 drafted</p></div><div class="report-paper">${extra.report}</div>`;
+    if(step===7)reportPanel.innerHTML=`<div class="report-toolbar"><strong>Investigation report</strong><small>INV-2026-0096 · Marcus Doyle</small><span>1 Draft　　2 Review & finalize</span><p>Showing 2 of 8 drafted sections · demo excerpt</p></div><div class="report-paper">${reportExcerpt()}</div>`;
     document.querySelectorAll('.stage-tabs button').forEach((el,i)=>{el.setAttribute('aria-selected',String(i===step));el.tabIndex=i===step?0:-1;});
     $('#demo-panel').setAttribute('aria-labelledby',`tab-${step}`);$('#scene-label').textContent=`0${step+1} / 09 · ${sceneNames[step]}`;
     $('#capture-caption').textContent=step===0?'Home · across cases':step===2?'Actual finalized plan':step===3?'Interview summary · actual captured artifact':step===7?'Conversation + report workspace':'Selected moments · actual case';
@@ -162,7 +163,18 @@
   function play(){if(playing){stop();return;}playing=true;playToken++;if(cue>=cues.length)cue=0;showCue();updatePlayback();}
   audio.addEventListener('ended',()=>{if(!playing)return;cue++;const token=playToken;timer=setTimeout(()=>{if(playing&&token===playToken)showCue();},cue===4?1800:cue===5?1500:1800);if(cue===4){const b=$('#confirm-draft');b?.classList.add('click-cue');$('#speaker-label').textContent='INVESTIGATOR ACTION';$('#voice-caption').textContent='Clicks “Draft the plan.” Processing time is shortened in this replay.';}});
   audio.addEventListener('error',()=>{if(!playing)return;stop();$('#speaker-label').textContent='AUDIO UNAVAILABLE';$('#voice-caption').textContent='The sound file could not load. You can still explore all nine scenes.';});
-  function matrixView(){return `<div class="matrix-by-allegation"><div class="matrix-heading">Evidence matrix <span>By allegation</span></div>${refined.groups.map((g,i)=>`<details class="matrix-allegation" name="matrix-allegation" ${i===0?'open':''}><summary>${escape(g.title)}</summary>${g.entries.map(e=>`<div class="matrix-account"><strong>${escape(e.source.replace(/(Complainant|Subject|Witness)$/,' · $1'))}</strong><p>${escape(e.text)}</p></div>`).join('')}</details>`).join('')}</div>`;}
+  function shortExcerpt(text){
+    if(text.length<=340)return text;
+    const end=text.lastIndexOf('. ',340);
+    return text.slice(0,end>100?end+1: text.lastIndexOf(' ',340))+' …';
+  }
+  function reportExcerpt(){
+    const template=document.createElement('template');template.innerHTML=extra.report;
+    const headings=Array.from(template.content.querySelectorAll('h2'));
+    if(headings[2]){let node=headings[2];while(node){const next=node.nextSibling;node.remove();node=next;}}
+    return '<p class="plan-readonly-note">Selected report sections · shortened for this demo.</p>'+template.innerHTML;
+  }
+  function matrixView(){return `<div class="matrix-by-allegation"><div class="matrix-heading">Evidence matrix <span>Selected excerpts · by allegation</span></div>${refined.groups.map((g,i)=>`<details class="matrix-allegation" name="matrix-allegation" ${i===0?'open':''}><summary>${escape(g.title)}</summary>${g.entries.slice(0,3).map(e=>`<div class="matrix-account"><strong>${escape(e.source.replace(/(Complainant|Subject|Witness)$/,' · $1'))}</strong><p>${escape(shortExcerpt(e.text))}</p></div>`).join('')}</details>`).join('')}</div>`;}
   function confidenceView(){return `<div class="vt-ccheck"><p class="vt-ccheck-head is-ok"><b>✓ The evidence agrees with all 3 findings</b></p><ul class="vt-ccheck-rows">${refined.confidence.map(c=>`<li class="is-ok"><details><summary><span class="vt-ccheck-q">${escape(c.title)}</span><span class="vt-ccheck-v">${escape(c.finding)} · evidence agrees (${c.confidence})</span></summary><div class="vt-ccheck-more"><b>Limitations</b><p>${escape(c.detail)}</p></div></details></li>`).join('')}</ul><div class="vt-ccheck-foot"><button class="vt-chip is-next" data-step="7">Start the report →</button></div></div>`;}
   let citeFocus=null;
   function alignSource(){
@@ -182,7 +194,7 @@
     panel.innerHTML=`<header><strong>${escape(c.title)}</strong><button type="button" id="close-source" aria-label="Close source">×</button><small>${escape(c.meta)}</small></header><div class="source-lines">${c.lines.filter(l=>l.text.trim()).map(l=>`<div class="source-line ${l.on?'is-on':''}"><span>${l.n}</span><p>${escape(l.text)}</p></div>`).join('')}</div>`;
     const target=dialog.open?$('#detail-body'):$('.workspace-body');target.append(panel);$('#demo-panel').classList.add('source-open');if(!dialog.open){const summary=content.querySelector('.vt-summary');if(summary)content.scrollTop+=summary.getBoundingClientRect().top-content.getBoundingClientRect().top;alignSource();}$('#close-source').focus({preventScroll:true});const hit=panel.querySelector('.is-on');if(hit)panel.querySelector('.source-lines').scrollTop=hit.offsetTop-panel.querySelector('header').offsetHeight-35;
   }
-  function timelineBody(){return `<label class="timeline-filter"><input type="checkbox" id="flagged-only"> Flagged only</label><ol class="timeline-list">${capture.events.map(e=>`<li data-flagged="${e.flags.length>0}"><time>${escape(e.date)}</time><h4>${escape(e.title)}</h4><p>${escape(e.description)}</p><small>${escape(e.source)}</small>${e.flags.map(f=>`<span class="timeline-flag">${escape(f)}</span>`).join('')}</li>`).join('')}</ol>`;}
+  function timelineBody(){return `<label class="timeline-filter"><input type="checkbox" id="flagged-only"> Flagged only</label><ol class="timeline-list">${capture.events.filter((_,i)=>[5,9,12,13,15,19].includes(i)).map(e=>`<li data-flagged="${e.flags.length>0}"><time>${escape(e.date)}</time><h4>${escape(e.title)}</h4><p>${escape(shortExcerpt(e.description))}</p><small>${escape(e.source)}</small>${e.flags.map(f=>`<span class="timeline-flag">${escape(f)}</span>`).join('')}</li>`).join('')}</ol>`;}
   const originalFiles=[['01_Complaint_Email_Goldberg.docx','Complaint · Leah Goldberg','complaint'],['06_Exhibit_A_Emails_and_Chat.pdf','Emails and team chat','email'],['07_Exhibit_B_WFM_and_Training_Records.docx','Workforce Management and certification','records'],['08_Religious_Accommodation_Policy.pdf','Religious Accommodation Policy','policy']];
   const details={
     plan:['Plan · Marcus Doyle',()=>`<div class="vt">${capture.plan}</div>`],
@@ -196,7 +208,7 @@
     records:['Exhibit B · selected records',()=>`<h3>September 16, 2026</h3><p>Leah Goldberg, Ngozi Okafor, Kevin Tran and Amy Bell were removed from escalations by M. Doyle. The reason recorded for each was “Cert not on file (LMS pull 9/10).”</p><h3>September 21, 2026</h3><p>Goldberg and Tran were restored by C. Rivera. The reason was “Cert confirmed (LMS re-pull 9/21).”</p><p class="source-review-note">Condensed display of rows from the supplied fictional Exhibit B.</p>`],
     policy:['Religious Accommodation Policy · excerpt',()=>`<p>Harlow & Pine Credit Union · HR-114</p><blockquote>A supervisor who receives a request must respond in writing within five (5) business days. Business days exclude weekends and company holidays.</blockquote><blockquote>Before denying a request, the supervisor must consider reasonable alternatives, including voluntary shift swaps, schedule changes and transfers, and must discuss them with the employee.</blockquote><blockquote>A supervisor who believes a request cannot be granted must consult HR before denying it.</blockquote><p class="source-review-note">Exact selected provisions from the supplied fictional policy.</p>`],
     matrix:['Evidence matrix · Marcus Doyle',matrixView],
-    report:['Investigation report · Marcus Doyle',()=>`<div class="report-paper">${extra.report}</div>`]
+    report:['Investigation report · Marcus Doyle',()=>`<div class="report-paper">${reportExcerpt()}</div>`]
 
   };
   function openDetail(key){if(!details[key])return;stop();if(!dialog.open)previousFocus=document.activeElement;$('#detail-title').textContent=details[key][0];$('#detail-body').innerHTML=details[key][1]();if(!dialog.open)dialog.showModal();dialog.scrollTop=0;$('#close-dialog').focus();}
