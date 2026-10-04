@@ -94,7 +94,7 @@
     });
     return template.innerHTML;
   }
-  const homeOverview=`<div class="home-intro"><small>SATURDAY, OCTOBER 3</small><h3>Good evening, friend.</h3><p>Your work, across cases.</p><div class="home-start vt-start"><div><strong>Start a case</strong><p>Tell me what you have: files, a complaint you can describe, or just a name. I'll ask you what I need and set it up with you. Drop files here any time.</p></div></div><div class="home-today"><div><span>Inbox</span><p>42 reports are waiting in the inbox<small>Through Tell Violet</small></p></div><div><span>Plan</span><p>Maya Lindgren — Mock Case 6: the plan is waiting for review<small>Drafted, not finalized</small></p></div></div></div>`;
+  const homeOverview=`<div class="home-intro"><small>SATURDAY, OCTOBER 3</small><h3>Good evening, friend.</h3><p>Your work, across cases.</p><button class="vt-btn is-p home-start-demo" data-start-demo>▶ Start demo with sound</button><div class="home-start vt-start"><div><strong>Start a case</strong><p>Tell me what you have: files, a complaint you can describe, or just a name. I'll ask you what I need and set it up with you. Drop files here any time.</p></div></div><div class="home-today"><div><span>Inbox</span><p>42 reports are waiting in the inbox<small>Through Tell Violet</small></p></div><div><span>Plan</span><p>Maya Lindgren — Mock Case 6: the plan is waiting for review<small>Drafted, not finalized</small></p></div></div></div>`;
   function render(next,nextMode){
     closeSource();
     step=Math.max(0,Math.min(8,next));if(step===6)findingAligned=false;mode=nextMode||(step===0?'home':step===1?'proposal':step===2?'final':'built');
@@ -145,10 +145,13 @@
   function typeOpening(){
     const token=playToken, field=$('.composer>span'), composer=$('.composer');
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    audio.src='audio/user-home-natural.mp3';audio.muted=muted;
+    audio.play().catch(()=>{if(token!==playToken)return;stop();$('#voice-caption').textContent='Audio could not start. Press Play with sound to retry.';});
+    composer.scrollIntoView({block:'nearest',behavior:'auto'});
     let n=0; composer.classList.add('is-typing'); field.textContent='';
     $('#talk-button').innerHTML='↵';
-    $('#speaker-label').textContent='INVESTIGATOR · TYPING';
-    $('#voice-caption').textContent='The investigator types a request across two cases.';
+    $('#speaker-label').textContent='INVESTIGATOR';
+    $('#voice-caption').textContent=homePrompt;
     function tick(){
       if(!playing||token!==playToken)return;
       n=Math.min(homePrompt.length,n+(reduced?homePrompt.length:2));field.textContent=homePrompt.slice(0,n);
@@ -164,12 +167,12 @@
           content.innerHTML=bubble(homePrompt);$('#voice-caption').textContent='Violet is working on the request…';
           timer=setTimeout(()=>{if(playing&&token===playToken){cue=1;showCue();}},900);
         },450);
-      },650);
+      },Math.max(650,Number.isFinite(audio.duration)?(audio.duration-audio.currentTime)*1000:5500));
     }
     tick();
   }
   function play(){if(playing){stop();return;}playing=true;playToken++;if(cue>=cues.length)cue=0;showCue();updatePlayback();}
-  audio.addEventListener('ended',()=>{if(!playing)return;cue++;const token=playToken;timer=setTimeout(()=>{if(playing&&token===playToken)showCue();},cue===4?1800:cue===5?1500:1800);if(cue===4){const b=$('#confirm-draft');b?.classList.add('click-cue');$('#speaker-label').textContent='INVESTIGATOR ACTION';$('#voice-caption').textContent='Clicks “Draft the plan.” Processing time is shortened in this replay.';}});
+  audio.addEventListener('ended',()=>{if(!playing||cue===0)return;cue++;const token=playToken;timer=setTimeout(()=>{if(playing&&token===playToken)showCue();},cue===4?1800:cue===5?1500:1800);if(cue===4){const b=$('#confirm-draft');b?.classList.add('click-cue');$('#speaker-label').textContent='INVESTIGATOR ACTION';$('#voice-caption').textContent='Clicks “Draft the plan.” Processing time is shortened in this replay.';}});
   audio.addEventListener('error',()=>{if(!playing)return;stop();$('#speaker-label').textContent='AUDIO UNAVAILABLE';$('#voice-caption').textContent='The sound file could not load. You can still explore all nine scenes.';});
   function redraftView(){return `<section class="report-review-card redraft-section"><h3>Harassment analysis · revised</h3><p class="review-note">Illustrative revised excerpt</p><div class="redraft-highlight"><p>The supported remarks and the policy finding are separate questions. Doyle partly acknowledged the Friday and “holy day” remarks, and Kim described hearing the latter firsthand. That supports that remarks occurred; it does not, by itself, establish severe or pervasive harassment.</p><p>On this record, the supported remarks concern a limited set of exchanges around the rotation. The evidence does not establish a broader pattern or sufficient severity to meet the standard being applied in this fictional analysis. The reported “find a job” remark lacks firsthand support and cannot be treated as established. The finding remains Not Substantiated; this does not mean the supported remarks were appropriate, and the accommodation-policy finding remains separate.</p></div><div class="redraft-actions"><button class="vt-btn is-p" data-redraft-keep>Keep</button><button class="vt-btn" data-redraft-undo>Undo</button></div><p class="redraft-status review-note" aria-live="polite">Review the revised wording before keeping it.</p></section>`;}
   document.addEventListener('click',event=>{
@@ -282,6 +285,7 @@
   function closeDetail(){closeSource();dialog.close();previousFocus?.focus();}
   function selectScene(index){stop();cue=Math.max(0,cues.findIndex(c=>c.step===index));render(index);$('#speaker-label').textContent='VOICE REENACTMENT';$('#voice-caption').textContent='Press play to hear this part of the actual exchange.';}
   document.addEventListener('click',e=>{
+    if(e.target.closest('[data-start-demo]')){stop();cue=0;muted=false;play();return;}
     const cite=e.target.closest('[data-cite]');if(cite)return openSource(cite.dataset.cite);
     if(e.target.closest('#close-source'))return closeSource();
     if(e.target.closest('[data-demo-upload]')){e.target.textContent='Demo only · upload in your live case';return;}
