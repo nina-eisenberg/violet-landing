@@ -1,0 +1,14 @@
+[
+  {
+    "id": "violet-support",
+    "role": "violet",
+    "text": "I've sent this to Nina. She usually replies within a few hours, and I'll tell you here when it's fixed.",
+    "bytes": 91578
+  },
+  {
+    "id": "violet-fixed",
+    "role": "violet",
+    "text": "The problem you reported is fixed.",
+    "bytes": 35153
+  }
+]

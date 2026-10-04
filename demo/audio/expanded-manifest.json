@@ -1,0 +1,68 @@
+[
+  {
+    "id": "user-home",
+    "role": "investigator",
+    "text": "Prepare a summary of Marcus Doyle’s interview on INV-2026-0096, and prepare a note for Maya Lindgren — Mock Case 6 saying I need to review the draft plan.",
+    "bytes": 215711
+  },
+  {
+    "id": "violet-home",
+    "role": "violet",
+    "text": "Summary card is up for the Resolution-stage case.",
+    "bytes": 50618
+  },
+  {
+    "id": "user-interview",
+    "role": "investigator",
+    "text": "Summarize Marcus Doyle's interview.",
+    "bytes": 40169
+  },
+  {
+    "id": "violet-interview",
+    "role": "violet",
+    "text": "The summary card for Marcus Doyle's interview is up.",
+    "bytes": 48110
+  },
+  {
+    "id": "user-matrix",
+    "role": "investigator",
+    "text": "Build the evidence matrix.",
+    "bytes": 35153
+  },
+  {
+    "id": "violet-matrix",
+    "role": "violet",
+    "text": "Building the evidence matrix from the plan's allegations, the interviews and the documents.",
+    "bytes": 86562
+  },
+  {
+    "id": "violet-findings",
+    "role": "violet",
+    "text": "The evidence matrix is built. Ready to draft the report? The findings come first: 7 decisions to make. Pick each one; it saves as you go.",
+    "bytes": 153018
+  },
+  {
+    "id": "user-report",
+    "role": "investigator",
+    "text": "Start the report.",
+    "bytes": 23868
+  },
+  {
+    "id": "violet-report",
+    "role": "violet",
+    "text": "The report is open on the right, ready to draft. Your findings are recorded, and I'll write each section from them. Once it's drafted, you can edit it by talking to me: “tighten the background,” “add Kim's account to allegation 2.”",
+    "bytes": 221981
+  },
+  {
+    "id": "user-edit",
+    "role": "investigator",
+    "text": "Make the summary of findings section shorter.",
+    "bytes": 46856
+  },
+  {
+    "id": "violet-edit",
+    "role": "violet",
+    "text": "Rewriting “II. Summary of Findings”. Violet's version will show in that section, to use or not.",
+    "bytes": 115819
+  }
+]

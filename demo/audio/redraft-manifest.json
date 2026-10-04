@@ -1,0 +1,14 @@
+[
+  {
+    "id": "user-redraft",
+    "role": "investigator",
+    "text": "Redraft the harassment analysis to put more emphasis on why the conduct that occurred did not meet the severe-or-pervasive standard. Keep the finding unchanged.",
+    "bytes": 169736
+  },
+  {
+    "id": "violet-redraft",
+    "role": "violet",
+    "text": "I’ve revised the harassment analysis to distinguish the conduct supported by the record from whether it meets the policy threshold. The finding is unchanged. Review the highlighted section; you can keep it or undo it.",
+    "bytes": 209442
+  }
+]
