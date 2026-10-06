@@ -33,6 +33,8 @@ for (const answer of caseAnswers) {
  answer.verified=Boolean(captured);
  if(captured)Object.assign(answer,captured,{cites:[]});
 }
+// Replies that speak about the four-allegation plan only appear once the scope change has been saved.
+const afterScope=['reword5','retaliation','gaps','executive','tran','pay','followup'];
 export function responseAvailable(answer,state){
- return answer.verified && (answer.id!=='finding3'||(state.findings[3]==='Partially Substantiated'&&state.findings[4]==='Not substantiated')) && (answer.id!=='client'||(state.files.includes('policy')&&!state.plan&&state.summaries.length===0&&!state.files.some(id=>['leah','jordan','carla','marcus'].includes(id))));
+ return answer.verified && (answer.id!=='priya'||state.plan) && (!afterScope.includes(answer.id)||state.scope) && (answer.id!=='retaliation'||state.findings.every(Boolean)) && (answer.id!=='email'||state.files.includes('marcus')) && (answer.id!=='finding3'||(state.findings[3]==='Partially Substantiated'&&state.findings[4]==='Not substantiated')) && (answer.id!=='client'||(state.files.includes('policy')&&!state.plan&&state.summaries.length===0&&!state.files.some(id=>['leah','jordan','carla','marcus'].includes(id))));
 }
