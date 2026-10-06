@@ -1,0 +1,76 @@
+VIOLET — USABILITY AND JOY WALKTHROUGH
+October 4, 2026 · Initial findings, not a completed end-to-end audit
+Source baseline: origin/main 66bcabcb. Live app: app.violetinvestigations.com.
+Method: read-only Home, existing Marcus Doyle INV-2026-0096, plan modal, person window, summary tab; current source inspection. No paid model calls this pass. No production records edited. Older conversation content is historical evidence, not evidence that current code still produces those messages.
+
+1. Make the conversational editing target unmistakable. HIGH
+Observed: opening Summary sets the composer to “Editing Marcus Doyle's summary”, but the composer is behind the modal. The main placeholder remains the generic case prompt.
+Recommendation: put “Ask Violet to change this summary” inside the artifact view, or provide a visible attached composer. Keep a named target above it and a clear exit. Verify target clears appropriately on close.
+Joy: the investigator can immediately ask for a change without wondering where the words will go.
+
+2. Make citations comfortably discoverable and accessible. HIGH
+Observed: source numbers are visually tiny superscripts. They are visible in the screenshot but were not exposed as buttons in the summary's accessibility snapshot. The instruction says to click a marker.
+Recommendation: retain restrained superscripts but give each a generous target, keyboard focus, and accessible label naming the source. Hover/focus should highlight the supported sentence. Opening a source should preserve reading position.
+Limit: keyboard activation and actual source-opening behavior not yet tested in this pass.
+
+3. Clarify saved versus final in the plan. MEDIUM
+Observed: shelf says “Final · 4 allegations”; the plan modal allows immediate editing and says “it saves as you go.”
+Recommendation: show the plan's current final/draft status inside the modal; after an edit, explicitly show whether finalization was invalidated. One small “Saved” acknowledgement near the changed field is enough.
+Limit: did not edit the existing finalized plan, so not claiming a persistence defect.
+
+4. Reduce duplicate identity and hierarchy noise. LOW
+Observed: person window title “Marcus Doyle · Details”, subtitle “Marcus Doyle”, selected Summary tab. “Bottom line” is inline bold while “Background” is a section heading.
+Recommendation: person name once, role underneath, active tab conveys the task. Give Bottom line the same section hierarchy as the other headings, or style it as a clear lead summary rather than an undersized pseudo-heading.
+Joy: calmer, easier scanning, less interface to decode.
+
+5. Distinguish same-named cases at selection time. MEDIUM
+Observed: three open Marcus Doyle cases in Home navigation, differentiated primarily by case number. This fixture makes ambiguity unusually visible.
+Recommendation: disambiguation cards should include case number, stage, organization/context and last activity. A short “the one with the completed interviews” reply should resolve the offered set.
+Demo: preserve case-selection state; do not jump immediately to a report from a generic name.
+
+6. Treat confirmation as the interaction, not a second explanation. PRESERVE
+Current prompt explicitly requires cards to speak for themselves; no “the card is up”; show a finished draft immediately; one confirmation, not two; short milestone acknowledgement without confetti.
+Recommendation: preserve this in the demo. Do not revive old narration from stored conversations.
+Joy: responsiveness comes from the work appearing, not Violet announcing that she will show it.
+
+7. Protect the thread from old-state confusion. VERIFY NEXT
+Historical thread contains duplicate task warnings and old support results; current shelf has one open task. Do not classify these as current regressions.
+Recommendation to investigate: visibly retire obsolete proposals; make pending items and the latest artifact easy to find. Keep the milestone jump and shelf.
+
+8. Voice must respect actual confirmation boundaries. DEMO REQUIREMENT
+Current main allows spoken yes for tasks, notes, scheduling and interview status. Reporter replies require “send it”; outlines, summaries, new cases and other document/external writes require a tap. The proposed demo must not pretend every action can complete by voice alone.
+Recommendation: when a tap is required, show the relevant card and explain the boundary once, concisely. Avoid repeating it on every turn.
+
+NEXT CHECKS
+Plan drafting and inline revision on disposable fixture; interrupt and resume; ambiguity and multi-request sequencing; completed versus missing outlines/summaries; narrative toggle placement on current data; citation keyboard behavior; report review and redraft; voice turn-taking. Use source and existing artifacts before buying new generation. Testing ceiling $3; no charges incurred in this pass.
+
+ADDITIONAL OBSERVATIONS — completed read-only walkthrough, October 4
+
+9. Timeline flags need an unmistakable connection to the event (medium).
+Observed: “Contradiction · Swap authority vs. Doyle's stated belief” appeared below the September 11 LMS certification event. A reader has to infer what the flag relates to. Recommendation: anchor each flag to the exact event(s)/passage(s), and show the comparison when opened. This is an observed presentation ambiguity, not a verified data corruption defect.
+
+10. Long artifacts need a compact entry point (medium).
+Observed: the timeline presents all 20 substantial events; the interview summary is also long. Preserve the full record but start with key events and expandable detail, clearly showing counts and filters. For the marketing demo, use selected excerpts labelled as such.
+
+11. The report has a real workspace, not another chat card (keep).
+Observed: Report opens alongside the conversation, with Draft and Review & finalize. The loaded report contains all eight sections. Review has highlighted/flag context and a source area; this case currently has no open flags. Keep the complete report visible when showing a revision or zoomed review. Do not imply our illustrative flag is an outstanding flag in the actual case.
+
+12. Celebrate genuine completion (keep).
+Current main distinguishes a checked report from a finalized report. Celebration belongs after review and finalization, not after generation. This restraint makes the product feel trustworthy.
+
+RECOMMENDED ORDER
+First: visible edit target; reliable citation hit targets/focus; clear plan status.
+Next: timeline flag anchoring; concise artifact entry points; retire completed proposals without disabling useful historical citations.
+Joy: one calm completion acknowledgment, saved place when changing subjects, recognizable case/person context, and instant opening of existing work. Avoid adding celebratory noise or extra confirmation steps.
+
+WHAT WAS VERIFIED
+Read-only live browser inspection of Home, Marcus Doyle's case shelf, plan modal, person/interview summary modal, timeline, full report, and Review & finalize. Current main source snapshot 66bcabcb, fetched again after inspection with no newer changes. Reviewed current prompt, stage/action cards, and nextStep/reportRequest state rules. Existing conversation content was treated as historical, not evidence of current generation behavior.
+
+NOT VERIFIED
+No production artifact was regenerated, no real report finding was changed, no production message/upload was submitted, and no live voice call was started. Keyboard operation of the actual summary's citation superscripts still needs a focused accessibility check. Recommendations are not claimed to have been implemented in the app.
+
+PROTOTYPE DELIVERED IN THIS PASS
+Local /sandbox now has a stateful prepared Home -> plan proposal -> draft -> finalize -> interview outline -> prepared transcript -> summary path, plus a Maya note interruption and return. A bare confirmation cannot create an unrelated action; summary requires a transcript; existing work reopens; proposals remain tied to their case. Eight state-transition tests pass. Browser walked the plan, cross-case note, return, outline, transcript, summary, narrative toggle and source modal. One new live Jev free-text plan request was verified; buttons use local routing with zero provider calls.
+
+LIMITS / NEXT CAPTURE WORK
+This is the first working slice, not the promised complete production-like sandbox. Arbitrary plan edits, multiple simultaneous requests, other witnesses, live voice, genuine uploads, missing-policy intake, and complete findings/timeline/matrix branches are not implemented here. Report/revision/review and support are retained prepared examples from the earlier prototype. They are not newly verified live AI output. Full capture should add each branch with initial state, user wording, exact response/card, confirmation, resulting state, cancellation, interruption/resume, and provenance before expanding Jev's allowed choices. Do not advertise unlimited interaction.

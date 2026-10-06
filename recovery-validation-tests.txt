@@ -1,0 +1,403 @@
+TAP version 13
+# Subtest: ambiguous plan request asks for case then proposes, never drafts silently
+ok 1 - ambiguous plan request asks for case then proposes, never drafts silently
+  ---
+  duration_ms: 1.621166
+  ...
+# Subtest: bare confirmation and early finalization cannot advance case
+ok 2 - bare confirmation and early finalization cannot advance case
+  ---
+  duration_ms: 0.144125
+  ...
+# Subtest: plan approval leads to interviews; existing outline is reused
+ok 3 - plan approval leads to interviews; existing outline is reused
+  ---
+  duration_ms: 0.632917
+  ...
+# Subtest: summary requires transcript, approval and then reopens existing summary
+ok 4 - summary requires transcript, approval and then reopens existing summary
+  ---
+  duration_ms: 0.105541
+  ...
+# Subtest: cross case note confirmation preserves plan and returns to Marcus
+ok 5 - cross case note confirmation preserves plan and returns to Marcus
+  ---
+  duration_ms: 0.116958
+  ...
+# Subtest: cancel leaves artifact untouched
+ok 6 - cancel leaves artifact untouched
+  ---
+  duration_ms: 0.127625
+  ...
+# Subtest: changing cases cannot apply a pending proposal to the wrong case
+ok 7 - changing cases cannot apply a pending proposal to the wrong case
+  ---
+  duration_ms: 0.100916
+  ...
+# Subtest: next on Maya stays in Maya rather than exposing Marcus state
+ok 8 - next on Maya stays in Maya rather than exposing Marcus state
+  ---
+  duration_ms: 0.069333
+  ...
+# Subtest: Maya never renders Marcus plan or interview without case selection
+ok 9 - Maya never renders Marcus plan or interview without case selection
+  ---
+  duration_ms: 0.329542
+  ...
+# Subtest: every supplied standard question selects its own prepared answer
+ok 10 - every supplied standard question selects its own prepared answer
+  ---
+  duration_ms: 1.792834
+  ...
+# Subtest: citations point to real supplied file passages
+ok 11 - citations point to real supplied file passages
+  ---
+  duration_ms: 0.142708
+  ...
+# Subtest: whole case with upload and report guards
+not ok 12 - whole case with upload and report guards
+  ---
+  duration_ms: 0.526667
+  location: '/Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:4:1'
+  failureType: 'testCodeFailure'
+  error: 'Record each finding first'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    progress (file:///Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey-state.js:16:35)
+    TestContext.<anonymous> (file:///Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:4:485)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: duplicate upload is idempotent and changed finding invalidates final review
+ok 13 - duplicate upload is idempotent and changed finding invalidates final review
+  ---
+  duration_ms: 0.081875
+  ...
+# Subtest: suggestions respect available evidence and change with the stage
+not ok 14 - suggestions respect available evidence and change with the stage
+  ---
+  duration_ms: 1.634375
+  location: '/Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:8:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + [
+    +   'client'
+    + ]
+    - []
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0: 'client'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:10:9)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: captured artifacts retain the substantive case record
+not ok 15 - captured artifacts retain the substantive case record
+  ---
+  duration_ms: 0.253083
+  location: '/Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:24:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    33 !== 8
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 8
+  actual: 33
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:27:9)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: uncaptured answers and wrong-stage client drafts cannot impersonate Violet
+ok 16 - uncaptured answers and wrong-stage client drafts cannot impersonate Violet
+  ---
+  duration_ms: 0.150167
+  ...
+# Subtest: all twenty requested questions have live captured responses
+not ok 17 - all twenty requested questions have live captured responses
+  ---
+  duration_ms: 0.083875
+  location: '/Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:53:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    priya
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:55:42)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: all four people have actual outlines and separately captured formats
+not ok 18 - all four people have actual outlines and separately captured formats
+  ---
+  duration_ms: 7.335166
+  location: '/Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:57:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(versions.bullets.includes('<ul'))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:58:141)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: full report citation markers all have captured source passages
+not ok 19 - full report citation markers all have captured source passages
+  ---
+  duration_ms: 0.701458
+  location: '/Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:60:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(Object.keys(capturedCitations).length>100)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:62:9)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: factual findings remain distinct from policy findings
+ok 20 - factual findings remain distinct from policy findings
+  ---
+  duration_ms: 0.232667
+  ...
+# Subtest: client update retains all four sections and completed detours are not suggested again
+not ok 21 - client update retains all four sections and completed detours are not suggested again
+  ---
+  duration_ms: 0.615208
+  location: '/Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:70:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(!suggestQuestions(state,'Investigation plan',['client']).some(q=>q.id==='client'))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:75:9)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: every response retains the complete independently saved source body
+not ok 22 - every response retains the complete independently saved source body
+  ---
+  duration_ms: 1.04275
+  location: '/Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:80:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    knowledge must not be shortened
+    + actual - expected
+    
+    + `Doyle says he first learned of the complaint on September 17, when Anand called him: "When you called me yesterday, the 17th. I didn't know before." 1 That is the only evidence of when he found out, and it is his own account. The record has no call log, email or notice showing when he was told. Goldberg's complaint reached HR on September 15 at 8:12 AM. 2 The change log shows Doyle removed her from escalations on September 16 at 7:05 AM. 3 By his account, he did not know of the complaint when he made that removal. Goldberg does not claim he knew. She links the removal to her complaint because it came the day after she went to HR. 4 5 Rivera said she did not know Goldberg had raised a complaint, which says nothing about Doyle's knowledge. 6 Nothing in the record independently confirms or contradicts his date.`
+    - `<p class="mb-4 leading-[1.75] text-foreground/90">Doyle says he first learned of the complaint on September 17, when Anand called him: "When you called me yesterday, the 17th. I didn't know before." <button type="button" class="av-cite" title="Marcus Doyle — Subject, Team Supervisor, Member Services — Interview Transcript, lines 83–87 — open the source" aria-label="Source 1: Marcus Doyle — Subject, Team Supervisor, Member Services — Interview Transcript, lines 83–87">1</button></p>\n` +
+    -   '<p class="mb-4 leading-[1.75] text-foreground/90">That is the only evidence of when he found out, and it is his own account. The record has no call log, email or notice showing when he was told.</p>\n' +
+    -   `<p class="mb-4 leading-[1.75] text-foreground/90">Goldberg's complaint reached HR on September 15 at 8:12 AM. <button type="button" class="av-cite" title="01_Complaint_Email_Goldberg.docx, line 7 — open the source" aria-label="Source 2: 01_Complaint_Email_Goldberg.docx, line 7">2</button> The change log shows Doyle removed her from escalations on September 16 at 7:05 AM. <button type="button" class="av-cite" title="07_Exhibit_B_WFM_and_Training_Records.docx, lines 15–21 — open the source" aria-label="Source 3: 07_Exhibit_B_WFM_and_Training_Records.docx, lines 15–21">3</button> By his account, he did not know of the complaint when he made that removal.</p>\n` +
+    -   `<p class="mb-4 leading-[1.75] text-foreground/90">Goldberg does not claim he knew. She links the removal to her complaint because it came the day after she went to HR. <button type="button" class="av-cite" title="Leah Goldberg — Complainant, Member Services Representative II — Interview Transcript, line 87 — open the source" aria-label="Source 4: Leah Goldberg — Complainant, Member Services Representative II — Interview Transcript, line 87">4</button> <button type="button" class="av-cite" title="Leah Goldberg — Complainant, Member Services Representative II — Interview Transcript, line 95 — open the source" aria-label="Source 5: Leah Goldberg — Complainant, Member Services Representative II — Interview Transcript, line 95">5</button> Rivera said she did not know Goldberg had raised a complaint, which says nothing about Doyle's knowledge. <button type="button" class="av-cite" title="Carla Rivera — Witness — Interview Transcript, line 13 — open the source" aria-label="Source 6: Carla Rivera — Witness — Interview Transcript, line 13">6</button></p>\n` +
+    -   '<p class="mb-4 leading-[1.75] text-foreground/90">Nothing in the record independently confirms or contradicts his date.</p>'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    <p class="mb-4 leading-[1.75] text-foreground/90">Doyle says he first learned of the complaint on September 17, when Anand called him: "When you called me yesterday, the 17th. I didn't know before." <button type="button" class="av-cite" title="Marcus Doyle — Subject, Team Supervisor, Member Services — Interview Transcript, lines 83–87 — open the source" aria-label="Source 1: Marcus Doyle — Subject, Team Supervisor, Member Services — Interview Transcript, lines 83–87">1</button></p>
+    <p class="mb-4 leading-[1.75] text-foreground/90">That is the only evidence of when he found out, and it is his own account. The record has no call log, email or notice showing when he was told.</p>
+    <p class="mb-4 leading-[1.75] text-foreground/90">Goldberg's complaint reached HR on September 15 at 8:12 AM. <button type="button" class="av-cite" title="01_Complaint_Email_Goldberg.docx, line 7 — open the source" aria-label="Source 2: 01_Complaint_Email_Goldberg.docx, line 7">2</button> The change log shows Doyle removed her from escalations on September 16 at 7:05 AM. <button type="button" class="av-cite" title="07_Exhibit_B_WFM_and_Training_Records.docx, lines 15–21 — open the source" aria-label="Source 3: 07_Exhibit_B_WFM_and_Training_Records.docx, lines 15–21">3</button> By his account, he did not know of the complaint when he made that removal.</p>
+    <p class="mb-4 leading-[1.75] text-foreground/90">Goldberg does not claim he knew. She links the removal to her complaint because it came the day after she went to HR. <button type="button" class="av-cite" title="Leah Goldberg — Complainant, Member Services Representative II — Interview Transcript, line 87 — open the source" aria-label="Source 4: Leah Goldberg — Complainant, Member Services Representative II — Interview Transcript, line 87">4</button> <button type="button" class="av-cite" title="Leah Goldberg — Complainant, Member Services Representative II — Interview Transcript, line 95 — open the source" aria-label="Source 5: Leah Goldberg — Complainant, Member Services Representative II — Interview Transcript, line 95">5</button> Rivera said she did not know Goldberg had raised a complaint, which says nothing about Doyle's knowledge. <button type="button" class="av-cite" title="Carla Rivera — Witness — Interview Transcript, line 13 — open the source" aria-label="Source 6: Carla Rivera — Witness — Interview Transcript, line 13">6</button></p>
+    <p class="mb-4 leading-[1.75] text-foreground/90">Nothing in the record independently confirms or contradicts his date.</p>
+  actual: `Doyle says he first learned of the complaint on September 17, when Anand called him: "When you called me yesterday, the 17th. I didn't know before." 1 That is the only evidence of when he found out, and it is his own account. The record has no call log, email or notice showing when he was told. Goldberg's complaint reached HR on September 15 at 8:12 AM. 2 The change log shows Doyle removed her from escalations on September 16 at 7:05 AM. 3 By his account, he did not know of the complaint when he made that removal. Goldberg does not claim he knew. She links the removal to her complaint because it came the day after she went to HR. 4 5 Rivera said she did not know Goldberg had raised a complaint, which says nothing about Doyle's knowledge. 6 Nothing in the record independently confirms or contradicts his date.`
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:83:68)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: initial artifacts exactly retain the fresh live captures
+not ok 23 - initial artifacts exactly retain the fresh live captures
+  ---
+  duration_ms: 0.158292
+  location: '/Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:89:1'
+  failureType: 'testCodeFailure'
+  error: "ENOENT: no such file or directory, open '/Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/reference-captures/final-pass/initial-plan.html'"
+  code: 'ENOENT'
+  stack: |-
+    readFileSync (node:fs:442:20)
+    TestContext.<anonymous> (file:///Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:91:27)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: scope proposal preserves the full response, caveats and all six sources
+not ok 24 - scope proposal preserves the full response, caveats and all six sources
+  ---
+  duration_ms: 0.080166
+  location: '/Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:97:1'
+  failureType: 'testCodeFailure'
+  error: "ENOENT: no such file or directory, open '/Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/reference-captures/final-pass/scope-response.html'"
+  code: 'ENOENT'
+  stack: |-
+    readFileSync (node:fs:442:20)
+    TestContext.<anonymous> (file:///Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:99:34)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: confidence retains every complete saved assessment row
+not ok 25 - confidence retains every complete saved assessment row
+  ---
+  duration_ms: 0.067541
+  location: '/Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:105:1'
+  failureType: 'testCodeFailure'
+  error: "ENOENT: no such file or directory, open '/Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/reference-captures/final-pass/confidence.html'"
+  code: 'ENOENT'
+  stack: |-
+    readFileSync (node:fs:442:20)
+    TestContext.<anonymous> (file:///Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/journey.test.js:106:17)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: opening questions from user screenshot
+not ok 26 - opening questions from user screenshot
+  ---
+  duration_ms: 2.967916
+  location: '/Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/openings.test.js:2:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    null !== 'marcus'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'marcus'
+  actual: ~
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/openings.test.js:2:121)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.start (node:internal/test_runner/test:877:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: common beginnings have prepared branches
+ok 27 - common beginnings have prepared branches
+  ---
+  duration_ms: 0.80075
+  ...
+# Subtest: overview is distinct from artifact requests
+not ok 28 - overview is distinct from artifact requests
+  ---
+  duration_ms: 0.849458
+  location: '/Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/openings.test.js:4:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'summary'
+    - 'marcus'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'marcus'
+  actual: 'summary'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/ninaeisenberg/.codex/visualizations/2026/10/04/01a10453-33be-7662-b7e2-94c80158be68/recovery/site/sandbox/openings.test.js:4:64)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: unnamed case overview asks before choosing
+ok 29 - unnamed case overview asks before choosing
+  ---
+  duration_ms: 0.232208
+  ...
+1..29
+# tests 29
+# suites 0
+# pass 16
+# fail 13
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 95.139958

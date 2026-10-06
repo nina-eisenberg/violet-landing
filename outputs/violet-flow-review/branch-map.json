@@ -1,0 +1,17 @@
+{
+  "baseline": "66bcabcb",
+  "status": "initial source-backed map; live capture incomplete",
+  "states": [
+    {"id":"home", "intents":{"ambiguous_case_request":"choose_case","known_case_request":"case_context","new_case":"intake_method"}},
+    {"id":"choose_case", "intents":{"select_offered_case":"case_context","cancel":"home","unrelated_request":"handle_new_request_preserve_pending"}},
+    {"id":"case_context", "intents":{"draft_plan_no_plan":"plan_proposal","show_existing_plan":"plan_review","show_interviews":"interview_tiles"}},
+    {"id":"plan_proposal", "intents":{"confirm_card":"plan_working","cancel":"case_context","voice_yes":"require_card_tap"}},
+    {"id":"plan_working", "completion":"plan_review", "failure":"diagnosis"},
+    {"id":"plan_review", "intents":{"edit":"proposed_plan_revision","finalize":"finalize_action","cancel_edit":"plan_review","interviews":"interview_tiles"}},
+    {"id":"proposed_plan_revision", "intents":{"accept":"plan_review_updated","reject":"plan_review_original","change_subject":"handle_new_request_preserve_pending"}},
+    {"id":"interview_tiles", "intents":{"choose_person":"person_window","schedule":"person_scheduler","missing_outline":"outline_proposal","existing_outline":"outline_review","existing_summary":"summary_review","missing_summary_with_transcript":"summary_proposal"}},
+    {"id":"summary_review", "intents":{"citation":"source_view","edit":"proposed_summary_revision","format":"same_summary_other_format","finalize":"summary_finalize_action"}},
+    {"id":"handle_new_request_preserve_pending", "return_action":"restore_named_pending_flow"}
+  ],
+  "invariants": ["No generic yes without pending context", "Current case state outranks conversation history", "Cards do not claim execution before completion", "Existing artifacts are shown without needless regeneration", "Multi-request back-and-forth flows run in requested order", "Voice and text confirmation rules differ", "Demo recommendations do not silently replace observed product behavior"]
+}

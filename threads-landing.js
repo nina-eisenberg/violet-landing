@@ -1,2 +1,10 @@
-const frame=document.querySelector('#violet-tour');
-window.addEventListener('message',event=>{if(event.origin!==location.origin||event.source!==frame.contentWindow||event.data?.type!=='violet:demo-height')return;const height=Number(event.data.height);if(Number.isFinite(height)&&height>300&&height<5000)frame.style.height=Math.ceil(height)+'px';});
+const workspace = document.querySelector('.tour-workspace');
+const expand = document.querySelector('#expand-tour');
+function setExpanded(value) {
+  workspace.classList.toggle('is-expanded', value);
+  document.body.classList.toggle('tour-expanded', value);
+  expand.setAttribute('aria-expanded', String(value));
+  expand.textContent = value ? 'Return to website ↙' : 'Expand demo ↗';
+}
+expand.addEventListener('click', () => setExpanded(expand.getAttribute('aria-expanded') !== 'true'));
+window.addEventListener('keydown', event => { if (event.key === 'Escape') setExpanded(false); });

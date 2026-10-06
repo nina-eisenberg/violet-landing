@@ -1,0 +1,71 @@
+Violet usability and joy — walkthrough findings, 5 October 2026
+
+Observed in the real app
+
+1. Keep the assistant aware of the controls on the card.
+   Violet said Marcus's summary had no narrative option, while its Narrative toggle was visible and worked. Teach the assistant the available card actions; a request to change format should invoke that action directly.
+
+2. Keep independent requests independent.
+   An executive-summary request became entangled with a running interview-summary job. It produced a duplicate-job error and a support-report prompt. Coalesce duplicate jobs, show the existing job, and retain the other request in a visible queue. A harmless duplicate should not need a support ticket.
+
+3. Make editing focus unmistakable and easy to leave.
+   Opening a summary citation can leave the composer saying “Editing Leah Goldberg’s summary.” A subsequent unrelated request can be misinterpreted. Keep a visible focus chip beside the composer; automatically leave edit mode when the user clearly names another task.
+
+4. Let review flags express uncertainty.
+   The report checker flagged an internal contradiction while its own explanation called the flag weak. Separate “check this” from a definite error. Keep “It’s fine as is” easy to reach and acknowledge the investigator's judgment without another warning.
+
+5. Keep factual findings distinct from policy findings in every output.
+   The findings card correctly separates the four factual questions from the three policy conclusions. A requested harassment redraft labels the section “ALLEGATION 3” and “NOT SUBSTANTIATED,” although the conduct finding is partly found. Use consistent labels in drafts, report headings and chat.
+
+6. Distinguish notes from a transcript.
+   Carla’s source is interview notes, but summary and source-viewer labels say “transcript.” Preserve the source type in the label and in any assurance about citation checking.
+
+7. Make format changes feel immediate.
+   Switching to narrative launches a generation job. Cache both versions once prepared; keep the existing version readable while the new one is being produced. Explain the change in one short line.
+
+8. After a side task, offer the next useful step.
+   A short client update should end with a small “Back to your plan” or “Continue interviews” option, preserving edits and position. This was a demonstrated dead end in the earlier demo and is fixed locally.
+
+9. Celebrate concrete progress quietly.
+   After a file is accepted, show its destination and one next action. After an interview summary is finalized, update the person’s status and offer the next person. Avoid a separate celebratory screen or extra confirmation.
+
+10. Make sources feel attached to the sentence.
+    Open the cited passage beside the artifact at the same vertical position, with a visible close button and highlighted lines. Preserve scroll position and keyboard focus on return. The local demo uses a bounded source modal to avoid the previous misaligned pane.
+
+Recommended follow-up checks
+
+- Verify voice responses and screen actions stay synchronized after a multi-task request.
+- Measure whether first-time users understand the difference between a proposal, a saved change, and a generated draft.
+- Test narrow screens with the composer, report, and source viewer together.
+- Review the captured follow-up outlines separately from initial-interview outlines: the reference case already had completed interviews when these were generated.
+
+These are recommendations for the app. This pass changes the local marketing demo only.
+
+Fresh-case capture findings — 5 October, evening
+
+11. Preserve existing scope when proposing an addition (high priority).
+    Asking about retaliation initially proposed removing the harassment group.
+    I rejected it. An explicit preserve-the-existing-plan request produced the
+    correct added-group proposal. Show deletions prominently and never infer
+    removal from a request to add something.
+12. Clear resolved failures after retry.
+    Initial plan generation failed with an unresolved clause ID; Retry succeeded,
+    but the earlier failure/support card remained. Mark it resolved in place.
+13. Don't treat normal batch work as a problem.
+    Generating four different outlines triggered a repeated-request help prompt.
+    Different witnesses are independent work, not repeated failed attempts.
+14. Keep finalization clear of the sticky composer.
+    A live finalize action was obscured and required keyboard navigation.
+15. Make saved confidence accessible from the report.
+    The saved full assessment existed in the report DOM but had no obvious visible
+    entry from the current report state. Add a stable Review findings action.
+16. Avoid false citation flags on procedural statements.
+    Violet marked “Tell me if you want any wording changed...” as an uncited fact.
+    Requests and explanations of UI behavior should not require case evidence.
+17. Review initial-outline boilerplate.
+    Fresh outlines assume privilege/attorney framing and an organization name.
+    Make these depend on confirmed case settings; don't infer them silently.
+
+Initial outlines have now been captured before any interviews were added. The
+previous follow-up-outline check is superseded. Source docks are non-modal in
+the local demo, with Close and Escape; earlier “bounded modal” wording is stale.

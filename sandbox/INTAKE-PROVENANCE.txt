@@ -1,0 +1,31 @@
+Intake checkpoint — October 4, 2026
+
+Source: Mock Case 7 (tiny), source D01_complaint.txt only. No answer key,
+interview, subsequent complaint, or later evidence was used to populate intake.
+The full supplied complaint is available under Read complaint.
+Synopsis is a prepared, source-grounded condensation, not a captured live model response.
+Jordan's surname is deliberately absent until the visitor supplies it.
+
+UI: existing Violet app-original.css (Inter/Newsreader, vt-* styles); rendered
+markup and editable fields ported from FromFilesCard.tsx and IntakeCard.tsx.
+These are local HTML implementations, not mounted production React components.
+Home's drop behavior and exact fixed reply come from VioletHome.tsx.
+Draft-ready text and Finalize and open case match FromFilesCard.tsx.
+Follow-up questions and country list come from caseScript.ts and countries.ts.
+Source inspected on origin/main 66bcabcb; live Home checked in browser.
+
+Demo-only differences: file tray and Show me how; fictional prepared extraction;
+accelerated processing; internal-team preset; no network/file upload, real record,
+voice mode or AI extraction. Missing-information lists are limited demo defaults,
+except the complete country list. This checkpoint ends after intake confirmation.
+Previous broader prototype remains at explore.html.
+
+Verified in browser: sample drag drop; Show me how animation; editable people
+persist through finalization; channel/urgency/country follow-up; intake card.
+Build passed. New AI spend for this checkpoint: $0.
+
+Superseding fidelity pass: see FIDELITY-AUDIT.txt. The plan, Marcus summary,
+timeline, matrix and full report now use captured generated artifacts from
+INV-2026-0096. The report was recaptured live on October 4. Other summaries and
+outlines remain labelled prepared examples. Anti-Harassment and Anti-Retaliation
+policy excerpts come from the existing case's library-backed plan.
