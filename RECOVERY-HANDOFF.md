@@ -1,5 +1,11 @@
 # Violet website/demo recovery handoff — October 6, 2026
 
+> **Update, Oct 6 evening — restoration tasks 1–10 below are done.** 29/29 tests pass, the build passes, and the
+> full journey was walked in the browser. What was rebuilt, from which saved records, and the remaining
+> deviations are in `sandbox/FIDELITY-AUDIT.txt`; how to reproduce is in `recovery-tools/README.txt`. Backups
+> (git bundles and the read-only case dumps) are in `../violet-landing-backups/`. The text below is the original
+> handoff, kept for history.
+
 ## Open the recovered work
 
 - Website: http://127.0.0.1:4190/

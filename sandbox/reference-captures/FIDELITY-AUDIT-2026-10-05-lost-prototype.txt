@@ -1,0 +1,95 @@
+RECOVERY NOTICE — 2026-10-06: The audit below describes the lost temporary prototype, not this partially recovered copy. Consult ../RECOVERY-HANDOFF.md for current status.
+
+Prepared-case fidelity audit — 5 October 2026, final capture pass
+
+THE FOUR PREVIOUSLY LISTED CONTENT GAPS ARE CLOSED
+
+1. Initial plan — reference-captures/final-pass/initial-plan.html
+   Generated in a fresh live fictional case INV-2026-0105 using the complaint,
+   supplied HR-114 and the selected library policy, before any interview records.
+   The first generation failed; Retry succeeded. The raw output included an
+   additional anti-discrimination group. I removed that group using the live
+   plan's controls to retain the intended three-allegation scope, then captured
+   the result. Both raw and reviewed captures are retained. The demo uses the
+   actual reviewed plan, including Context, policy excerpts, people and all eight
+   collection items. It no longer removes retaliation from a later plan to
+   manufacture an initial one.
+
+2. Initial outlines — reference-captures/final-pass/outline-{person}.html
+   All four generated in INV-2026-0105 BEFORE any interview transcript was added.
+   Complete outputs replace the old follow-up outlines, with original wording
+   retained. These are the initial outlines; they do not silently update after
+   scope expansion. They are not the follow-up outlines from completed case 0096.
+
+3. Scope proposal — scope-response.html, scope-card.html, scope-caveat.html,
+   scope-sources.json and expanded-plan.html in the same capture directory.
+   Added Leah's actual supplied transcript through live Paste transcript.
+   First proposal would remove an existing group; rejected through Keep plan
+   as is. Explicitly requested preserving all three existing allegations and
+   adding retaliation. Captured the COMPLETE corrected answer, proposal card,
+   final caveat and six actual source docks. Save this change was exercised live:
+   case file showed Final / 4 allegations. Captured that resulting plan too.
+   The demo asks the investigator to request this proposal rather than inventing
+   an automatic Violet response to the upload. Save and Keep both continue.
+   The live caveat that Anti-Retaliation Policy text was absent remains visible;
+   it is not rewritten to suggest the policy was read. Later completed-record
+   artifacts use case 0096, which has that policy. This is a prepared composite
+   journey through the same fictional case material, not one uninterrupted run.
+
+4. Confidence — confidence.html and captured-confidence.js
+   Full saved assessment from live completed case INV-2026-0096: all three
+   policy rows, confidence labels, every limitation, supporting factor and
+   counter-evidence item. No substantive assessment paragraphs are cut.
+   Captured from the report page's closed evidence-alignment dialog DOM; the
+   production dialog was NOT successfully opened visually from that report
+   state. Content is live-source verified; interactive presentation was checked
+   in the local demo. Do not describe this as a pixel-identical live modal test.
+   The three saved confidence labels are high. Investigator selections and
+   disagreement labels are local state. Optional reasoning persists on return.
+   Saved assessments are not recomputed; the demo makes no such claim.
+
+BROWSER VERIFICATION IN THIS PASS
+Complaint -> intake -> policy sample -> full initial plan -> finalize -> Leah
+initial outline -> transcript -> scope proposal -> source / Escape -> Keep ->
+summary -> proposal / Save -> finalize summary -> remaining three initial
+outlines / records / summaries -> evidence files -> seven findings -> one policy
+disagreement -> expanded supporting/counter-evidence -> correction -> full
+8-section report -> flag review. Verified all source capture mappings and
+retained full artifact bodies with regression checks. Fixed reasoning-field
+serialization discovered during this check. Production build passes.
+
+PREVIOUSLY VERIFIED CONTENT RETAINED
+- 20 standard question responses plus report redraft retain complete captured
+  bodies. Independent response-source-text.json prevents silent truncation.
+- Full four bullet summaries and four separately generated narrative summaries.
+- Actual 20 timeline events and flags; compact disclosure presentation.
+- Actual evidence matrix content organized by policy.
+- Seven findings: four factual questions and three overall policy determinations.
+- Full eight-section report, numbered source captures, real checker flag and
+  its Edit / Remove / It's fine as is choices. Full real redraft with Keep/Undo.
+- Side questions preserve work; answered suggestions are removed on return.
+- Sample-file trays at upload stages; correct four participant names.
+
+DELIBERATE DEMO ADAPTATIONS / BOUNDARIES
+The demo uses captured content and local controls, not the production React app.
+Home, intake card, upload animation, file trays and completion are simulations;
+intake prompts were checked against production scripts. No real ingestion or
+filing happens. Initial outline content retains live boilerplate, including
+case settings from the capture. The final report and findings use the completed
+0096 record, so wording can differ from the fresh plan. Captured response caveats
+and genuine weak checker flags are retained, not silently improved.
+
+Source docks are non-modal and bounded with Close / Escape and focus return.
+Production-native inline editing and pixel identity are not claimed. Arbitrary
+alternative report generation and live voice are outside this prepared replay.
+Reports inconsistent with chosen policy findings cannot be finalized as if they
+had been regenerated. No blanket claim of every possible Violet response.
+
+COST / LIVE EFFECTS
+Visitor use of this prepared journey makes no AI calls and uploads no files.
+Missing captures required live generation in authorized fictional cases; actual
+provider charges have not been independently verified. No verified $3 claim.
+Live 0105 now has a finalized expanded plan, four initial outlines and Leah's
+interview record. A report Verify action was invoked in 0096 while locating the
+saved confidence view; no report prose was edited in this pass. No support
+message was sent. No production app code changed; no website deployment.
