@@ -174,12 +174,19 @@ body>footer nav{font-size:12px;gap:22px}
   body>header{justify-content:space-between}
 }
 @media(max-width:650px){
-  .header-signin{display:none}
+  /* Sign in stays on phones (it was hidden, so customers had no way in from a phone held upright). */
+  .header-actions{gap:6px}
+  .header-signin{min-height:40px;padding:9px 13px;font-size:13px}
   .header-start{min-height:40px;padding:9px 15px}
   .section-lede{font-size:15px;margin-top:-10px}
   .onboarding-steps strong{font-size:22px}
   .mobile-start{display:flex;position:fixed;z-index:900;left:16px;right:16px;bottom:14px;min-height:50px;align-items:center;justify-content:center;border-radius:999px;background:var(--violet);color:white;font-size:14px;font-weight:700;box-shadow:0 12px 36px #29113c44}
   body>footer{padding-bottom:92px}
+}
+@media(max-width:380px){
+  body>header .logo{font-size:30px}
+  .header-signin{padding:8px 11px;font-size:12px}
+  .header-start{padding:8px 12px;font-size:12px}
 }
 
 /* Voice intake demo — mirrors the live Tell Violet call screen (Sept 2026 paper redesign):
