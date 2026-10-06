@@ -1,8 +1,9 @@
-import {caseAnswers} from './case-answers.js';
+import {caseAnswers,responseAvailable} from './case-answers.js';
 
 // Suggestions never imply that a record has been uploaded before it has.
-export function suggestQuestions(state, title = '') {
+export function suggestQuestions(state, title = '', answered = []) {
   const eligible = caseAnswers.filter(answer =>
+    !answered.includes(answer.id) && responseAvailable(answer,state) && answer.title !== title &&
     answer.requires.every(id => state.files.includes(id)) &&
     (!answer.needsFindings || state.findings.every(Boolean)));
   const priorities = /report|complete/i.test(title)
@@ -20,7 +21,7 @@ export function suggestQuestions(state, title = '') {
               : /findings|alignment|matrix|next|timeline/i.test(title)
                 ? ['gaps', 'retaliation', 'contradictions', 'deadline']
                 : ['deadline', 'consistency', 'pay', 'client'];
-  const ids = [...new Set([...priorities, 'client'])];
+  const ids = [...new Set([...priorities, 'knowledge', 'huddle', 'credibility', 'client'])];
   return ids.map(id => eligible.find(answer => answer.id === id))
     .filter(Boolean).slice(0, 3);
 }

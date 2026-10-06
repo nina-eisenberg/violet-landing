@@ -5,7 +5,7 @@ export function localRoute(text,view='home'){
 
 // High-confidence opening requests do not need a paid classifier.
 export function openingRoute(text){
- const t=text.toLowerCase().trim().replace(/[’']/g,'').replace(/[?!.,]/g,'');
+ const t=text.toLowerCase().trim().replace(/[’']s\b/g,'').replace(/[’']/g,'').replace(/[?!.,]/g,'');
  if(/\b(outline|transcript|interview|report|citation|source|draft|rewrite|redraft|note|remind|upload)\b/.test(t))return null;
  if(/\bmarcus\b/.test(t)&&/\b(case|about|overview|background|status|stands|going|happened)\b/.test(t))return 'marcus';
  if(/\bmaya\b/.test(t))return 'maya';

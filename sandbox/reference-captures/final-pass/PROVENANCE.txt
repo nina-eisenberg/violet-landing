@@ -1,0 +1,15 @@
+Reference captures, final pass. Status as of 2026-10-06 (after /tmp loss and recovery).
+
+expanded-plan.html   Original live capture (survived).
+initial-plan.html    Derived: expanded-plan.html minus the Anti-Retaliation group. Saved INV-2026-0105 record shows
+                     previousPlanData differs from planData only by that group.
+scope-response.html  Original live response body (survived inside captured-scope.js).
+scope-card.html      Rebuilt from saved VioletAction c6db4db3 using the app's PlanChangeCard markup.
+outline-*.html       The original capture files were lost; these are written from captured-outlines.js, which was itself
+                     built from the originals. Independently checked on 2026-10-06 against the saved INV-2026-0105
+                     interview-outline artifacts: every outline line is present (the app shows "[FOLLOW-UP IF NOT
+                     RAISED]" as an "If not raised" tag).
+confidence.html      Same situation: written from captured-confidence.js; every bullet of all three rows checked against
+                     the saved INV-2026-0096 guided-report-determinations artifact b3ac6afe.
+So the outline and confidence equality tests now guard against drift from these verified files; they are not an
+independent second capture.
