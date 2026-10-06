@@ -1,6 +1,5 @@
 import {capturedConfidence} from './captured-confidence.js';
 import {initialPlan,expandedPlan} from './initial-plan.js';
-import {summaryCitationMap} from './summary-citation-map.js';
 import {capturedSummaries} from './captured-summaries.js';
 import {capturedOutlines} from './captured-outlines.js';
 import {realArtifacts as a} from './real-artifacts.js';
@@ -22,7 +21,7 @@ export function summaryView(id,format){
  const t=template(html),r=t.content;
  r.querySelectorAll('.vt-stagecard-foot,.vt-summary-foot,.vt-icon-btn,[data-edit-key] .vt-summary-actions').forEach(e=>e.remove());
  r.querySelectorAll('.vt-mode button').forEach((b,i)=>{b.disabled=false;b.dataset.journey='format:'+(i?'narrative':'bullets');b.setAttribute('aria-checked',String(format===(i?'narrative':'bullets')));b.classList.toggle('is-on',format===(i?'narrative':'bullets'));});
- r.querySelectorAll('[data-citation-footnote]').forEach(b=>{const n=document.createElement('button');n.className='source-number';if(id==='marcus')n.dataset.realCitation=b.dataset.citationFootnote;else {n.dataset.cite=id;n.dataset.summaryCitation=id+':'+(format==='narrative'?b.dataset.citationFootnote:(summaryCitationMap[id]?.[b.dataset.citationFootnote]||''));}n.textContent=b.textContent;n.setAttribute('aria-label',b.getAttribute('aria-label'));b.replaceWith(n);});
+ r.querySelectorAll('[data-citation-footnote]').forEach(b=>{const n=document.createElement('button');n.className='source-number';n.dataset.cite=id;n.dataset.summaryCitation=id+':'+format+'-'+b.dataset.citationFootnote;n.textContent=b.textContent;n.setAttribute('aria-label',b.getAttribute('aria-label'));b.replaceWith(n);});
  r.querySelectorAll('[data-cite]').forEach(b=>{if(/^\d+$/.test(b.dataset.cite)){const n=document.createElement('button');n.className='source-number';n.dataset.realCitation=b.dataset.cite;n.textContent=b.textContent;n.setAttribute('aria-label',b.getAttribute('aria-label')||'View citation');b.replaceWith(n);}});
  // Promote the existing lead-in to the same heading level as the other sections.
  const lead=[...r.querySelectorAll('strong')].find(e=>e.textContent==='Bottom line:');
