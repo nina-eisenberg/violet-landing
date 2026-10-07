@@ -1,0 +1,268 @@
+[
+ {
+  "q": "when did marcus find out about the complaint?",
+  "want": "knowledge",
+  "jev": "knowledge",
+  "p": 0.97,
+  "kw": "none"
+ },
+ {
+  "q": "Is there evidence Doyle knew about the complaint before he took her off escalations?",
+  "want": "knowledge",
+  "jev": "knowledge",
+  "p": 0.77,
+  "kw": "knowledge"
+ },
+ {
+  "q": "Who was at the huddle on the 9th?",
+  "want": "huddle",
+  "jev": "huddle",
+  "p": 0.93,
+  "kw": "huddle"
+ },
+ {
+  "q": "who heard marcus say we'll see about fridays",
+  "want": "huddle",
+  "jev": "hearers",
+  "p": 0.59,
+  "kw": "huddle"
+ },
+ {
+  "q": "did doyle respond in time?",
+  "want": "deadline",
+  "jev": "deadline",
+  "p": 0.62,
+  "kw": "deadline"
+ },
+ {
+  "q": "was the denial email late under the accommodation policy?",
+  "want": "deadline",
+  "jev": "deadline",
+  "p": 0.72,
+  "kw": "deadline"
+ },
+ {
+  "q": "anyone else hear the holy day comment?",
+  "want": "hearers",
+  "jev": "hearers",
+  "p": 0.99,
+  "kw": "hearers"
+ },
+ {
+  "q": "who is kevin tran",
+  "want": "tran",
+  "jev": "tran",
+  "p": 0.75,
+  "kw": "tran"
+ },
+ {
+  "q": "Do Rivera and Doyle disagree about the certification list?",
+  "want": "list",
+  "jev": "list",
+  "p": 0.73,
+  "kw": "list"
+ },
+ {
+  "q": "are there documents that contradict marcus?",
+  "want": "contradictions",
+  "jev": "contradictions",
+  "p": 1,
+  "kw": "contradictions"
+ },
+ {
+  "q": "does the $1.75 vs $2 difference matter",
+  "want": "pay",
+  "jev": "pay",
+  "p": 0.99,
+  "kw": "pay"
+ },
+ {
+  "q": "is marcus credible?",
+  "want": "credibility",
+  "jev": "credibility",
+  "p": 0.93,
+  "kw": "credibility"
+ },
+ {
+  "q": "assess doyle's credibility for me",
+  "want": "credibility",
+  "jev": "credibility",
+  "p": 0.99,
+  "kw": "credibility"
+ },
+ {
+  "q": "is leah's story consistent?",
+  "want": "consistency",
+  "jev": "consistency",
+  "p": 0.98,
+  "kw": "consistency"
+ },
+ {
+  "q": "write up allegation 3 as substantiated",
+  "want": "finding3",
+  "jev": "finding3",
+  "p": 0.98,
+  "kw": "finding3"
+ },
+ {
+  "q": "I don't think retaliation is supported - is my reasoning ok?",
+  "want": "retaliation",
+  "jev": "retaliation",
+  "p": 1,
+  "kw": "retaliation"
+ },
+ {
+  "q": "make the case that the holy day remark isn't harassment",
+  "want": "harassment",
+  "jev": "harassment",
+  "p": 1,
+  "kw": "harassment"
+ },
+ {
+  "q": "what am I missing before I decide the findings?",
+  "want": "gaps",
+  "jev": "gaps",
+  "p": 1,
+  "kw": "gaps"
+ },
+ {
+  "q": "give me questions for a second interview with marcus",
+  "want": "followup",
+  "jev": "followup",
+  "p": 1,
+  "kw": "followup"
+ },
+ {
+  "q": "reword the retaliation allegation so it's only about the HR complaint",
+  "want": "reword5",
+  "jev": "reword5",
+  "p": 0.87,
+  "kw": "reword5"
+ },
+ {
+  "q": "add priya anand to the witness list",
+  "want": "priya",
+  "jev": "priya",
+  "p": 1,
+  "kw": "priya"
+ },
+ {
+  "q": "email marcus to set up a follow-up interview",
+  "want": "email",
+  "jev": "email",
+  "p": 1,
+  "kw": "email"
+ },
+ {
+  "q": "write a status update for the client",
+  "want": "client",
+  "jev": "client",
+  "p": 1,
+  "kw": "client"
+ },
+ {
+  "q": "draft an exec summary",
+  "want": "executive",
+  "jev": "executive",
+  "p": 1,
+  "kw": "executive"
+ },
+ {
+  "q": "show me the plan",
+  "want": "nav-plan",
+  "jev": "nav-plan",
+  "p": 0.99,
+  "kw": "nav-plan"
+ },
+ {
+  "q": "open the report",
+  "want": "nav-report",
+  "jev": "nav-report",
+  "p": 1,
+  "kw": "nav-report"
+ },
+ {
+  "q": "summarize jordan's interview",
+  "want": "nav-summary",
+  "jev": "nav-summary",
+  "p": 1,
+  "kw": "nav-summary"
+ },
+ {
+  "q": "what should I do next?",
+  "want": "nav-next",
+  "jev": "nav-next",
+  "p": 1,
+  "kw": "nav-next"
+ },
+ {
+  "q": "what is this case about?",
+  "want": "nav-overview",
+  "jev": "nav-overview",
+  "p": 1,
+  "kw": "nav-overview"
+ },
+ {
+  "q": "did doyle discriminate against leah?",
+  "want": "none",
+  "jev": "none",
+  "p": 0.96,
+  "kw": "none"
+ },
+ {
+  "q": "what does the religious accommodation policy require?",
+  "want": "none",
+  "jev": "none",
+  "p": 1,
+  "kw": "none"
+ },
+ {
+  "q": "should Marcus be fired?",
+  "want": "none",
+  "jev": "none",
+  "p": 0.97,
+  "kw": "none"
+ },
+ {
+  "q": "what's the weather today",
+  "want": "none",
+  "jev": "none",
+  "p": 1,
+  "kw": "none"
+ },
+ {
+  "q": "How long does Violet take to write a report?",
+  "want": "none",
+  "jev": "none",
+  "p": 1,
+  "kw": "nav-report"
+ },
+ {
+  "q": "can I upload my own files?",
+  "want": "none",
+  "jev": "none",
+  "p": 1,
+  "kw": "none"
+ },
+ {
+  "q": "what did jordan say about the swap?",
+  "want": "none",
+  "jev": "none",
+  "p": 0.9,
+  "kw": "none"
+ },
+ {
+  "q": "Was Leah the only one taken off escalations?",
+  "want": "none",
+  "jev": "none",
+  "p": 1,
+  "kw": "none"
+ },
+ {
+  "q": "help me write the harassment analysis",
+  "want": "none",
+  "jev": "none",
+  "p": 0.67,
+  "kw": "none"
+ }
+]

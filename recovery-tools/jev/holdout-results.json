@@ -1,0 +1,191 @@
+[
+ {
+  "q": "How did Marcus learn Leah had gone to HR?",
+  "want": "knowledge",
+  "jev": "knowledge",
+  "p": 0.53,
+  "kw": "none"
+ },
+ {
+  "q": "was anybody else at that team meeting on september 9",
+  "want": "huddle",
+  "jev": "huddle",
+  "p": 0.95,
+  "kw": "none"
+ },
+ {
+  "q": "did the september 14 email meet the five business day rule",
+  "want": "deadline",
+  "jev": "deadline",
+  "p": 0.97,
+  "kw": "deadline"
+ },
+ {
+  "q": "is kim the only witness to the holy day thing",
+  "want": "hearers",
+  "jev": "hearers",
+  "p": 0.98,
+  "kw": "none"
+ },
+ {
+  "q": "tell me about tran",
+  "want": "tran",
+  "jev": "tran",
+  "p": 0.57,
+  "kw": "tran"
+ },
+ {
+  "q": "where do marcus and carla's stories about the list differ",
+  "want": "list",
+  "jev": "list",
+  "p": 1,
+  "kw": "list"
+ },
+ {
+  "q": "anything in the exhibits that undercuts doyle's interview?",
+  "want": "contradictions",
+  "jev": "contradictions",
+  "p": 1,
+  "kw": "none"
+ },
+ {
+  "q": "she said $2 but the record says less, is that a problem",
+  "want": "pay",
+  "jev": "pay",
+  "p": 0.98,
+  "kw": "pay"
+ },
+ {
+  "q": "how believable is doyle",
+  "want": "credibility",
+  "jev": "credibility",
+  "p": 0.96,
+  "kw": "credibility"
+ },
+ {
+  "q": "did leah's account change between her email and her interview?",
+  "want": "consistency",
+  "jev": "consistency",
+  "p": 1,
+  "kw": "consistency"
+ },
+ {
+  "q": "I'd like the allegation 3 finding written as substantiated",
+  "want": "finding3",
+  "jev": "finding3",
+  "p": 1,
+  "kw": "finding3"
+ },
+ {
+  "q": "retaliation doesn't look supported to me, am I right?",
+  "want": "retaliation",
+  "jev": "retaliation",
+  "p": 1,
+  "kw": "retaliation"
+ },
+ {
+  "q": "what's the best argument the holy day comment wasn't harassment",
+  "want": "harassment",
+  "jev": "harassment",
+  "p": 1,
+  "kw": "harassment"
+ },
+ {
+  "q": "what gaps are there in the evidence",
+  "want": "gaps",
+  "jev": "gaps",
+  "p": 1,
+  "kw": "none"
+ },
+ {
+  "q": "what should I ask marcus in a re-interview",
+  "want": "followup",
+  "jev": "followup",
+  "p": 0.99,
+  "kw": "followup"
+ },
+ {
+  "q": "change allegation 5 to be about the complaint",
+  "want": "reword5",
+  "jev": "reword5",
+  "p": 0.99,
+  "kw": "reword5"
+ },
+ {
+  "q": "put priya on the witness list",
+  "want": "priya",
+  "jev": "priya",
+  "p": 0.99,
+  "kw": "priya"
+ },
+ {
+  "q": "write marcus an email to schedule another interview",
+  "want": "email",
+  "jev": "email",
+  "p": 1,
+  "kw": "email"
+ },
+ {
+  "q": "can you draft an update I can send the client",
+  "want": "client",
+  "jev": "client",
+  "p": 1,
+  "kw": "client"
+ },
+ {
+  "q": "write the executive summary",
+  "want": "executive",
+  "jev": "executive",
+  "p": 1,
+  "kw": "executive"
+ },
+ {
+  "q": "let me see the investigation plan",
+  "want": "nav-plan",
+  "jev": "nav-plan",
+  "p": 1,
+  "kw": "nav-plan"
+ },
+ {
+  "q": "take me to the report",
+  "want": "nav-report",
+  "jev": "nav-report",
+  "p": 1,
+  "kw": "nav-report"
+ },
+ {
+  "q": "what's next",
+  "want": "nav-next",
+  "jev": "nav-next",
+  "p": 1,
+  "kw": "nav-next"
+ },
+ {
+  "q": "give me an overview of the case",
+  "want": "nav-overview",
+  "jev": "nav-overview",
+  "p": 1,
+  "kw": "none"
+ },
+ {
+  "q": "what does HR-114 say about swaps",
+  "want": "none",
+  "jev": "none",
+  "p": 0.99,
+  "kw": "none"
+ },
+ {
+  "q": "is Violet secure?",
+  "want": "none",
+  "jev": "none",
+  "p": 1,
+  "kw": "none"
+ },
+ {
+  "q": "did carla tell jordan anything about religion?",
+  "want": "none",
+  "jev": "none",
+  "p": 0.93,
+  "kw": "none"
+ }
+]

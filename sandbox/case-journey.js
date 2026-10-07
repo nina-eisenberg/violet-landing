@@ -14,6 +14,7 @@ import {complaint} from './complaint.js';
 import {planView,summaryView,outlineView,policyText,reportView,policyConfidenceRows,artifacts} from './artifact-views.js';
 import {answerFor,caseAnswers,responseAvailable} from './case-answers.js';
 import {suggestQuestions} from './question-suggestions.js';
+import {typedAnswerFor,typedAnswerNeeds,guideAnswerFor} from './typed-answers.js';
 import {materials} from './materials.js';
 import {freshJourney,progress,interviewOrder} from './journey-state.js';
 
@@ -32,9 +33,9 @@ export function createJourney({reply,user,esc}){
  const conduct=()=>framework==='conduct';
  const reportCites=()=>conduct()?conductReportCitations:reportCitations;
  const recommended=()=>conduct()?conductPath.findings.map(r=>r.recorded):policyRecommended;
- function init(fw='conduct'){framework=fw;s=freshJourney(fw==='conduct'?conductPath.findings.length:7);format='bullets';revision=false;accepted=false;flagReplacement=null;scopeDecision=null;scopeReviewed=false;answered=new Set();reasons={};confidenceSeen=false;reportOpen=false;}
+ function init(fw='conduct'){framework=fw;s={...freshJourney(fw==='conduct'?conductPath.findings.length:7),framework:fw};format='bullets';revision=false;accepted=false;flagReplacement=null;scopeDecision=null;scopeReviewed=false;answered=new Set();reasons={};confidenceSeen=false;reportOpen=false;}
  init();
- const mutate=(event,id)=>{s=progress(s,event,id);shelf();};
+ const mutate=(event,id)=>{s={...progress(s,event,id),framework};shelf();};
  const btn=(a,t,cls='')=>`<button type="button" class="vt-chip ${cls}" data-journey="${a}">${t}</button>`;
  const link=(a,t)=>`<button type="button" class="vt-linkish journey-link" data-journey="${a}">${t}</button>`;
  const scroll=e=>requestAnimationFrame(()=>e.scrollIntoView({block:'start',behavior:'smooth'}));
@@ -150,7 +151,8 @@ export function createJourney({reply,user,esc}){
   stage('Evidence alignment',`<p>${differs?`Your finding differs from what the evidence suggests on ${differs} ${differs===1?'question':'questions'}. You decide; keeping yours is fine, and a reason is optional.`:'Your findings line up with what the evidence suggests.'}</p><div class="cf-table">${rows.map(r=>{const same=norm(s.findings[r.i])===norm(r.suggests);return `<div class="cf-row ${same?'is-same':'is-diff'}"><div class="cf-q">${esc(r.title)}</div><div class="cf-cols"><span><small>Your finding</small>${esc(s.findings[r.i])}</span><span><small>Evidence suggests</small>${esc(r.suggests)}${r.conf?` · ${esc(r.conf)} confidence`:''}</span><span class="cf-badge">${same?'Aligned':'Differs'}</span></div>${same?'':`<div class="cf-choice">${btn('align:'+r.i,'Change to '+r.suggests)}<label>Your reasoning (optional)<textarea rows="2" data-confidence-reason="${r.i}" aria-label="Your reasoning for ${esc(r.title)}">${esc(reasons[r.i]||'')}</textarea></label></div>`}<details class="cf-detail"><summary>Why</summary>${r.detail}</details></div>`;}).join('')}</div>`,{next:['report','Open the report'],extras:[['findings','Review all findings']]});}
 
  // ── The report ──────────────────────────────────────────────────────────────────────────────────────────
- function reviewCitationKey(){if(!conduct())return POLICY_REVIEW_CITATION;const c=conductReportCitations;return Object.keys(c).find(k=>c[k].html.includes("didn't pursue it"))||'1';}
+ // The sentence about Marcus not pursuing the swap, cited to his transcript, in whichever report is open.
+ function reviewCitationKey(){if(!conduct())return POLICY_REVIEW_CITATION;const paper=document.querySelector('#report-pane .report-paper');const p=paper&&[...paper.querySelectorAll('p,li')].find(x=>/didn.t pursue/.test(x.textContent)&&x.querySelector('[data-report-citation]'));return p?.querySelector('[data-report-citation]')?.dataset.reportCitation||'1';}
  function reportFindingsDiffer(){return conduct()?conductPath.findings.some((r,i)=>norm(s.findings[i])!==norm(r.recorded)):overallIndexes.some(i=>s.findings[i]!==policyRecommended[i]);}
  function report(){if(!reportOpen&&s.stage!=='report'&&!s.final){try{mutate('report');}catch(e){notice(e.message);return;}}
   if(conduct()&&!s.flag)s.flag=true; // The conduct report passed verification with no flags.
@@ -207,6 +209,7 @@ export function createJourney({reply,user,esc}){
   if(a.id==='priya')return 'I can add Priya Anand once the plan is final.';
   if(a.id==='email')return "I'll be able to draft that once Marcus's interview is in the case.";
   if(a.id==='client')return 'This demo has the client update Violet drafted at the plan stage; ask for it before the plan is finalized.';
+  if(conduct()&&['client','deadline','harassment','finding3'].includes(a.id))return 'That answer was captured on the policy-based version of this case, so it isn’t available on the conduct-based path.';
   if(['reword5','retaliation','gaps','executive','tran','pay','followup'].includes(a.id))return conduct()?'That answer was captured on the policy-based version of this case, so it isn’t available on the conduct-based path.':'That question depends on the escalations allegation, which is added to the plan after Leah’s interview.';
   return 'That answer was captured at a later point in this case. Keep going and ask again.';
  }
@@ -264,10 +267,14 @@ export function createJourney({reply,user,esc}){
  }catch(e){notice(e.message);}}
  function route(text){
   const t=text.toLowerCase();
-  if(/tell me about.*case|case.*overview|where.*(stand|are we)/.test(t)){const n=nextStep();reply(`This is Leah Goldberg's complaint about her supervisor, Marcus Doyle: a denied Friday-evening accommodation request and remarks about her religious observance${s.scope?', plus her removal from the escalations queue':''}. ${n?'Next: '+n[1].toLowerCase()+'.':'The report is final.'}`);continueLine();return true;}
+  if(/overview|what is this case|what.?s this case|tell me about.*case|where.*(stand|are we)/.test(t)){const n=nextStep();reply(`This is Leah Goldberg's complaint about her supervisor, Marcus Doyle: a denied Friday-evening accommodation request and remarks about her religious observance${s.scope?', plus her removal from the escalations queue':''}. ${n?'Next: '+n[1].toLowerCase()+'.':'The report is final.'}`);continueLine();return true;}
   if(/redraft|rewrite|severe|pervasive/.test(t)&&reportOpen&&!conduct()){dispatch('redraft');return true;}
   const answer=answerFor(text);if(answer){showAnswer(answer);return true;}
   if(/outside the (current )?plan|anything new|new allegation/.test(t)&&!conduct()&&s.files.includes('leah')&&!scopeDecision){reviewScope();return true;}
+  const ta=typedAnswerFor(text,s.files);
+  if(ta){answerBlock({html:ta.html+(ta.extra&&ta.extra.requires.every(id=>s.files.includes(id))?ta.extra.html:''),provenance:'Sample answer written for this demo in Violet’s style · not captured from Violet'});continueLine();return true;}
+  const need=typedAnswerNeeds(text);if(need){reply(`I can answer that from the record once ${need.requires.map(id=>materials[id].name).join(' and ')} ${need.requires.length>1?'are':'is'} in the case.`);continueLine();return true;}
+  const g=guideAnswerFor(text);if(g){guide(g.text);continueLine();return true;}
   if(/^(next|what.?s next|what now|continue)/.test(t)){const n=nextStep();if(n){dispatch(n[0]);return true;}}
   if(/\breport\b/.test(t)&&(s.stage==='report'||ready())){dispatch('report');return true;}
   if(/\bplan\b/.test(t)){dispatch('plan');return true;}
@@ -277,15 +284,19 @@ export function createJourney({reply,user,esc}){
   if(/finding/.test(t)){dispatch('findings');return true;}
   if(/interview|summary|summari[sz]e|outline/.test(t)){const id=interviewOrder.find(k=>t.includes(k)||t.includes(names[k].split(' ')[1].toLowerCase()));if(!id){dispatch('interviews');return true;}dispatch((/outline/.test(t)?'outline:':/summary|summari/.test(t)?'summary:':'person:')+id);return true;}
   if(/upload|document|file|exhibit/.test(t)){dispatch('gather');return true;}
-  return false;
+  const qs=suggestQuestions(s,'',[...answered]).filter(q=>responseAvailable(q,s));
+  guide(`This demo doesn't have a prepared answer for that. In Violet you can ask anything about the case's record.${qs.length?' Here are questions this demo can answer right now:':''}`,qs.map(q=>`<button type="button" class="suggestion" data-journey="question:${caseAnswers.indexOf(q)}">${esc(q.question)}</button>`).join(''));
+  continueLine();return true;
  }
+ // The demo guide speaks for the demo itself, never as Violet.
+ function guide(text,extra=''){const e=document.createElement('div');e.className='reply demo-guide';e.innerHTML=`<strong>Demo guide</strong><div><p>${esc(text)}</p>${extra?`<div class="question-list">${extra}</div>`:''}</div>`;root().append(e);scroll(e);}
 
  // ── Events ──────────────────────────────────────────────────────────────────────────────────────────────
  document.addEventListener('click',e=>{const b=e.target.closest('button,[data-journey]');if(!b||!b.closest('#content,#report-pane,#case-link,#document'))return;lastClicked=b;
   if(b.getAttribute('aria-disabled')==='true'&&b.dataset.journey!=='final-report')return;
   if(b.dataset.scopeSource!==undefined){const t=document.createElement('template');t.innerHTML=capturedScope.sources[b.dataset.scopeSource];const aside=t.content.querySelector('aside');dock(aside.getAttribute('aria-label')||'Source',(aside.querySelector('.vt-dock-meta')?.outerHTML||'')+(aside.querySelector('.vt-dock-body')?.innerHTML||''));return;}
   if(b.dataset.reportSection){document.querySelector('#report-section-'+b.dataset.reportSection)?.scrollIntoView({block:'start',behavior:'smooth'});return;}
-  if(b.dataset.pick!==undefined){mutate('finding',{index:Number(b.dataset.pick),value:b.dataset.value});b.closest('.vt-fx-opts').querySelectorAll('button').forEach(x=>{const on=x===b;x.classList.toggle('is-on',on);x.setAttribute('aria-checked',String(on));x.textContent=(on?'✓ ':'')+x.dataset.value.replace('Partially Substantiated','Partially');});return;}
+  if(b.dataset.pick!==undefined){try{mutate('finding',{index:Number(b.dataset.pick),value:b.dataset.value});}catch(err){notice(err.message);return;}b.closest('.vt-fx-opts').querySelectorAll('button').forEach(x=>{const on=x===b;x.classList.toggle('is-on',on);x.setAttribute('aria-checked',String(on));x.textContent=(on?'✓ ':'')+x.dataset.value.replace('Partially Substantiated','Partially');});return;}
   if(b.dataset.reportCitation){const c=reportCites()[b.dataset.reportCitation];if(c)dock(c.title,c.html);return;}
   if(b.dataset.cite){const key=(b.getAttribute('title')||b.getAttribute('aria-label')||'').replace(/^Source \d+: /,'').replace(/ — open the source$/,'');const [person,num]=(b.dataset.summaryCitation||'').split(':');const c=summaryCitations[person]?.[num]||capturedCitations[key];if(c)dock(c.title,c.html);else source(b.dataset.cite,b.dataset.needle);return;}
   if(b.dataset.journey)dispatch(b.dataset.journey);});
