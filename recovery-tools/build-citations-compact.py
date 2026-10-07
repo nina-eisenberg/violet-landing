@@ -22,11 +22,11 @@ def take(blocks):
             s0, e0 = c['lineStart'], c.get('lineEnd') or c['lineStart']
             key = label(src['label']) + (f", lines {s0}–{e0}" if e0 > s0 else f", line {s0}")
             answers[key] = cite(c['sourceId'], src, s0, e0)
-for f in ['0096-before-recapture.json', '0105.json']:
+for f in ['0096-before-recapture.json', '0105.json', '0107.json']:
     for m in json.loads((B / 'db-dumps' / f).read_text())['threads'][0]['messages']:
         try: take(json.loads(m['meta']).get('blocks'))
         except Exception: pass
-for f in ['rendered-answers.json', 'rendered-answers-0105.json']:
+for f in ['rendered-answers.json', 'rendered-answers-0105.json', 'rendered-answers-0107.json']:
     for a in json.loads((B / f).read_text()): take(a['blocks'])
 summ = {}
 for person, forms in json.loads((B / 'summary-cites.json').read_text()).items():

@@ -5,6 +5,7 @@ import {capturedScope} from './captured-scope.js';
 import {scopeReview} from './scope-review.js';
 import {conductPath} from './conduct-path.js';
 import {sectionRevision} from './section-revision.js';
+import {conductScope} from './conduct-scope.js';
 import {openSourcePanel} from './source-panel.js';
 import {capturedCitations,summaryCitations} from './captured-citations.js';
 import {reportCitations,conductReportCitations} from './report-citations.js';
@@ -50,7 +51,7 @@ export function createJourney({reply,user,esc}){
  function nextStep(){
   if(!s.files.includes('policy'))return ['policy','Add the policy'];
   if(!s.plan)return ['finalize-plan','Finalize the plan'];
-  if(!conduct()&&s.files.includes('leah')&&!scopeDecision)return root()?.querySelector('.violet-proposal .vt-stagecard')?['scope','Save or keep the proposed change']:scopeReviewed?['propose-scope','Ask Violet to propose the change']:['scope-review',"Check Leah's interview for anything new"];
+  if(s.files.includes('leah')&&!scopeDecision)return root()?.querySelector('.violet-proposal .vt-stagecard')?['scope','Save or keep the proposed change']:scopeReviewed?['propose-scope','Ask Violet to propose the change']:['scope-review',"Check Leah's interview for anything new"];
   for(const id of interviewOrder){
    if(!s.files.includes(id))return ['person:'+id,`Prepare ${first[id]}'s interview`];
    if(!s.summaries.includes(id))return ['summary:'+id,`Review ${first[id]}'s summary`];
@@ -101,7 +102,7 @@ export function createJourney({reply,user,esc}){
   const rest=remaining();
   stage('Interviews',`<p>${s.summaries.length} of 4 summaries finalized.</p><div class="interview-tiles">${interviewOrder.map(id=>`<button class="person-tile" data-journey="person:${id}" data-keep><b>${names[id]}</b><span>${roles[id]}</span><small>${s.summaries.includes(id)?'✓ Summary finalized':s.files.includes(id)?'Record added · summary ready':s.outlines.includes(id)?'Outline ready':'Not yet interviewed'}</small></button>`).join('')}</div>${bulkOffer(rest)}`,{next:nextStep()});}
  // Add the remaining interview records in one go. On the policy path Leah's comes first, because her interview changes the plan.
- function bulkOffer(rest){if(!rest.length)return '';if(!conduct()&&!s.files.includes('leah'))return '';return `<div class="bulk-offer"><span>For the demo, the interviews have been conducted.</span>${btn('upload-all:'+rest.join(','),rest.length===4?'Add all four interview records':`Add the other ${rest.length===1?'interview record':rest.length+' interview records'}`)}</div>`;}
+ function bulkOffer(rest){if(!rest.length)return '';if(!s.files.includes('leah'))return '';return `<div class="bulk-offer"><span>For the demo, the interviews have been conducted.</span>${btn('upload-all:'+rest.join(','),rest.length===4?'Add all four interview records':`Add the other ${rest.length===1?'interview record':rest.length+' interview records'}`)}</div>`;}
  function person(id){
   stage(names[id]+' · '+roles[id],`<p>${id==='carla'?'Carla’s record is interview notes, not a verbatim transcript.':'Prepare the outline, then bring in the completed interview.'}</p>`,{next:s.files.includes(id)?['summary:'+id,`Review ${first[id]}'s summary`]:s.outlines.includes(id)?['record:'+id,id==='carla'?'Add the interview notes':'Add the transcript']:['outline:'+id,'Write the interview outline'],extras:[...(s.outlines.includes(id)?[['outline:'+id,'View the outline']]:[]),...(!s.files.includes(id)&&!s.outlines.includes(id)?[['record:'+id,'Skip to the record']]:[]),['interviews','All interviews']]});}
  function outline(id){mutate('outline',id);const e=stage('Interview outline · '+names[id],outlineView(id),{next:s.files.includes(id)?['summary:'+id,`Review ${first[id]}'s summary`]:['record:'+id,id==='carla'?'Add the interview notes':'Add the transcript'],extras:[['interviews','All interviews']]});e.classList.add('artifact-host');}
@@ -111,28 +112,31 @@ export function createJourney({reply,user,esc}){
   if(ids.includes('policy')){reply('The policy is added.');return plan();}
   const people=ids.filter(id=>interviewOrder.includes(id)),docs=ids.filter(id=>!interviewOrder.includes(id));
   if(people.length){reply(people.length>1?`${people.map(id=>first[id]).join(', ')}: records added; the interviews are marked complete.`:people[0]==='carla'?'The interview notes are added.':'The transcript is added; the interview is marked complete.');
-   if(people.includes('leah')&&!conduct()&&!scopeDecision){return stage('Interview added',`<p>Leah's account is in the case. Before summarizing, it is worth checking whether her interview raises anything the plan doesn't cover.</p>`,{next:['scope-review',"Check Leah's interview for anything new"],extras:[['summary:leah','Read her summary first']]});}
+   if(people.includes('leah')&&!scopeDecision){return stage('Interview added',`<p>Leah's account is in the case. Before summarizing, it is worth checking whether her interview raises anything the plan doesn't cover.</p>`,{next:['scope-review',"Check Leah's interview for anything new"],extras:[['summary:leah','Read her summary first']]});}
    if(people.length>1)return interviews();return summary(people[0]);}
   if(docs.length)gather();
  }
  // The scope moment (policy path): Violet finds the escalations removal herself, then proposes the change.
- function reviewScope(){scopeReviewed=true;user(scopeReview.question);answerBlock({html:scopeReview.html+scopeReview.followup.map(t=>`<p class="violet-followup">${esc(t)}</p>`).join(''),provenance:'Captured from Violet · INV-2026-0105'});
+ function reviewScope(){scopeReviewed=true;
+  if(conduct()){user(conductScope.question);answerBlock({html:conductScope.html,provenance:'Captured from Violet · INV-2026-0107'});showProposal(conductScope.card,'');return;}
+  user(scopeReview.question);answerBlock({html:scopeReview.html+scopeReview.followup.map(t=>`<p class="violet-followup">${esc(t)}</p>`).join(''),provenance:'Captured from Violet · INV-2026-0105'});
   stage('Possible new allegation',`<p>Violet found a possible retaliation issue the plan doesn't cover: the September 16 removal from the escalations queue.</p>`,{next:['propose-scope','Ask Violet to propose the change'],extras:[['keep-scope','Leave the plan as it is']],suggest:false});}
- function proposeScope(){scopeReviewed=true;user(SCOPE_PROPOSAL_PROMPT);
-  const t=document.createElement('template');t.innerHTML=capturedScope.card;const card=t.content.firstElementChild;
+ function proposeScope(){scopeReviewed=true;user(SCOPE_PROPOSAL_PROMPT);showProposal(capturedScope.card,`<div class="reply"><strong>● Violet</strong><div>${esc(capturedScope.caveat.replace(/<[^>]+>/g,''))}</div></div>`,`<details class="full-reply"><summary>Violet's full reply</summary><div class="answer-copy">${tidyLists(tidyScopeBody(capturedScope.body))}</div></details>`);}
+ function showProposal(cardHtml,before,after=''){
+  const t=document.createElement('template');t.innerHTML=cardHtml;const card=t.content.firstElementChild;
   card.querySelectorAll('.vt-stagecard-foot button').forEach(b=>{b.dataset.journey=b.textContent.includes('Save')?'scope':'keep-scope';});
   card.querySelector('.vt-stagecard-foot button')?.classList.add('is-next');
   retire();const e=document.createElement('section');e.className='violet-proposal stage-live';
-  e.innerHTML=`<div class="reply"><strong>● Violet</strong><div>${esc(capturedScope.caveat.replace(/<[^>]+>/g,''))}</div></div>${card.outerHTML}<details class="full-reply"><summary>Violet's full reply</summary><div class="answer-copy">${tidyLists(tidyScopeBody(capturedScope.body))}</div></details>`;
+  e.innerHTML=`${before}${card.outerHTML}${after}`;
   root().append(e);e.querySelectorAll('.av-cite').forEach((b,i)=>{b.dataset.scopeSource=i;b.dataset.keep='';});shelf();scroll(e);}
  // Display fixes only: the allegation keeps its real number, run-together list items are split, the uncited marker is explained.
  function tidyScopeBody(h){return h.replace(/<ol class="list-decimal pl-6 mb-4 space-y-2">/,'<ol class="list-decimal pl-6 mb-4 space-y-2" start="4">')
   
   ;}
  function decideScope(save){const p=[...root().querySelectorAll('.violet-proposal .vt-stagecard')].pop();
-  if(p)p.outerHTML=save?'<div class="vt-plan-change-done">✓ Saved: add Anti-Retaliation Policy.</div>':'<div class="vt-plan-change-done is-kept">Kept the plan as it was.</div>';
-  scopeDecision=save?'saved':'kept';if(save){mutate('scope');reply(scopeReview.savedReply);}
-  else reply('The plan stays at three allegations. You can still ask about the escalations removal at any time.');
+  if(p)p.outerHTML=save?`<div class="vt-plan-change-done">✓ Saved: ${conduct()?'change allegations':'add Anti-Retaliation Policy'}.</div>`:'<div class="vt-plan-change-done is-kept">Kept the plan as it was.</div>';
+  scopeDecision=save?'saved':'kept';if(save){mutate('scope');reply(conduct()?conductScope.savedReply:scopeReview.savedReply);}
+  else reply(`The plan stays at ${conduct()?'four':'three'} allegations. You can still ask about the escalations removal at any time.`);
   continueLine(save?'The other outlines were written before the change.':'Back to the case');}
  function summary(id){if(!s.files.includes(id))return record(id);
   const e=stage('Interview summary · '+names[id],summaryView(id,format),{next:s.summaries.includes(id)?nextStep():['final-summary:'+id,'Finalize this summary'],extras:[['interviews','All interviews']]});e.classList.add('artifact-host');e.dataset.person=id;}
@@ -279,7 +283,7 @@ export function createJourney({reply,user,esc}){
   if(/overview|what is this case|what.?s this case|tell me about.*case|where.*(stand|are we)/.test(t)){const n=nextStep();reply(`This is Leah Goldberg's complaint about her supervisor, Marcus Doyle: a denied Friday-evening accommodation request and remarks about her religious observance${s.scope?', plus her removal from the escalations queue':''}. ${n?'Next: '+n[1].toLowerCase()+'.':'The report is final.'}`);continueLine();return true;}
   if(/redraft|rewrite|severe|pervasive/.test(t)&&reportOpen&&!conduct()){dispatch('redraft');return true;}
   const answer=answerFor(text);if(answer){showAnswer(answer);return true;}
-  if(/outside the (current )?plan|anything new|new allegation/.test(t)&&!conduct()&&s.files.includes('leah')&&!scopeDecision){reviewScope();return true;}
+  if(/outside the (current )?plan|anything new|new allegation/.test(t)&&s.files.includes('leah')&&!scopeDecision){reviewScope();return true;}
   const ta=typedAnswerFor(text,s.files);
   if(ta){answerBlock({html:ta.html+(ta.extra&&ta.extra.requires.every(id=>s.files.includes(id))?ta.extra.html:''),provenance:'Sample answer written for this demo in Violet’s style · not captured from Violet'});continueLine();return true;}
   const need=typedAnswerNeeds(text);if(need){reply(`I can answer that from the record once ${need.requires.map(id=>materials[id].name).join(' and ')} ${need.requires.length>1?'are':'is'} in the case.`);continueLine();return true;}

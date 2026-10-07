@@ -3,6 +3,7 @@ import {initialPlan,expandedPlan} from './initial-plan.js';
 import {capturedSummaries} from './captured-summaries.js';
 import {capturedOutlines} from './captured-outlines.js';
 import {conductPath} from './conduct-path.js';
+import {conductScope} from './conduct-scope.js';
 import {realArtifacts as a} from './real-artifacts.js';
 const template=html=>{const t=document.createElement('template');t.innerHTML=html;return t;};
 // The app's small violet superscript citation, kept as a button so it opens the source beside the text.
@@ -11,7 +12,7 @@ const supNumber=s=>String(s).replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g,c=>'⁰¹�
 
 // Plan cards are the app's own renders. Editing controls the demo can't honour are removed rather than left dead.
 export function planView({final,scope,framework}){
- const t=template(framework==='conduct'?conductPath.initialPlan:scope?expandedPlan:initialPlan),r=t.content;
+ const t=template(framework==='conduct'?(scope?conductScope.expandedPlan:conductPath.initialPlan):scope?expandedPlan:initialPlan),r=t.content;
  r.querySelector('.vt-eyebrow').textContent='Investigation plan · '+(final?'final':'draft');
  r.querySelectorAll('.vt-icon-btn,.vt-plan-add,.vt-stagecard-foot,.vt-card-tools,select').forEach(e=>e.remove());
  r.querySelectorAll('input[type=checkbox]').forEach(e=>e.remove());
