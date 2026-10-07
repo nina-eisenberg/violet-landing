@@ -12,7 +12,10 @@ STATE
   report (checklist) → flag (scrolls into view) → citation → redraft (Undo, Keep) → finalize (incl. findings-differ path).
   Conduct path (default): conduct plan → bulk-add all four records → summaries → documents → six conduct findings →
   alignment → report (no flags; verification passed) → citation → finalize (incl. findings-differ path).
-Landing page: hero, preview (4 steps), outputs copy, highlights tour, sandbox choice, pricing and FAQ all present.
+Landing page (Oct 7, late): hero → "See how it works" quick look (quicklook.html: one conversation, five exchanges, plays itself
+  once in view, holds on hover/scroll-away, stops when the visitor clicks in; flagged sentence opens the flag card in the side
+  panel) → outputs copy → "Work the full case yourself" (sandbox) → pricing and FAQ. The 4-step redraft preview and the
+  highlights tour are no longer on the page (preview.*, highlights.* kept in sandbox/, unlinked).
 Visitor AI calls: one kind only, approved by Nina on Oct 7 — typed questions the keywords miss go to /api/route-question,
 which asks Jev to pick one of the prepared answers (≈$0.00005 each; it never writes text). Needs AI_GATEWAY_API_KEY in the
 landing site's Vercel project; without it the demo falls back to the honest no-answer reply.
@@ -56,4 +59,7 @@ GAPS AND DEVIATIONS
 - Live routing (api/route-question.js) is untested on Vercel itself: tested locally against the real gateway with a
   stand-in server. Deploying it needs the AI_GATEWAY_API_KEY environment variable on the landing project.
 - The site has no analytics; engagement events are emitted as `violet:track` DOM events only (threads-landing.js).
-- Nothing has been deployed.
+- Quick look: the scope answer shows its first two paragraphs (rest behind "Show the whole reply"); plan and outline cards
+  are clipped with "Show the whole…"; the report shows only the flagged paragraph. The conversation's request lines and the
+  purple captions are the website's. Composite of 0107 (plan, scope) and 0096 (outline, answer, report), same fictional case.
+- Deployed to Vercel previews only (branch codex/threads-homepage); not production.
