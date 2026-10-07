@@ -17,15 +17,16 @@ import { flagDetail, flagNextStep, quotedInRationale } from "@/lib/guidedFlagDet
 import { flagVerdictLabel } from "@/lib/guidedFlagVerdict";
 vi.mock("@/lib/api", async (orig) => ({ ...(await orig<object>()), }));
 const B = "/Users/ninaeisenberg/Documents/Codex/violet-landing-backups";
-const dump = JSON.parse(readFileSync(`${B}/db-dumps/0096.json`, "utf8"));
+const DUMP = process.env.DEMO_DUMP || "0096.json"; const OUTP = process.env.DEMO_OUT || ""; const dump = JSON.parse(readFileSync(`${B}/db-dumps/${DUMP}`, "utf8"));
+const byType = (t: string) => dump.artifacts.filter((a: { type: string }) => a.type === t).pop();
 const art = (p: string) => dump.artifacts.find((a: { id: string }) => a.id.startsWith(p));
 it("renders the report", async () => {
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
-  const sections = JSON.parse(art("3548533f").content).sections;
-  const content: string = art("756439ba").content;
+  const sections = JSON.parse((process.env.DEMO_DUMP ? byType("guided-report-sections") : art("3548533f")).content).sections;
+  const content: string = (process.env.DEMO_DUMP ? byType("investigation-report-guided") : art("756439ba")).content;
   const O = "<!--guided-verification:"; const s = content.lastIndexOf(O);
   const run = JSON.parse(content.slice(s + O.length, content.indexOf("-->", s)));
-  const side = JSON.parse(art("4d6065d7").content);
+  const side = JSON.parse((process.env.DEMO_DUMP ? byType("guided-report-citations") : art("4d6065d7")).content);
   const claimCitations = side.citations, corpus = side.sourceCorpus, contradictions = side.contradictions ?? [];
   const flagged = (faithfulnessLine(run) as { flagged?: unknown[] } | null)?.flagged ?? [];
   const live = partitionFlags([...flagged, ...guidedQuoteFlags(undefined, sections), ...guidedAttributionFlags(sections)] as never, []).live;
@@ -69,7 +70,7 @@ it("renders the report", async () => {
       </div>));
     cards.push(host.innerHTML); act(() => r.unmount()); host.remove();
   }
-  writeFileSync(`${B}/rendered-report.json`, JSON.stringify({ reportHtml, marks, cards, live, citations, corpusLabels: Object.fromEntries(Object.entries(corpus).map(([k, v]) => [k, (v as { label: string }).label])) }));
-  writeFileSync(`${B}/report-corpus.json`, JSON.stringify(corpus));
+  writeFileSync(`${B}/rendered-report${OUTP}.json`, JSON.stringify({ reportHtml, marks, cards, live, citations, corpusLabels: Object.fromEntries(Object.entries(corpus).map(([k, v]) => [k, (v as { label: string }).label])) }));
+  writeFileSync(`${B}/report-corpus${OUTP}.json`, JSON.stringify(corpus));
   act(() => root.unmount());
 }, 60000);

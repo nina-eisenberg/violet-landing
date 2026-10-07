@@ -49,7 +49,7 @@ export function createJourney({reply,user,esc}){
  function nextStep(){
   if(!s.files.includes('policy'))return ['policy','Add the policy'];
   if(!s.plan)return ['finalize-plan','Finalize the plan'];
-  if(!conduct()&&s.files.includes('leah')&&!scopeDecision)return scopeReviewed?['propose-scope','Ask Violet to propose the change']:['scope-review',"Check Leah's interview for anything new"];
+  if(!conduct()&&s.files.includes('leah')&&!scopeDecision)return root()?.querySelector('.violet-proposal .vt-stagecard')?['scope','Save or keep the proposed change']:scopeReviewed?['propose-scope','Ask Violet to propose the change']:['scope-review',"Check Leah's interview for anything new"];
   for(const id of interviewOrder){
    if(!s.files.includes(id))return ['person:'+id,`Prepare ${first[id]}'s interview`];
    if(!s.summaries.includes(id))return ['summary:'+id,`Review ${first[id]}'s summary`];
@@ -122,11 +122,11 @@ export function createJourney({reply,user,esc}){
   card.querySelectorAll('.vt-stagecard-foot button').forEach(b=>{b.dataset.journey=b.textContent.includes('Save')?'scope':'keep-scope';});
   card.querySelector('.vt-stagecard-foot button')?.classList.add('is-next');
   retire();const e=document.createElement('section');e.className='violet-proposal stage-live';
-  e.innerHTML=`<div class="reply"><strong>● Violet</strong><div>${esc(capturedScope.caveat.replace(/<[^>]+>/g,''))}</div></div>${card.outerHTML}<details class="full-reply"><summary>Violet's full reply</summary><div class="answer-copy">${tidyScopeBody(capturedScope.body)}</div></details>`;
-  root().append(e);e.querySelectorAll('.av-cite').forEach((b,i)=>{b.dataset.scopeSource=i;b.dataset.keep='';});scroll(e);}
+  e.innerHTML=`<div class="reply"><strong>● Violet</strong><div>${esc(capturedScope.caveat.replace(/<[^>]+>/g,''))}</div></div>${card.outerHTML}<details class="full-reply"><summary>Violet's full reply</summary><div class="answer-copy">${tidyLists(tidyScopeBody(capturedScope.body))}</div></details>`;
+  root().append(e);e.querySelectorAll('.av-cite').forEach((b,i)=>{b.dataset.scopeSource=i;b.dataset.keep='';});shelf();scroll(e);}
  // Display fixes only: the allegation keeps its real number, run-together list items are split, the uncited marker is explained.
  function tidyScopeBody(h){return h.replace(/<ol class="list-decimal pl-6 mb-4 space-y-2">/,'<ol class="list-decimal pl-6 mb-4 space-y-2" start="4">')
-  .replace(/<li([^>]*)>([\s\S]*?)<\/li>/g,(m,a,inner)=>inner.includes(' - ')?inner.split(/ - (?=[A-Z])/).map(x=>`<li${a}>${x}</li>`).join(''):m)
+  
   ;}
  function decideScope(save){const p=[...root().querySelectorAll('.violet-proposal .vt-stagecard')].pop();
   if(p)p.outerHTML=save?'<div class="vt-plan-change-done">✓ Saved: add Anti-Retaliation Policy.</div>':'<div class="vt-plan-change-done is-kept">Kept the plan as it was.</div>';
@@ -156,7 +156,7 @@ export function createJourney({reply,user,esc}){
 
  // ── The report ──────────────────────────────────────────────────────────────────────────────────────────
  // The sentence about Marcus not pursuing the swap, cited to his transcript, in whichever report is open.
- function reviewCitationKey(){if(!conduct())return POLICY_REVIEW_CITATION;const paper=document.querySelector('#report-pane .report-paper');const p=paper&&[...paper.querySelectorAll('p,li')].find(x=>/didn.t pursue/.test(x.textContent)&&x.querySelector('[data-report-citation]'));return p?.querySelector('[data-report-citation]')?.dataset.reportCitation||'1';}
+ function reviewCitationKey(){if(!conduct())return POLICY_REVIEW_CITATION;const paper=document.querySelector('#report-pane .report-paper');if(!paper)return '1';for(const p of paper.querySelectorAll('p,li')){if(!/swap/i.test(p.textContent))continue;for(const b of p.querySelectorAll('[data-report-citation]')){const k=b.dataset.reportCitation;if(conductReportCitations[k]?.title.includes('Marcus Doyle'))return k;}}return '1';}
  function reportFindingsDiffer(){return conduct()?conductPath.findings.some((r,i)=>norm(s.findings[i])!==norm(r.recorded)):overallIndexes.some(i=>s.findings[i]!==policyRecommended[i]);}
  function report(){if(!reportOpen&&s.stage!=='report'&&!s.final){try{mutate('report');}catch(e){notice(e.message);return;}}
   if(conduct()&&!s.flag)s.flag=true; // The conduct report passed verification with no flags.
@@ -175,10 +175,11 @@ export function createJourney({reply,user,esc}){
   if(revision&&!conduct()){const h=headings.find(x=>/Anti-Harassment/.test(x.textContent))||headings[6];const nextH=headings[headings.indexOf(h)+1];h.id='revised-section';let x=h.nextElementSibling;while(x&&x!==nextH){const r=x;x=x.nextElementSibling;r.remove();}const note=document.createElement('div');note.className='revision';note.innerHTML=`<p class="revision-label">${accepted?'Revised by Violet · kept':'Violet\'s revision · your finding is unchanged'}</p>${capturedResponses.redraft.html}${accepted?'':`<div class="revision-actions">${btn('keep-revision','Keep','is-next')}${btn('undo-revision','Undo')}</div>`}`;h.after(note);}
   if(!conduct()){const flagSentence=(capturedReview.flaggedSentences[0]||'').replace(/[¹²³⁴⁵⁶⁷⁸⁹⁰]+$/,'');
    for(const p of paper.querySelectorAll('p')){if(p.textContent.includes(flagSentence)){p.innerHTML=flagReplacement!==null?p.innerHTML.replace(flagSentence,esc(flagReplacement)):p.innerHTML.replace(flagSentence,`<mark class="flag-sentence ${s.flag?'is-reviewed':''}" role="button" tabindex="0" data-journey="flag" data-keep title="${s.flag?'Flag reviewed':'Violet flagged this sentence; click to review'}">${flagSentence}</mark>`);break;}}}
+  setTimeout(()=>{const h=document.querySelector('.vt-home');if(h)h.scrollTop=h.scrollHeight;},80);
   if(!root().querySelector('.report-narration'))stage('Report',`<p>The report is open beside the conversation. Follow the checklist at the top of it: ${conduct()?'check a citation':'review the flag, check a citation'}, then finalize. You can ask me about any part of it here.</p>`,{cls:'report-narration',suggest:true});
  }
  function closeReport(){document.querySelector('#report-pane')?.remove();document.body.classList.remove('report-open','dock-open','chat-hidden');reportOpen=false;const d=document.querySelector('#document');if(d?.open)d.close();}
- function showInReport(el){if(!el)return;el.scrollIntoView({block:'center',behavior:'smooth'});el.classList.add('is-focus');setTimeout(()=>el.classList.remove('is-focus'),2200);}
+ function showInReport(el){if(!el)return;const pane=document.querySelector('#report-pane');const go=()=>{if(!pane||!el.isConnected)return;pane.scrollTop+=el.getBoundingClientRect().top-pane.getBoundingClientRect().top-pane.clientHeight/3;};go();setTimeout(go,120);setTimeout(go,450);el.classList.add('is-focus');setTimeout(()=>el.classList.remove('is-focus'),2400);}
  function review(kind){if(!reportOpen)report();const paper=document.querySelector('#report-pane .report-paper');
   if(kind==='flag'){if(conduct())return;showInReport(paper.querySelector('.flag-sentence'));
    const t=document.createElement('template');t.innerHTML=capturedReview.flagHtml;t.content.querySelectorAll('dialog').forEach(e=>e.remove());
@@ -197,7 +198,9 @@ export function createJourney({reply,user,esc}){
   if(host){host.querySelector(':scope > .journey-notice')?.remove();const p=document.createElement('p');p.className='journey-notice';p.setAttribute('role','alert');p.textContent=msg;host.append(p);}else reply(msg);}
 
  // ── Answers ─────────────────────────────────────────────────────────────────────────────────────────────
- function answerBlock({html,provenance,copy}){retire();const e=document.createElement('div');e.className='reply violet-answer stage-live';e.innerHTML=`<strong>● Violet</strong><div class="answer-copy">${html}</div><div class="answer-tools">${copy?`<button type="button" class="vt-linkish" data-journey="copy:${copy}" data-keep>Copy</button>`:''}<small>${esc(provenance)}</small></div>`;root().append(e);scroll(e);return e;}
+ // Display fix only: Violet sometimes runs several list items into one line separated by " - "; split them back out.
+ function tidyLists(h){return h.replace(/<li([^>]*)>([\s\S]*?)<\/li>/g,(m,a,inner)=>/ - (?=<strong|[A-Z])/.test(inner)?inner.split(/ - (?=<strong|[A-Z])/).map(x=>`<li${a}>${x}</li>`).join(''):m);}
+ function answerBlock({html,provenance,copy}){html=tidyLists(html);retire();const e=document.createElement('div');e.className='reply violet-answer stage-live';e.innerHTML=`<strong>● Violet</strong><div class="answer-copy">${html}</div><div class="answer-tools">${copy?`<button type="button" class="vt-linkish" data-journey="copy:${copy}" data-keep>Copy</button>`:''}<small>${esc(provenance)}</small></div>`;root().append(e);scroll(e);return e;}
  function showAnswer(answer){
   if(!responseAvailable(answer,s)){reply(unavailableReason(answer));continueLine();return;}
   const missing=answer.requires.filter(id=>!s.files.includes(id));
@@ -258,7 +261,7 @@ export function createJourney({reply,user,esc}){
    case 'save-flag-edit':flagReplacement=document.querySelector('#flag-edit').value;return dispatch('address-flag');
    case 'remove-flag':flagReplacement='';return dispatch('address-flag');
    case 'review-citation':mutate('citation');document.querySelector('#document').close();report();return;
-   case 'redraft':if(conduct())return;user(REDRAFT_PROMPT);revision=true;accepted=false;reply("Here's the revised section in the report, for your review. Your finding is unchanged.");report();showInReport(document.querySelector('#revised-section'));return;
+   case 'redraft':if(conduct())return;user(REDRAFT_PROMPT);revision=true;accepted=false;reply(capturedResponses.redraft.text.match(/I kept your finding[^.]*\./)?.[0]||'I kept your finding as substantiated.');if(s.findings[3]&&s.findings[3]!=='Substantiated')guide('Violet drafted this revision in the saved case, where allegation 3 was recorded as substantiated; your finding here is “'+s.findings[3]+'”. In the app she would draft to your finding.');report();showInReport(document.querySelector('#revised-section'));return;
    case 'keep-revision':accepted=true;report();return;
    case 'undo-revision':revision=false;accepted=false;report();return;
    case 'final-report':return finalizeReport(false);

@@ -1,80 +1,51 @@
-Prepared-case fidelity audit — 6 October 2026 (after the /tmp loss and recovery)
+Prepared-case fidelity audit — 7 October 2026 (after Nina's walkthrough fixes, items 1–21)
 
-This replaces the 5 October audit, which described the lost prototype (kept for reference in
-reference-captures/FIDELITY-AUDIT-2026-10-05-lost-prototype.txt). Everything below was checked on 6 October
-against this copy of the code. Sources: read-only dumps of the two fictional cases (INV-2026-0096 completed
-case, INV-2026-0105 fresh case), the app's own components rendered offline from those dumps, and the saved
-Codex session log. No AI calls were made and nothing was written to the app or its database.
-How to reproduce: ../recovery-tools/README.txt.
+Earlier audits: reference-captures/FIDELITY-AUDIT-2026-10-05-lost-prototype.txt (the lost prototype). Everything below
+was checked on 7 October against this code. How each piece was rebuilt: ../recovery-tools/README.txt.
 
-STATE: 29/29 tests pass, `npm run build` passes, and the full journey was walked in a browser on 6 October:
-intake → policy → initial plan → client update detour → finalize plan → Leah outline → transcript → scope
-proposal (six source docks, Save) → Leah summary (bullets/narrative, citations) → Jordan, Carla (notes),
-Marcus → huddle detour and return → finalize four summaries → two exhibits → deadline detour → evidence
-matrix → seven findings → confidence → report (8 sections, 138 placed citations) → flag review → citation
-review → redraft, Undo, redraft, Keep → finalize. No console errors. Completed detours were not suggested again.
+STATE
+29/29 tests pass; `npm run build` passes. Walked end to end on both paths in the built-in browser and in Chrome
+(real clicks on the decisive buttons; Chrome renders a background window stale, so some Chrome checks read page state):
+  Policy path: intake (policy chosen) → policy → initial plan → client update → finalize → Leah outline + transcript →
+  "Check Leah's interview for anything new" (Violet's real answer) → proposal card → Save → Violet's real follow-up →
+  summaries (format toggle, citations) → bulk-add other records → documents → detours → findings → evidence alignment →
+  report (checklist) → flag (scrolls into view) → citation → redraft (Undo, Keep) → finalize (incl. findings-differ path).
+  Conduct path (default): conduct plan → bulk-add all four records → summaries → documents → six conduct findings →
+  alignment → report (no flags; verification passed) → citation → finalize (incl. findings-differ path).
+Landing page: hero, preview (4 steps), outputs copy, highlights tour, sandbox choice, pricing and FAQ all present.
+No visitor AI calls anywhere. Live-app spend for this round: $1.78 recapture + $0.10 for the conduct case (INV-2026-0107) = $1.88; Jev test $0.003.
 
-WHAT EACH PIECE IS NOW, AND HOW FAITHFUL
+WHERE EACH PIECE COMES FROM
+Captured from current production Violet, Oct 7 (asked verbatim as the demo shows them; case INV-2026-0096)
+  All 19 prepared question answers, the redraft and finding drafts. Rendered with the app's CitedAnswer offline.
+  Display-only fixes: run-together list items (" - ") split into separate bullets; Violet's "no source cited" marker
+  shown small as in the app; the client update shows no citation markers (client-facing draft); signature placeholder.
+Saved records, rendered with the app's own components offline (validated against surviving live captures)
+  Policy plan cards (0105; the initial 3-allegation card is derived from the expanded one, content-verified).
+  Conduct plan card: new case INV-2026-0107 (Oct 7, complaint + policy, conduct-based) via PlanCard — exact length match
+  with the live card. Only the draft exists: finalizing in the live app was blocked, see GAPS.
+  Scope moment (policy path): Violet's real answer to "Does Leah's interview raise anything outside the current
+  investigation plan?", the real proposal card, caveat and full reply (folded), and her real saved follow-up (0105).
+  Summaries (both formats), report 756439ba with flags and 157 citations (0096).
+  Conduct findings, evidence review and report with 197 citations: INV-2026-0076 (Sept 24, conduct run from all 8 files).
+Written for the demo (labelled on screen as such)
+  typed-answers.js: sample answers for common uncaptured questions, cited line by line to the sample files.
+  Demo-guide replies (product questions, unavailable answers, no-answer fallback) are labelled "Demo guide".
+  Short connective lines in the conversation ("The policy is added.", step narration) are the demo's, as before.
 
-Exact live captures that survived the loss
-- Expanded four-allegation plan (reference-captures/final-pass/expanded-plan.html).
-- Scope response body and caveat (captured-scope.js body/caveat).
-- 20 Violet response bodies (captured-responses.js); see response-source-text.json and the raw saved HTML in
-  reference-captures/response-source-html.json.
-- Four interview outlines from 0105 and the three-policy confidence assessment. Their original reference files
-  were lost; the copies in final-pass/ were written from the modules after every outline line and every
-  confidence bullet was found in the saved 0105 outline artifacts and 0096 determinations artifact b3ac6afe.
-  Those two equality tests therefore guard against drift; they are not a second independent capture.
-
-Rebuilt from saved records with the app's own code
-- Initial three-allegation plan: DERIVED, not the original capture. It is the expanded capture with the
-  Anti-Retaliation group removed and counts set to 3. The saved 0105 record shows the finalized plan
-  (previousPlanData) differs from the later plan (planData) only by that group, so the content is exact. The
-  5 Oct audit noted the original demo deliberately avoided this derivation and used a direct capture of the
-  reviewed plan; that capture is gone. Visual chrome may differ slightly from the lost capture.
-- Scope proposal card: the app's PlanChangeCard markup filled from saved action c6db4db3 and the saved plan.
-  Six source docks: SourcePanel markup from the sourceCorpus saved with that answer (highlights verified).
-- Interview summaries, both formats: the app's SummaryCard rendered offline from the saved summaries and
-  their citation sidecars. Leah's narrative render is identical to the surviving capture; the other three
-  narratives match their surviving captures word for word, plus the citations the app places (the captures
-  had been taken without them). Bullet versions: Leah 7ff7988f, Jordan 33d4a774, Carla 5db3956d, Marcus
-  7a42278b (the only Marcus bullet version, from Oct 1).
-- Report: filed report 756439ba (the report live when the original flag was captured, 02:24 UTC Oct 6)
-  rendered by AnnotatedReportView with its 157 citations (138 place, as in the app) and both flagged
-  sentences. The earlier plain capture, which also carried stray outline headings, is kept in
-  reference-captures/report-earlier-capture.html.
-- Flag card: GuidedReport's embedded flag card for the first flag (the CONTRADICTS flag on "The response was
-  timely…"), built with the app's flagDetail/flagNextStep/FlagSentenceEditor. Which of the two flags the lost
-  capture opened is not known; the first in document order is used. The second flag is highlighted in the
-  report text but has no separate review step.
-- Citation docks: 157 report, 206 summary and 111 Ask Violet passages; all 205 citation buttons in the
-  captured replies open their real passage, including the case-synopsis citation in the client update.
-- Citation review: report footnote 23 and its real dock (Marcus transcript line 47). The previous version used
-  a hand-written sentence that is not in the report; it was replaced.
-- Priya-add: the real scripted reply ("Added Priya Anand as a witness…"). In the record it was a direct
-  action with no proposal card, so the demo shows none. The earlier authored stand-in was removed.
-
-Restored from the saved session log (code, not content)
-- journey.test.js final version (session output 7034 + tests appended at 7106), question-suggestions.js final
-  version (5828/5834), intents.js possessive fix (3324). The recovered copies were earlier replays.
-
-STAGE COMPATIBILITY (added 6 Oct)
-Replies only appear at the point in the case they were captured for: the client update only before the plan is
-final (it is the early-stage capture, message 136); Priya-add only once the plan is final; replies that discuss
-allegation 4 or the Anti-Retaliation group only after the scope change is saved (reword5, retaliation, gaps,
-executive, tran, pay, followup); retaliation review also needs findings; the follow-up email needs Marcus's
-transcript. Typing a question that isn't available yet shows a demo-guide card instead of a reply.
-
-KNOWN GAPS AND DEVIATIONS
-- credibility mentions allegation 4 but is not scope-gated, because the original test expects it on Marcus's
-  summary regardless of scope. If the visitor keeps the plan as is, that reply still refers to allegation 4.
-- If the visitor keeps the plan as is, the report, confidence and findings still cover four allegations
-  (they come from the completed case). The demo labels the report as captured, not regenerated.
-- The redraft request in the conversation paraphrases the investigator's real prompt; Violet's reply is the
-  real one.
-- The scope reply's blockquoted allegation shows as "1." (as captured) although it is allegation 4.
-- Moving back and forth between people repeats "Here's where the interviews stand." in the conversation.
-- The linked "Earlier prototype" page posts unrecognised text to /api/demo-route. No such endpoint exists in
-  this project, so it falls back to local routing; there are no visitor AI calls anywhere.
-- The narrated linear demo under /demo was not re-verified in this pass.
+GAPS AND DEVIATIONS
+- Conduct path is a composite: the plan (0107, 4 allegations, from the complaint) and the findings/report (0076,
+  6 allegations, from all files, Sept 24 — older than the rest) are worded differently; the findings screen says so.
+  No conduct-path scope moment: it needs the 0107 plan finalized, Leah's transcript added and the open question asked
+  in the live app (≈$0.2). The live-app step to finalize was blocked by the safety check, pending Nina's go-ahead.
+- Conduct path hides replies captured in the policy plan's terms (client, deadline, harassment, finding3 and the
+  post-scope replies); it says why if asked.
+- Policy path: if the visitor keeps the plan at three allegations, findings, alignment and report still cover four.
+- The redraft was captured where allegation 3 was recorded substantiated; if the visitor chose otherwise a demo-guide
+  note says so. Credibility mentions no allegation numbers now (recapture), so it is offered on both paths.
+- Summary steers (Shorter, Plainer…), Word export and edit controls are hidden: no captured results.
+- "What findings are supported?" and other open questions have no captured answer; they get the honest fallback.
+- Jev routes typed questions far better than keywords (held-out 27/27 vs 21/27) but stays off: visitor AI calls are
+  disallowed. See recovery-tools/jev/README.txt.
+- The site has no analytics; engagement events are emitted as `violet:track` DOM events only (threads-landing.js).
 - Nothing has been deployed.
