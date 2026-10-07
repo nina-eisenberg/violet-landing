@@ -109,3 +109,5 @@ body.report-open.source-open .vt-shell{margin-right:0}
 .rev-new{background:#efe7fb;border-radius:3px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .rev-body.is-kept .rev-new{background:none}
 .rev-note{margin:14px 0;padding:12px 16px;border-radius:10px;background:#f4f1f7;font-size:14px;color:#4d4757}.rev-note p{margin:0 0 6px}
+.reply.thinking div{color:#a59fae;font-size:20px;letter-spacing:2px;animation:pulseDots 1s infinite}
+@keyframes pulseDots{50%{opacity:.4}}

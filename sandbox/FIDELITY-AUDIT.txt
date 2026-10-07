@@ -1,4 +1,4 @@
-Prepared-case fidelity audit — 7 October 2026 (after Nina's walkthrough fixes, items 1–21)
+Prepared-case fidelity audit — 7 October 2026, updated evening (walkthrough fixes; redraft, conduct scope, live routing)
 
 Earlier audits: reference-captures/FIDELITY-AUDIT-2026-10-05-lost-prototype.txt (the lost prototype). Everything below
 was checked on 7 October against this code. How each piece was rebuilt: ../recovery-tools/README.txt.
@@ -13,17 +13,27 @@ STATE
   Conduct path (default): conduct plan → bulk-add all four records → summaries → documents → six conduct findings →
   alignment → report (no flags; verification passed) → citation → finalize (incl. findings-differ path).
 Landing page: hero, preview (4 steps), outputs copy, highlights tour, sandbox choice, pricing and FAQ all present.
-No visitor AI calls anywhere. Live-app spend for this round: $1.78 recapture + $0.10 for the conduct case (INV-2026-0107) = $1.88; Jev test $0.003.
+Visitor AI calls: one kind only, approved by Nina on Oct 7 — typed questions the keywords miss go to /api/route-question,
+which asks Jev to pick one of the prepared answers (≈$0.00005 each; it never writes text). Needs AI_GATEWAY_API_KEY in the
+landing site's Vercel project; without it the demo falls back to the honest no-answer reply.
+Live-app spend: $1.78 recapture + 0107 conduct case and scope capture (see below) + one in-place section rewrite.
 
 WHERE EACH PIECE COMES FROM
 Captured from current production Violet, Oct 7 (asked verbatim as the demo shows them; case INV-2026-0096)
   All 19 prepared question answers, the redraft and finding drafts. Rendered with the app's CitedAnswer offline.
+  The redraft step and the landing preview NO LONGER use the chat-path redraft reply: asked without the report open,
+  Violet overrode "keep my finding unchanged" (product issue, filed separately). They use the real in-place rewrite of
+  section VII made with the report open (section-revision.js): her two chat lines, the rewritten section with new passages
+  highlighted, its 31 sentence citations, and her note (captured from the page; not stored with the section).
   Display-only fixes: run-together list items (" - ") split into separate bullets; Violet's "no source cited" marker
   shown small as in the app; the client update shows no citation markers (client-facing draft); signature placeholder.
 Saved records, rendered with the app's own components offline (validated against surviving live captures)
   Policy plan cards (0105; the initial 3-allegation card is derived from the expanded one, content-verified).
   Conduct plan card: new case INV-2026-0107 (Oct 7, complaint + policy, conduct-based) via PlanCard — exact length match
-  with the live card. Only the draft exists: finalizing in the live app was blocked, see GAPS.
+  with the live card; after the scope change, the five-allegation plan card.
+  Conduct scope moment (conduct-scope.js, 0107): Violet's real answer to the open question about Leah's interview and her
+  own proposal card, then her saved reply. Left out, as product glitches: a duplicate second answer block in that reply,
+  and her line "I added a retaliation allegation… check the policy heading" sent before saving, on a plan with no headings.
   Scope moment (policy path): Violet's real answer to "Does Leah's interview raise anything outside the current
   investigation plan?", the real proposal card, caveat and full reply (folded), and her real saved follow-up (0105).
   Summaries (both formats), report 756439ba with flags and 157 citations (0096).
@@ -36,8 +46,6 @@ Written for the demo (labelled on screen as such)
 GAPS AND DEVIATIONS
 - Conduct path is a composite: the plan (0107, 4 allegations, from the complaint) and the findings/report (0076,
   6 allegations, from all files, Sept 24 — older than the rest) are worded differently; the findings screen says so.
-  No conduct-path scope moment: it needs the 0107 plan finalized, Leah's transcript added and the open question asked
-  in the live app (≈$0.2). The live-app step to finalize was blocked by the safety check, pending Nina's go-ahead.
 - Conduct path hides replies captured in the policy plan's terms (client, deadline, harassment, finding3 and the
   post-scope replies); it says why if asked.
 - Policy path: if the visitor keeps the plan at three allegations, findings, alignment and report still cover four.
@@ -45,7 +53,7 @@ GAPS AND DEVIATIONS
   note says so. Credibility mentions no allegation numbers now (recapture), so it is offered on both paths.
 - Summary steers (Shorter, Plainer…), Word export and edit controls are hidden: no captured results.
 - "What findings are supported?" and other open questions have no captured answer; they get the honest fallback.
-- Jev routes typed questions far better than keywords (held-out 27/27 vs 21/27) but stays off: visitor AI calls are
-  disallowed. See recovery-tools/jev/README.txt.
+- Live routing (api/route-question.js) is untested on Vercel itself: tested locally against the real gateway with a
+  stand-in server. Deploying it needs the AI_GATEWAY_API_KEY environment variable on the landing project.
 - The site has no analytics; engagement events are emitted as `violet:track` DOM events only (threads-landing.js).
 - Nothing has been deployed.

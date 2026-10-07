@@ -16,7 +16,7 @@ import {complaint} from './complaint.js';
 import {planView,summaryView,outlineView,policyText,reportView,policyConfidenceRows,artifacts} from './artifact-views.js';
 import {answerFor,caseAnswers,responseAvailable} from './case-answers.js';
 import {suggestQuestions} from './question-suggestions.js';
-import {typedAnswerFor,typedAnswerNeeds,guideAnswerFor} from './typed-answers.js';
+import {typedAnswers,typedAnswerFor,typedAnswerNeeds,guideAnswerFor} from './typed-answers.js';
 import {materials} from './materials.js';
 import {freshJourney,progress,interviewOrder} from './journey-state.js';
 
@@ -285,7 +285,7 @@ export function createJourney({reply,user,esc}){
   const answer=answerFor(text);if(answer){showAnswer(answer);return true;}
   if(/outside the (current )?plan|anything new|new allegation/.test(t)&&s.files.includes('leah')&&!scopeDecision){reviewScope();return true;}
   const ta=typedAnswerFor(text,s.files);
-  if(ta){answerBlock({html:ta.html+(ta.extra&&ta.extra.requires.every(id=>s.files.includes(id))?ta.extra.html:''),provenance:'Sample answer written for this demo in Violet’s style · not captured from Violet'});continueLine();return true;}
+  if(ta){showTyped(ta);return true;}
   const need=typedAnswerNeeds(text);if(need){reply(`I can answer that from the record once ${need.requires.map(id=>materials[id].name).join(' and ')} ${need.requires.length>1?'are':'is'} in the case.`);continueLine();return true;}
   const g=guideAnswerFor(text);if(g){guide(g.text);continueLine();return true;}
   if(/^(next|what.?s next|what now|continue)/.test(t)){const n=nextStep();if(n){dispatch(n[0]);return true;}}
@@ -297,9 +297,26 @@ export function createJourney({reply,user,esc}){
   if(/finding/.test(t)){dispatch('findings');return true;}
   if(/interview|summary|summari[sz]e|outline/.test(t)){const id=interviewOrder.find(k=>t.includes(k)||t.includes(names[k].split(' ')[1].toLowerCase()));if(!id){dispatch('interviews');return true;}dispatch((/outline/.test(t)?'outline:':/summary|summari/.test(t)?'summary:':'person:')+id);return true;}
   if(/upload|document|file|exhibit/.test(t)){dispatch('gather');return true;}
-  const qs=suggestQuestions(s,'',[...answered]).filter(q=>responseAvailable(q,s));
+  routeWithJev(text);return true;
+ }
+ function showTyped(ta){answerBlock({html:ta.html+(ta.extra&&ta.extra.requires.every(id=>s.files.includes(id))?ta.extra.html:''),provenance:'Sample answer written for this demo in Violet’s style · not captured from Violet'});continueLine();}
+ function noAnswer(){const qs=suggestQuestions(s,'',[...answered]).filter(q=>responseAvailable(q,s));
   guide(`This demo doesn't have a prepared answer for that. In Violet you can ask anything about the case's record.${qs.length?' Here are questions this demo can answer right now:':''}`,qs.map(q=>`<button type="button" class="suggestion" data-journey="question:${caseAnswers.indexOf(q)}">${esc(q.question)}</button>`).join(''));
-  continueLine();return true;
+  continueLine();}
+ // When the keywords don't recognise a question, Jev (via /api/route-question) picks the closest prepared answer from
+ // the ones available at this point, or none. It only chooses; every answer shown is still prepared content. If the
+ // endpoint isn't there (e.g. a local preview) or isn't confident, the honest no-answer reply is shown.
+ function routeWithJev(text){
+  const allowed=[...caseAnswers.filter(q=>responseAvailable(q,s)).map(q=>'answer:'+q.id),...typedAnswers.map(t=>'typed:'+t.id),'nav:plan','nav:interviews','nav:next','nav:overview',...(s.stage==='report'||ready()?['nav:report']:[])];
+  const wait=document.createElement('div');wait.className='reply thinking';wait.innerHTML='<strong>● Violet</strong><div>…</div>';root().append(wait);scroll(wait);
+  fetch('/api/route-question',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({text,allowed}),signal:AbortSignal.timeout(5000)})
+   .then(r=>r.ok?r.json():null).catch(()=>null).then(res=>{wait.remove();const c=res?.choice;
+    if(!c||c==='none'||!(res.p>=0.6))return noAnswer();
+    const [kind,id]=c.split(':');
+    if(kind==='answer'){const q=caseAnswers.find(a=>a.id===id);if(q)return showAnswer(q);}
+    if(kind==='typed'){const t=typedAnswers.find(a=>a.id===id);if(t){const need=t.requires.filter(r=>!s.files.includes(r));if(!need.length)return showTyped(t);reply(`I can answer that from the record once ${need.map(r=>materials[r].name).join(' and ')} ${need.length>1?'are':'is'} in the case.`);return continueLine();}}
+    if(kind==='nav'){if(id==='overview')return route('tell me about this case');return dispatch({plan:'plan',report:'report',interviews:'interviews',next:'resume'}[id]||'resume');}
+    noAnswer();});
  }
  // The demo guide speaks for the demo itself, never as Violet.
  function guide(text,extra=''){const e=document.createElement('div');e.className='reply demo-guide';e.innerHTML=`<strong>Demo guide</strong><div><p>${esc(text)}</p>${extra?`<div class="question-list">${extra}</div>`:''}</div>`;root().append(e);scroll(e);}
