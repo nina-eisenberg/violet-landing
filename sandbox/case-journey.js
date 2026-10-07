@@ -4,6 +4,7 @@
 import {capturedScope} from './captured-scope.js';
 import {scopeReview} from './scope-review.js';
 import {conductPath} from './conduct-path.js';
+import {sectionRevision} from './section-revision.js';
 import {openSourcePanel} from './source-panel.js';
 import {capturedCitations,summaryCitations} from './captured-citations.js';
 import {reportCitations,conductReportCitations} from './report-citations.js';
@@ -22,7 +23,7 @@ const names={leah:'Leah Goldberg',jordan:'Jordan Kim',carla:'Carla Rivera',marcu
 const first={leah:'Leah',jordan:'Jordan',carla:'Carla',marcus:'Marcus'};
 const roles={leah:'Complainant',jordan:'Witness',carla:'Witness',marcus:'Subject'};
 const policyRecommended=findingRows.map(r=>r.recommended);
-const REDRAFT_PROMPT='Redraft the religious-remarks analysis to distinguish what occurred from whether the record shows severe or pervasive conduct. Keep my finding unchanged.';
+const REDRAFT_PROMPT=sectionRevision.prompt;
 const SCOPE_PROPOSAL_PROMPT='Keep all three existing allegations and both existing policy groups unchanged. Propose adding a fourth allegation under the Anti-Retaliation Policy: whether Marcus Doyle removed Leah Goldberg from the escalations queue because she requested a religious accommodation or complained to HR. Show the proposed change for my review before saving.';
 // The policy report's review citation: footnote 23 (Marcus, transcript line 47). The conduct report's is found by text.
 const POLICY_REVIEW_CITATION='23';
@@ -172,7 +173,7 @@ export function createJourney({reply,user,esc}){
   const paper=panel.querySelector('.report-paper');paper.innerHTML=reportView(framework);
   const headings=[...paper.querySelectorAll('h2')].filter(h=>/^[IVX]+\. /.test(h.textContent));headings.forEach((h,i)=>{h.id='report-section-'+i;});
   const toc=document.createElement('details');toc.className='report-contents';toc.innerHTML=`<summary>Report sections · ${headings.length}</summary>`+headings.map((h,i)=>`<button type="button" class="vt-linkish" data-report-section="${i}">${esc(h.textContent)}</button>`).join('');paper.before(toc);
-  if(revision&&!conduct()){const h=headings.find(x=>/Anti-Harassment/.test(x.textContent))||headings[6];const nextH=headings[headings.indexOf(h)+1];h.id='revised-section';let x=h.nextElementSibling;while(x&&x!==nextH){const r=x;x=x.nextElementSibling;r.remove();}const note=document.createElement('div');note.className='revision';note.innerHTML=`<p class="revision-label">${accepted?'Revised by Violet · kept':'Violet\'s revision · your finding is unchanged'}</p>${capturedResponses.redraft.html}${accepted?'':`<div class="revision-actions">${btn('keep-revision','Keep','is-next')}${btn('undo-revision','Undo')}</div>`}`;h.after(note);}
+  if(revision&&!conduct()){const h=headings.find(x=>/Anti-Harassment/.test(x.textContent))||headings[6];const nextH=headings[headings.indexOf(h)+1];h.id='revised-section';let x=h.nextElementSibling;while(x&&x!==nextH){const r=x;x=x.nextElementSibling;r.remove();}const note=document.createElement('div');note.className='revision';note.innerHTML=`<div class="rev-banner"><span>${accepted?'✓ Kept Violet\'s rewrite':'Redrafted just now. What\'s new is highlighted.'} · ${sectionRevision.quotesVerified} quotes verified</span>${accepted?'':`<span class="revision-actions">${btn('keep-revision','Keep','is-next')}${btn('undo-revision','Undo')}</span>`}</div><div class="rev-body ${accepted?'is-kept':''}">${sectionRevision.html}</div><div class="rev-note"><p class="revision-label">Violet's note</p><p>${esc(sectionRevision.note)}</p></div>`;h.after(note);}
   if(!conduct()){const flagSentence=(capturedReview.flaggedSentences[0]||'').replace(/[¹²³⁴⁵⁶⁷⁸⁹⁰]+$/,'');
    for(const p of paper.querySelectorAll('p')){if(p.textContent.includes(flagSentence)){p.innerHTML=flagReplacement!==null?p.innerHTML.replace(flagSentence,esc(flagReplacement)):p.innerHTML.replace(flagSentence,`<mark class="flag-sentence ${s.flag?'is-reviewed':''}" role="button" tabindex="0" data-journey="flag" data-keep title="${s.flag?'Flag reviewed':'Violet flagged this sentence; click to review'}">${flagSentence}</mark>`);break;}}}
   setTimeout(()=>{const h=document.querySelector('.vt-home');if(h)h.scrollTop=h.scrollHeight;},80);
@@ -261,7 +262,7 @@ export function createJourney({reply,user,esc}){
    case 'save-flag-edit':flagReplacement=document.querySelector('#flag-edit').value;return dispatch('address-flag');
    case 'remove-flag':flagReplacement='';return dispatch('address-flag');
    case 'review-citation':mutate('citation');document.querySelector('#document').close();report();return;
-   case 'redraft':if(conduct())return;user(REDRAFT_PROMPT);revision=true;accepted=false;reply(capturedResponses.redraft.text.match(/I kept your finding[^.]*\./)?.[0]||'I kept your finding as substantiated.');if(s.findings[3]&&s.findings[3]!=='Substantiated')guide('Violet drafted this revision in the saved case, where allegation 3 was recorded as substantiated; your finding here is “'+s.findings[3]+'”. In the app she would draft to your finding.');report();showInReport(document.querySelector('#revised-section'));return;
+   case 'redraft':if(conduct())return;user(REDRAFT_PROMPT);revision=true;accepted=false;sectionRevision.replies.forEach(r=>reply(r));report();showInReport(document.querySelector('#revised-section'));return;
    case 'keep-revision':accepted=true;report();return;
    case 'undo-revision':revision=false;accepted=false;report();return;
    case 'final-report':return finalizeReport(false);
@@ -306,6 +307,7 @@ export function createJourney({reply,user,esc}){
   if(b.dataset.reportSection){document.querySelector('#report-section-'+b.dataset.reportSection)?.scrollIntoView({block:'start',behavior:'smooth'});return;}
   if(b.dataset.pick!==undefined){try{mutate('finding',{index:Number(b.dataset.pick),value:b.dataset.value});}catch(err){notice(err.message);return;}b.closest('.vt-fx-opts').querySelectorAll('button').forEach(x=>{const on=x===b;x.classList.toggle('is-on',on);x.setAttribute('aria-checked',String(on));x.textContent=(on?'✓ ':'')+x.dataset.value.replace('Partially Substantiated','Partially');});return;}
   if(b.dataset.reportCitation){const c=reportCites()[b.dataset.reportCitation];if(c)dock(c.title,c.html);return;}
+  if(b.dataset.revisionCitation){const c=sectionRevision.docks[b.dataset.revisionCitation];if(c)dock(c.title,c.html);return;}
   if(b.dataset.cite){const key=(b.getAttribute('title')||b.getAttribute('aria-label')||'').replace(/^Source \d+: /,'').replace(/ — open the source$/,'');const [person,num]=(b.dataset.summaryCitation||'').split(':');const c=summaryCitations[person]?.[num]||capturedCitations[key];if(c)dock(c.title,c.html);else source(b.dataset.cite,b.dataset.needle);return;}
   if(b.dataset.journey)dispatch(b.dataset.journey);});
  document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches?.('mark[data-journey]')){e.preventDefault();lastClicked=e.target;dispatch(e.target.dataset.journey);}});

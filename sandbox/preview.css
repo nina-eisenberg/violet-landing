@@ -45,3 +45,6 @@ html,body{margin:0;background:transparent;font-family:Inter,system-ui,sans-serif
 @media(max-width:760px){.pv-grid{grid-template-columns:1fr;height:auto}.pv-chat{border-right:0;border-bottom:1px solid #ebe5f1;max-height:180px}.pv-report{max-height:340px}.pv-dock.is-open{width:auto;max-height:240px;border-left:0;border-top:1px solid #ebe5f1}}
 .cite-sup-wrap{line-height:0}.cite-sup{border:0;background:none;padding:0 1px;margin-left:1px;color:#7043bb;font:600 9.5px Inter,sans-serif;vertical-align:super;line-height:1}
 .av-flag{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;margin:0 1px;vertical-align:2px;border-radius:999px;background:#fef3c7;color:#92400e}.av-flag svg{width:9px;height:9px}
+.rev-new{background:#efe7fb;border-radius:3px}
+.pv-section h3{font:600 15px Inter,sans-serif;margin:12px 0 6px}.pv-section h4{font:600 14px Inter,sans-serif;margin:10px 0 4px}
+.cite-sup.is-active{background:#7043bb;color:#fff;border-radius:4px;padding:1px 4px}
