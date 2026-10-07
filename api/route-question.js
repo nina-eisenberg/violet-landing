@@ -1,7 +1,7 @@
 // POST /api/route-question — routes a question a visitor typed in the demo to one of the demo's prepared answers,
 // using Jev (TypeSafe AI) through the Vercel AI Gateway decision API. It never writes text: it returns one choice from
 // a fixed list (question-index.js) and the demo shows that prepared, captured content. About $0.00005 a question.
-// Needs AI_GATEWAY_API_KEY in this project's Vercel environment. The question text is not logged or stored here;
+// Authenticates with AI_GATEWAY_API_KEY if set, else the Vercel OIDC token. The question text is not logged or stored here;
 // the gateway is asked for zero data retention.
 import {options} from './question-index.js';
 const CONTEXT='Fictional workplace investigation demo: Leah Goldberg complained that her supervisor Marcus Doyle denied her Shabbat accommodation request and made remarks about her religion; she was later removed from the escalations queue. Witnesses: Jordan Kim, Carla Rivera.';
@@ -9,7 +9,9 @@ const hits=new Map(); // best-effort per-instance rate limit: 20 questions a min
 function limited(ip){const now=Date.now(),w=(hits.get(ip)||[]).filter(t=>now-t<60000);w.push(now);hits.set(ip,w);if(hits.size>5000)hits.clear();return w.length>20;}
 const json=(body,status=200)=>new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json','cache-control':'no-store'}});
 export async function POST(request){
- const key=process.env.AI_GATEWAY_API_KEY;if(!key)return json({choice:null,reason:'not configured'},503);
+ // An AI Gateway API key if one is set; otherwise Vercel's own OIDC token, which the gateway also accepts for
+ // projects on the same Vercel team (no key to manage).
+ const key=process.env.AI_GATEWAY_API_KEY||process.env.VERCEL_OIDC_TOKEN||request.headers.get('x-vercel-oidc-token');if(!key)return json({choice:null,reason:'not configured'},503);
  const ip=(request.headers.get('x-forwarded-for')||'').split(',')[0].trim()||'unknown';if(limited(ip))return json({choice:null,reason:'slow down'},429);
  let body;try{body=await request.json();}catch{return json({choice:null},400);}
  const text=String(body?.text||'').slice(0,300).trim();if(!text)return json({choice:null},400);
