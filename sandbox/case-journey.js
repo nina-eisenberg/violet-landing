@@ -27,6 +27,9 @@ const SCOPE_PROPOSAL_PROMPT='Keep all three existing allegations and both existi
 // The policy report's review citation: footnote 23 (Marcus, transcript line 47). The conduct report's is found by text.
 const POLICY_REVIEW_CITATION='23';
 
+// Engagement events go to the host page only (postMessage); the sandbox itself sends nothing anywhere.
+export function track(name){try{if(parent!==window)parent.postMessage({violet:name},location.origin);}catch{}}
+
 export function createJourney({reply,user,esc}){
  let s,framework,format,revision,accepted,flagReplacement,scopeDecision,scopeReviewed,answered,reasons,confidenceSeen,reportOpen;
  const root=()=>document.querySelector('#content');
@@ -90,6 +93,7 @@ export function createJourney({reply,user,esc}){
  function start(fw){init(fw);root().querySelectorAll('#draft,.vt-stagecard').forEach(c=>{c.classList.add('stage-past');c.querySelectorAll('[data-do],[data-field],input,select').forEach(b=>b.disabled=true);});shelf();policy();}
  function policy(){stage('Policies',`<p>Before the plan: are the policies at issue in your library? If one is missing, drop it in and I'll add it.</p>${s.files.includes('policy')?'<p>✓ Religious Accommodation Policy HR-114</p>':tray(['policy'],'Add the policy')}<p class="demo-label">HR-114 is supplied with the sample files. The case's library also holds the Anti-Harassment Policy. The Anti-Retaliation Policy text is not in the library, which Violet points out later.</p>`,{next:s.files.includes('policy')?['plan','Draft the investigation plan']:null});}
  function plan(){if(!s.files.includes('policy'))return policy();
+  if(!s.plan)track('first_artifact');
   reply(s.plan?"Here's the plan.":`Here's the plan as drafted${conduct()?': conduct allegations, each asking whether something happened':''}. Finalize it when it's right.`);
   const e=stage('Investigation plan',planView({final:s.plan,scope:s.scope,framework})+(conduct()?`<p class="demo-label">${esc(conductPath.source.plan)}</p>`:''),{next:s.plan?nextStep():['finalize-plan','Finalize the plan'],suggest:!s.plan});e.classList.add('artifact-host');}
  function interviews(){if(!s.plan)return plan();
@@ -156,6 +160,7 @@ export function createJourney({reply,user,esc}){
  function reportFindingsDiffer(){return conduct()?conductPath.findings.some((r,i)=>norm(s.findings[i])!==norm(r.recorded)):overallIndexes.some(i=>s.findings[i]!==policyRecommended[i]);}
  function report(){if(!reportOpen&&s.stage!=='report'&&!s.final){try{mutate('report');}catch(e){notice(e.message);return;}}
   if(conduct()&&!s.flag)s.flag=true; // The conduct report passed verification with no flags.
+  if(!reportOpen)track('report_reached');
   reportOpen=true;document.body.classList.add('report-open');
   let panel=document.querySelector('#report-pane');if(!panel){panel=document.createElement('aside');panel.id='report-pane';document.querySelector('.vt-main').append(panel);}
   const steps=[conduct()?{done:true,label:'No flags: verification passed 292 of 292 checks'}:{done:s.flag,label:s.flag?'Flag reviewed':'1 flag to review',action:'flag'},{done:s.citation,label:s.citation?'Citation checked':'1 citation to check',action:'citation'}];

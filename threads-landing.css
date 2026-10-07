@@ -73,3 +73,22 @@ body.tour-expanded {overflow:hidden;}.tour-workspace.is-expanded {position:fixed
 .restored-hero .hero-description{max-width:490px;margin-bottom:26px;}
 .restored-hero .trial-terms{font:400 12px/1.65 var(--sans);color:#756b7e;margin-top:16px;max-width:360px;}
 @media(max-width:800px){.restored-hero .threads-intro{padding-top:0;margin-top:12px;}.restored-hero .threads-caption{padding:0 16px;}}
+/* Product preview and the two ways to explore (Oct 2026) */
+.product-preview{max-width:1180px;margin:0 auto;padding:72px 24px 24px}
+.preview-heading{max-width:760px;margin:0 auto 28px;text-align:center}
+.preview-heading h2{font-family:Newsreader,Georgia,serif;font-weight:400;font-size:clamp(32px,4vw,48px);line-height:1.08;margin:8px 0 14px;color:#241640}
+.preview-heading h2 em{color:#6a3fb5}
+.preview-heading p{font-size:17px;color:#5f5969;margin:0}
+.preview-frame{display:block;width:100%;height:640px;border:0;background:transparent}
+.outputs-section{max-width:1080px;margin:0 auto;padding:24px 24px 56px}
+.outputs-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.outputs-grid article{background:#fff;border:1px solid #ebe5f1;border-radius:18px;padding:24px 28px}
+.outputs-grid article p:last-child{margin:6px 0 0;font-size:17px;line-height:1.6;color:#352f40}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tour-choices{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:1180px;margin:0 auto 16px;padding:0 24px}
+.tour-choice{display:flex;flex-direction:column;gap:6px;text-align:left;border:1px solid #e3d9f0;background:#fff;border-radius:16px;padding:18px 20px;cursor:pointer;font:inherit;color:#352f40}
+.tour-choice b{font-size:18px;color:#241640}
+.tour-choice span{font-size:14.5px;line-height:1.5;color:#5f5969}
+.tour-choice.is-on{border-color:#7043bb;box-shadow:0 0 0 3px #efe7fb;background:#fdfbff}
+.tour-choice:focus-visible{outline:3px solid #a58bd6;outline-offset:2px}
+@media(max-width:760px){.outputs-grid,.tour-choices{grid-template-columns:1fr}.preview-frame{height:820px}}
