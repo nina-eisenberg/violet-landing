@@ -1,112 +1,299 @@
+// The case journey after intake: a conversation that keeps everything it has shown. Every card stays where it was;
+// each card offers one filled next step; questions are answered in place and the next step is offered after them.
+// All Violet content is prepared from saved fictional cases (see FIDELITY-AUDIT.txt). No AI calls are made here.
 import {capturedScope} from './captured-scope.js';
+import {scopeReview} from './scope-review.js';
+import {conductPath} from './conduct-path.js';
 import {openSourcePanel} from './source-panel.js';
 import {capturedCitations,summaryCitations} from './captured-citations.js';
-import {reportCitations} from './report-citations.js';
+import {reportCitations,conductReportCitations} from './report-citations.js';
 import {findingRows,findingsView,overallIndexes} from './findings-view.js';
 import {capturedReview} from './captured-review.js';
 import {capturedResponses} from './captured-responses.js';
 import {complaint} from './complaint.js';
-import {planView,summaryView,outlineView,confidenceView,policyText,reportView,artifacts} from './artifact-views.js';
+import {planView,summaryView,outlineView,policyText,reportView,policyConfidenceRows,artifacts} from './artifact-views.js';
 import {answerFor,caseAnswers,responseAvailable} from './case-answers.js';
 import {suggestQuestions} from './question-suggestions.js';
 import {materials} from './materials.js';
 import {freshJourney,progress,interviewOrder} from './journey-state.js';
+
 const names={leah:'Leah Goldberg',jordan:'Jordan Kim',carla:'Carla Rivera',marcus:'Marcus Doyle'};
-const policyNames=['Religious Accommodation Policy','Anti-Harassment Policy','Anti-Retaliation Policy'];
-const recommended=findingRows.map(r=>r.recommended);
-export function createJourney({reply,user,chip,esc,bottom,showIntake}){
- const answered=new Set(); let confidenceReasons={};
- let returnStage=null,savedPlan=null,pendingAnswer=null,priya=false,allegation5='Was the removal connected to the accommodation request or HR complaint?',copyText='';
- let flagReplacement=null;let s=freshJourney(),active='leah',format='bullets',revision=false,accepted=false,reportOpen=false;
+const first={leah:'Leah',jordan:'Jordan',carla:'Carla',marcus:'Marcus'};
+const roles={leah:'Complainant',jordan:'Witness',carla:'Witness',marcus:'Subject'};
+const policyRecommended=findingRows.map(r=>r.recommended);
+const REDRAFT_PROMPT='Redraft the religious-remarks analysis to distinguish what occurred from whether the record shows severe or pervasive conduct. Keep my finding unchanged.';
+const SCOPE_PROPOSAL_PROMPT='Keep all three existing allegations and both existing policy groups unchanged. Propose adding a fourth allegation under the Anti-Retaliation Policy: whether Marcus Doyle removed Leah Goldberg from the escalations queue because she requested a religious accommodation or complained to HR. Show the proposed change for my review before saving.';
+// The policy report's review citation: footnote 23 (Marcus, transcript line 47). The conduct report's is found by text.
+const POLICY_REVIEW_CITATION='23';
+
+export function createJourney({reply,user,esc}){
+ let s,framework,format,revision,accepted,flagReplacement,scopeDecision,scopeReviewed,answered,reasons,confidenceSeen,reportOpen;
  const root=()=>document.querySelector('#content');
+ const conduct=()=>framework==='conduct';
+ const reportCites=()=>conduct()?conductReportCitations:reportCitations;
+ const recommended=()=>conduct()?conductPath.findings.map(r=>r.recorded):policyRecommended;
+ function init(fw='conduct'){framework=fw;s=freshJourney(fw==='conduct'?conductPath.findings.length:7);format='bullets';revision=false;accepted=false;flagReplacement=null;scopeDecision=null;scopeReviewed=false;answered=new Set();reasons={};confidenceSeen=false;reportOpen=false;}
+ init();
  const mutate=(event,id)=>{s=progress(s,event,id);shelf();};
- function shelf(){document.querySelector('#case-link').innerHTML=`<button class="vt-nav-item is-on" data-journey="plan">Marcus Doyle</button><div class="vt-case-sub">${s.final?'Final report':s.stage==='report'?'Report · Draft':s.plan?'Plan final · Interviews':'Intake complete'}</div><button class="vt-nav-item" data-journey="plan">Plan ${s.plan?'✓':''}</button><button class="vt-nav-item" data-journey="interviews">Interviews · ${s.summaries.length}/4</button><button class="vt-nav-item" data-journey="questions">Ask about the case</button><button class="vt-nav-item" data-journey="gather">Documents · ${s.files.length+1}</button>${s.summaries.length===4?'<button class="vt-nav-item" data-journey="analysis">Analysis</button>':''}${s.stage==='report'||s.final?'<button class="vt-nav-item" data-journey="report">Report</button>':''}`;}
- const button=(a,t)=>`<button type="button" class="vt-chip" data-journey="${a}">${t}</button>`;
- function card(title,html,side=false){root().querySelectorAll('[data-stage-actions] button').forEach(b=>b.disabled=true);const old=document.querySelector('#current-stage');if(side&&old&&!returnStage){returnStage=old;}if(!side)returnStage=null;if(old)old.remove();const e=document.createElement('section');e.className='vt-stagecard';e.id='current-stage';e.innerHTML=`<div class="vt-stagecard-head"><span class="vt-stagecard-dot" style="background:#7043bb"></span><span class="vt-eyebrow">${title}</span></div><div class="vt-ff-body">${html}</div>`;root().append(e);
- if(!side&&!/Ask about|More of the record/.test(title)){
- const qs=suggestQuestions(s,title,[...answered]);
- if(qs.length){const d=document.createElement('div');d.className='question-suggestions';d.innerHTML='<span class="demo-label">Try asking Violet</span>'+qs.map(q=>button('question:'+caseAnswers.indexOf(q),q.question||q.title)).join('');e.append(d);}}
- if(side){const label=returnStage?.querySelector('.vt-eyebrow')?.textContent||'your case';const nav=document.createElement('div');nav.className='answer-return';nav.innerHTML=button('resume-work','← Back to '+esc(label));e.append(nav);}e.scrollIntoView({block:'start'});return e;}
- function tray(ids,label){return `<div class="material-drop" data-drop="${ids.join(',')}" tabindex="0" aria-label="${label}"><b>${label}</b><span>Drop the sample file here</span></div><div class="sample-tray"><span class="demo-label">Your demo materials</span>${ids.map(id=>`<div class="material-item"><button class="sample-file" draggable="true" data-material="${id}">▤ ${materials[id].name}</button>${button('upload:'+id,'Use this file')}${button('read:'+id,'Read')}</div>`).join('')}</div>`;}
- function source(id,needle=''){if(id==='synopsis'){const d=document.querySelector('#document');d.querySelector('h2').textContent='Case synopsis · line 1';d.querySelector('pre').textContent="Leah Goldberg, a Member Services Representative II in the Contact Center, filed a complaint on September 15, 2026, alleging that her supervisor Marcus Doyle denied her request for religious accommodation to avoid Friday evening shifts for Shabbat observance, failed to consider a coworker's offered shift swap, and made comments suggesting disrespect for her religious practice.";openSourcePanel(d);return;}if(!s.files.includes(id)&&!['policy','complaint','harassment-policy','retaliation-policy'].includes(id))return;const material=id.endsWith('-policy')?policyText(id):id==='complaint'?{name:'01_Complaint_Email_Goldberg.docx',text:complaint}:materials[id];const d=document.querySelector('#document');d.querySelector('h2').textContent=material.name;const pre=d.querySelector('pre');pre.innerHTML=material.text.split('\n').map(line=>needle&&line.includes(needle)?`<mark>${esc(line)}</mark>`:esc(line)).join('\n');openSourcePanel(d);}
- function start(){answered.clear();s=freshJourney();shelf();policy();}
- function policy(){card('Policies',`<p>Before the plan: are the policies at issue in your library? If one is missing, drop it in and I'll add it.</p>${s.files.includes('policy')?'<p>✓ Religious Accommodation Policy HR-114</p>'+button('plan','Draft the investigation plan'):tray(['policy'],'Add the policy')}<p class="demo-label">HR-114 is supplied here. The existing case also uses Anti-Harassment and Anti-Retaliation policies from its library; their captured excerpts are available in the plan.</p>`);}
- function plan(){if(!s.files.includes('policy'))return policy();reply(s.plan?"Here's the plan.":"Here's the plan as drafted. Finalize it when it's right.");const e=card('Investigation plan',(savedPlan||planView({final:s.plan,scope:s.scope,priya,allegation5}))+button(s.plan?'interviews':'finalize-plan',s.plan?'Show interviews':'Finalize the plan'));e.classList.add('artifact-host');}
- function interviews(){if(!s.plan)return plan();reply("Here's where the interviews stand.");card('Interviews',`<p>${s.summaries.length} of ${priya?5:4} summaries finalized. Choose a person.</p><div class="interview-tiles">${interviewOrder.map(id=>`<button class="person-tile" data-journey="person:${id}"><b>${names[id]}</b><span>${id==='leah'?'Complainant':id==='marcus'?'Subject':'Witness'}</span><small>${s.summaries.includes(id)?'Summary finalized':s.files.includes(id)?'Record added · Summary next':s.outlines.includes(id)?'Outline ready':'Not yet interviewed'}</small></button>`).join('')}${priya?'<div class="person-tile"><b>Priya Anand</b><span>Witness · Not scheduled</span><small>No prepared interview in this demo</small></div>':''}</div>${s.summaries.length===4?button('gather','Gather remaining evidence'):''}`);}
- function person(id){active=id;card(names[id]+' · '+(id==='leah'?'Complainant':id==='marcus'?'Subject':'Witness'),`<p>${id==='carla'?'Carla’s prepared record is interview notes, not a verbatim transcript.':'Prepare the outline, then bring in the completed interview.'}</p>${button('outline:'+id,s.outlines.includes(id)?'View interview outline':'Generate interview outline')}${s.files.includes(id)?button('summary:'+id,'Read interview summary'):button('record:'+id,id==='carla'?'Add interview notes':'Upload transcript')}${button('interviews','All interviews')}`);}
- function outline(id){mutate('outline',id);card('Interview outline · '+names[id],outlineView(id)+button('record:'+id,id==='carla'?'Continue with interview notes':'Conduct the interview / add transcript')).classList.add('artifact-host');}
- function record(id){if(s.files.includes(id))return summary(id);card(names[id]+' · '+(id==='carla'?'Interview notes':'Interview & transcripts'),`<p>${id==='carla'?'Add the notes from Carla’s phone interview.':'For the demo, the interview has already been conducted. Drag in its prepared transcript.'}</p>${tray([id],id==='carla'?'Add interview notes':'Upload transcript')}`);}
- function upload(id){if(s.files.includes(id)){reply('That file is already in the case.');return;}mutate('upload',id);user('Added '+materials[id].name);if(id==='policy'){reply('The policy is added.');plan();}else if(interviewOrder.includes(id)){active=id;reply(id==='carla'?'The interview notes are added.':'The transcript is added; the interview is marked complete.');if(id==='leah'&&!s.scope){card('Interview added',`<p class="demo-label">Demo guide · The interview introduces a possible change to the investigation’s scope. Ask Violet to propose it, or review the summary first.</p>${button('propose-scope','Ask Violet to add the retaliation allegation')}${button('summary:leah','Review her summary first')}`);}else summary(id);}else gather();}
- function proposeScope(){
- user('Keep all three existing allegations and both existing policy groups unchanged. Propose adding a fourth allegation under the Anti-Retaliation Policy: whether Marcus Doyle removed Leah Goldberg from the escalations queue because she requested a religious accommodation or complained to HR. Show the proposed change for my review before saving.');
- const e=card('Violet',capturedScope.body+capturedScope.card+capturedScope.caveat);
- e.classList.add('captured-response');
- e.querySelectorAll('.av-cite').forEach((b,i)=>b.dataset.scopeSource=i);
- e.querySelectorAll('.vt-stagecard-foot button').forEach(b=>b.dataset.journey=b.textContent.includes('Save')?'scope':'keep-scope');
+ const btn=(a,t,cls='')=>`<button type="button" class="vt-chip ${cls}" data-journey="${a}">${t}</button>`;
+ const link=(a,t)=>`<button type="button" class="vt-linkish journey-link" data-journey="${a}">${t}</button>`;
+ const scroll=e=>requestAnimationFrame(()=>e.scrollIntoView({block:'start',behavior:'smooth'}));
+ const norm=v=>String(v||'').toLowerCase().replace('partially substantiated','partially');
+
+ // ── What comes next ─────────────────────────────────────────────────────────────────────────────────────
+ function remaining(){return interviewOrder.filter(id=>!s.files.includes(id));}
+ function nextStep(){
+  if(!s.files.includes('policy'))return ['policy','Add the policy'];
+  if(!s.plan)return ['finalize-plan','Finalize the plan'];
+  if(!conduct()&&s.files.includes('leah')&&!scopeDecision)return scopeReviewed?['propose-scope','Ask Violet to propose the change']:['scope-review',"Check Leah's interview for anything new"];
+  for(const id of interviewOrder){
+   if(!s.files.includes(id))return ['person:'+id,`Prepare ${first[id]}'s interview`];
+   if(!s.summaries.includes(id))return ['summary:'+id,`Review ${first[id]}'s summary`];
+  }
+  if(!['emails','records'].every(id=>s.files.includes(id)))return ['gather','Add the remaining documents'];
+  if(s.findings.some(v=>!v))return ['findings','Decide findings'];
+  if(!confidenceSeen)return ['confidence','Check evidence alignment'];
+  if(s.stage!=='report'&&!s.final)return ['report','Open the report'];
+  if(!s.flag)return ['flag','Review the flag'];
+  if(!s.citation)return ['citation','Check a citation'];
+  if(!s.final)return ['final-report','Finalize the report'];
+  return null;
  }
- function summary(id){if(!s.files.includes(id))return record(id);active=id;const e=card('Interview summary · '+names[id],summaryView(id,format)+(!s.summaries.includes(id)?button('final-summary:'+id,'Finalize'):'<p>✓ Summary finalized</p>')+button('interviews','Summarize another witness')+(id==='leah'&&!s.scope?button('propose-scope','Ask Violet to add the retaliation allegation'):''));e.classList.add('artifact-host');}
- function gather(){if(!s.plan)return plan();const missing=['emails','records'].filter(id=>!s.files.includes(id));card('Documents',`<p>${s.summaries.length<4?'You can add evidence now and return to the interviews.':'That’s everyone interviewed. Drop in anything else you have: emails, messages, records, notes.'}</p>${missing.length?tray(missing,'Add case documents'):'<p>✓ Email and chat records<br>✓ Workforce and training records</p>'}<details><summary>Files in the case</summary>${s.files.map(id=>button('read:'+id,materials[id].name)).join('')}</details>${s.summaries.length<4?button('interviews','Return to interviews'):!missing.length?button('analysis','That’s everything'):''}`);}
+
+ // ── The conversation ────────────────────────────────────────────────────────────────────────────────────
+ // A new card supersedes earlier ones: their step buttons are disabled; citations, reading and copying keep working.
+ function retire(){root().querySelectorAll('.stage-live').forEach(c=>{c.classList.remove('stage-live');c.classList.add('stage-past');c.querySelectorAll('[data-journey]:not([data-keep])').forEach(b=>b.disabled=true);});}
+ function stage(title,body,{next,extras=[],suggest=true,cls=''}={}){
+  retire();
+  const e=document.createElement('section');e.className=`vt-stagecard stage-live ${cls}`;
+  const foot=(next||extras.length)?`<div class="vt-stagecard-foot journey-foot">${next?btn(next[0],next[1],'is-next'):''}${extras.map(([a,t])=>link(a,t)).join('')}</div>`:'';
+  e.innerHTML=`<div class="vt-stagecard-head"><span class="vt-stagecard-dot" style="background:#7043bb"></span><span class="vt-eyebrow">${title}</span></div><div class="vt-ff-body">${body}</div>${foot}`;
+  root().append(e);
+  if(suggest){const qs=suggestQuestions(s,title,[...answered]).filter(q=>responseAvailable(q,s));
+   if(qs.length){const d=document.createElement('div');d.className='question-suggestions';d.innerHTML='<span class="demo-label">Optional · ask Violet</span>'+qs.map(q=>`<button type="button" class="suggestion" data-journey="question:${caseAnswers.indexOf(q)}">${esc(q.question||q.title)}</button>`).join('');e.append(d);}}
+  shelf();scroll(e);return e;
+ }
+ // After an answer or detour: the main journey's next step, offered in place.
+ function continueLine(lead='Back to the case'){
+  const n=nextStep();if(!n)return;
+  retire();const e=document.createElement('div');e.className='continue-line stage-live';e.innerHTML=`<span>${lead}</span>${btn(n[0],n[1],'is-next')}`;root().append(e);
+ }
+ function shelf(){const n=nextStep();document.querySelector('#case-link').innerHTML=`<button class="vt-nav-item is-on" data-journey="resume" data-keep>Marcus Doyle</button><div class="vt-case-sub">${conduct()?'Conduct-based':'Policy-based'} · ${s.final?'Final report':s.stage==='report'?'Report draft':s.plan?'Plan final':'Intake complete'}</div><button class="vt-nav-item" data-journey="plan" data-keep>Plan ${s.plan?'✓':''}</button><button class="vt-nav-item" data-journey="interviews" data-keep>Interviews · ${s.summaries.length}/4</button><button class="vt-nav-item" data-journey="questions" data-keep>Ask about the case</button><button class="vt-nav-item" data-journey="gather" data-keep>Documents · ${s.files.length+1}</button>${s.findings.some(Boolean)||s.summaries.length===4?'<button class="vt-nav-item" data-journey="findings" data-keep>Findings</button>':''}${s.stage==='report'||s.final?'<button class="vt-nav-item" data-journey="report" data-keep>Report</button>':''}${n?`<p class="vt-case-next">Next: ${n[1]}</p>`:''}`;}
+ function tray(ids,label){return `<div class="material-drop" data-drop="${ids.join(',')}" tabindex="0" aria-label="${label}"><b>${label}</b><span>Drop a sample file here, or choose one below</span></div><div class="sample-tray"><span class="demo-label">Your demo materials · fictional</span>${ids.map(id=>`<div class="material-item"><button class="sample-file" draggable="true" data-material="${id}">▤ ${materials[id].name}</button>${btn('upload:'+id,'Use this file')}${link('read:'+id,'Read')}</div>`).join('')}${ids.length>1?`<div class="material-all">${btn('upload-all:'+ids.join(','),'Use all '+ids.length+' files')}</div>`:''}</div>`;}
+ function dock(title,html){const d=document.querySelector('#document');d.querySelector('h2').textContent=title;d.querySelector('pre').innerHTML=html;openSourcePanel(d);document.body.classList.add('dock-open');}
+ function source(id,needle=''){if(id==='synopsis'){const c=capturedCitations['Case synopsis, line 1'];if(c)dock(c.title,c.html);return;}
+  const material=id.endsWith('-policy')?policyText(id):id==='complaint'?{name:'01_Complaint_Email_Goldberg.docx',text:complaint}:materials[id];if(!material)return;
+  dock(material.name,material.text.split('\n').map(line=>needle&&line.includes(needle)?`<mark>${esc(line)}</mark>`:esc(line)).join('\n'));}
+
+ // ── Stages ──────────────────────────────────────────────────────────────────────────────────────────────
+ function start(fw){init(fw);root().querySelectorAll('#draft,.vt-stagecard').forEach(c=>{c.classList.add('stage-past');c.querySelectorAll('[data-do],[data-field],input,select').forEach(b=>b.disabled=true);});shelf();policy();}
+ function policy(){stage('Policies',`<p>Before the plan: are the policies at issue in your library? If one is missing, drop it in and I'll add it.</p>${s.files.includes('policy')?'<p>✓ Religious Accommodation Policy HR-114</p>':tray(['policy'],'Add the policy')}<p class="demo-label">HR-114 is supplied with the sample files. The case's library also holds the Anti-Harassment Policy. The Anti-Retaliation Policy text is not in the library, which Violet points out later.</p>`,{next:s.files.includes('policy')?['plan','Draft the investigation plan']:null});}
+ function plan(){if(!s.files.includes('policy'))return policy();
+  reply(s.plan?"Here's the plan.":`Here's the plan as drafted${conduct()?': conduct allegations, each asking whether something happened':''}. Finalize it when it's right.`);
+  const e=stage('Investigation plan',planView({final:s.plan,scope:s.scope,framework})+(conduct()?`<p class="demo-label">${esc(conductPath.source.plan)}</p>`:''),{next:s.plan?nextStep():['finalize-plan','Finalize the plan'],suggest:!s.plan});e.classList.add('artifact-host');}
+ function interviews(){if(!s.plan)return plan();
+  const rest=remaining();
+  stage('Interviews',`<p>${s.summaries.length} of 4 summaries finalized.</p><div class="interview-tiles">${interviewOrder.map(id=>`<button class="person-tile" data-journey="person:${id}" data-keep><b>${names[id]}</b><span>${roles[id]}</span><small>${s.summaries.includes(id)?'✓ Summary finalized':s.files.includes(id)?'Record added · summary ready':s.outlines.includes(id)?'Outline ready':'Not yet interviewed'}</small></button>`).join('')}</div>${bulkOffer(rest)}`,{next:nextStep()});}
+ // Add the remaining interview records in one go. On the policy path Leah's comes first, because her interview changes the plan.
+ function bulkOffer(rest){if(!rest.length)return '';if(!conduct()&&!s.files.includes('leah'))return '';return `<div class="bulk-offer"><span>For the demo, the interviews have been conducted.</span>${btn('upload-all:'+rest.join(','),rest.length===4?'Add all four interview records':`Add the other ${rest.length===1?'interview record':rest.length+' interview records'}`)}</div>`;}
+ function person(id){
+  stage(names[id]+' · '+roles[id],`<p>${id==='carla'?'Carla’s record is interview notes, not a verbatim transcript.':'Prepare the outline, then bring in the completed interview.'}</p>`,{next:s.files.includes(id)?['summary:'+id,`Review ${first[id]}'s summary`]:s.outlines.includes(id)?['record:'+id,id==='carla'?'Add the interview notes':'Add the transcript']:['outline:'+id,'Write the interview outline'],extras:[...(s.outlines.includes(id)?[['outline:'+id,'View the outline']]:[]),...(!s.files.includes(id)&&!s.outlines.includes(id)?[['record:'+id,'Skip to the record']]:[]),['interviews','All interviews']]});}
+ function outline(id){mutate('outline',id);const e=stage('Interview outline · '+names[id],outlineView(id),{next:s.files.includes(id)?['summary:'+id,`Review ${first[id]}'s summary`]:['record:'+id,id==='carla'?'Add the interview notes':'Add the transcript'],extras:[['interviews','All interviews']]});e.classList.add('artifact-host');}
+ function record(id){if(s.files.includes(id))return summary(id);stage(names[id]+' · '+(id==='carla'?'Interview notes':'Interview record'),`<p>${id==='carla'?'Add the notes from Carla’s phone interview.':'For the demo, the interview has already been conducted. Add its transcript.'}</p>${tray([id],id==='carla'?'Add interview notes':'Add the transcript')}`,{extras:[['interviews','All interviews']]});}
+ function upload(id,quiet=false){if(s.files.includes(id))return false;mutate('upload',id);if(!quiet)user('Added '+materials[id].name);return true;}
+ function afterUpload(ids){
+  if(ids.includes('policy')){reply('The policy is added.');return plan();}
+  const people=ids.filter(id=>interviewOrder.includes(id)),docs=ids.filter(id=>!interviewOrder.includes(id));
+  if(people.length){reply(people.length>1?`${people.map(id=>first[id]).join(', ')}: records added; the interviews are marked complete.`:people[0]==='carla'?'The interview notes are added.':'The transcript is added; the interview is marked complete.');
+   if(people.includes('leah')&&!conduct()&&!scopeDecision){return stage('Interview added',`<p>Leah's account is in the case. Before summarizing, it is worth checking whether her interview raises anything the plan doesn't cover.</p>`,{next:['scope-review',"Check Leah's interview for anything new"],extras:[['summary:leah','Read her summary first']]});}
+   if(people.length>1)return interviews();return summary(people[0]);}
+  if(docs.length)gather();
+ }
+ // The scope moment (policy path): Violet finds the escalations removal herself, then proposes the change.
+ function reviewScope(){scopeReviewed=true;user(scopeReview.question);answerBlock({html:scopeReview.html+scopeReview.followup.map(t=>`<p class="violet-followup">${esc(t)}</p>`).join(''),provenance:'Captured from Violet · INV-2026-0105'});
+  stage('Possible new allegation',`<p>Violet found a possible retaliation issue the plan doesn't cover: the September 16 removal from the escalations queue.</p>`,{next:['propose-scope','Ask Violet to propose the change'],extras:[['keep-scope','Leave the plan as it is']],suggest:false});}
+ function proposeScope(){scopeReviewed=true;user(SCOPE_PROPOSAL_PROMPT);
+  const t=document.createElement('template');t.innerHTML=capturedScope.card;const card=t.content.firstElementChild;
+  card.querySelectorAll('.vt-stagecard-foot button').forEach(b=>{b.dataset.journey=b.textContent.includes('Save')?'scope':'keep-scope';});
+  card.querySelector('.vt-stagecard-foot button')?.classList.add('is-next');
+  retire();const e=document.createElement('section');e.className='violet-proposal stage-live';
+  e.innerHTML=`<div class="reply"><strong>● Violet</strong><div>${esc(capturedScope.caveat.replace(/<[^>]+>/g,''))}</div></div>${card.outerHTML}<details class="full-reply"><summary>Violet's full reply</summary><div class="answer-copy">${tidyScopeBody(capturedScope.body)}</div></details>`;
+  root().append(e);e.querySelectorAll('.av-cite').forEach((b,i)=>{b.dataset.scopeSource=i;b.dataset.keep='';});scroll(e);}
+ // Display fixes only: the allegation keeps its real number, run-together list items are split, the uncited marker is explained.
+ function tidyScopeBody(h){return h.replace(/<ol class="list-decimal pl-6 mb-4 space-y-2">/,'<ol class="list-decimal pl-6 mb-4 space-y-2" start="4">')
+  .replace(/<li([^>]*)>([\s\S]*?)<\/li>/g,(m,a,inner)=>inner.includes(' - ')?inner.split(/ - (?=[A-Z])/).map(x=>`<li${a}>${x}</li>`).join(''):m)
+  ;}
+ function decideScope(save){const p=[...root().querySelectorAll('.violet-proposal .vt-stagecard')].pop();
+  if(p)p.outerHTML=save?'<div class="vt-plan-change-done">✓ Saved: add Anti-Retaliation Policy.</div>':'<div class="vt-plan-change-done is-kept">Kept the plan as it was.</div>';
+  scopeDecision=save?'saved':'kept';if(save){mutate('scope');reply(scopeReview.savedReply);}
+  else reply('The plan stays at three allegations. You can still ask about the escalations removal at any time.');
+  continueLine(save?'The other outlines were written before the change.':'Back to the case');}
+ function summary(id){if(!s.files.includes(id))return record(id);
+  const e=stage('Interview summary · '+names[id],summaryView(id,format),{next:s.summaries.includes(id)?nextStep():['final-summary:'+id,'Finalize this summary'],extras:[['interviews','All interviews']]});e.classList.add('artifact-host');e.dataset.person=id;}
+ function gather(){if(!s.plan)return plan();const missing=['emails','records'].filter(id=>!s.files.includes(id));
+  stage('Documents',`<p>${s.summaries.length<4?'You can add evidence now and return to the interviews.':'That’s everyone interviewed. Drop in anything else you have: emails, messages, records, notes.'}</p>${missing.length?tray(missing,'Add case documents'):'<p>✓ Email and chat records<br>✓ Workforce and training records</p>'}<details><summary>Files in the case</summary>${['complaint',...s.files].map(id=>link('read:'+id,id==='complaint'?'01_Complaint_Email_Goldberg.docx':materials[id].name)).join('')}</details>`,{next:missing.length?null:s.summaries.length<4?nextStep():['analysis','That’s everything'],extras:s.summaries.length<4?[['interviews','Return to interviews']]:[]});}
  function ready(){return s.summaries.length===4&&['emails','records'].every(k=>s.files.includes(k));}
- function analysis(){if(!ready())return gather();card('What next',`<p>Next, the analysis: build the evidence matrix, the timeline, or go straight to the report.</p>${button('matrix:0','Build the evidence matrix')}${button('timeline','Build the timeline')}${button('findings','Straight to the report')}`);}
- const evidence=[['The request and denial','Goldberg asked on September 4. Doyle denied it September 14. HR-114 excludes weekends and Labor Day from business days. The denial fell on the fifth business day after the request.','emails','Monday, September 14'],['Authority to approve a swap','Pierce’s email expressly allowed supervisors to approve individual swaps. Doyle said he thought they were not allowed.','emails','Team supervisors may approve'],['Why four people were removed','The log records four removals, all based on the September 10 certification list. This contradicts Goldberg’s belief that she was the only one.','records','Kevin Tran']];
- function timeline(){if(!ready())return gather();reply("Here's the timeline: every dated event, and what doesn't line up.");card('Timeline · 20 events',`<p>Existing generated timeline · expand an event to read its detail.</p><ol class="actual-timeline">${artifacts.events.map(e=>`<li><time>${esc(e.date)}</time><details><summary>${esc(e.title)}</summary><p>${esc(e.description)}</p><small>${esc(e.source)}</small>${e.flags.map(f=>`<p class="timeline-flag">⚑ ${esc(typeof f==='string'?f:JSON.stringify(f))}</p>`).join('')}</details></li>`).join('')}</ol>${button('matrix:0','View evidence matrix')}${button('findings','Decide findings')}`);}
- function matrix(i){if(!ready())return gather();reply("Here's the evidence matrix: who and what supports each allegation.");const g=artifacts.groups[i];card('Evidence matrix · By allegation',`<nav class="artifact-tabs">${artifacts.groups.map((g,j)=>button('matrix:'+j,g.title)).join('')}</nav><h3>${esc(g.title)}</h3>${g.entries.map(e=>{const id=e.source.includes('Leah')?'leah':e.source.includes('Jordan')?'jordan':e.source.includes('Carla')?'carla':'marcus';return `<section class="matrix-account"><h4>${esc(e.source.replace(/(Complainant|Witness|Subject)/,' · $1'))}</h4><p>${esc(e.text)}</p><button class="vt-chip" data-cite="${id}">View source</button></section>`;}).join('')}${button('findings','Decide findings')}`);}
- function findings(){if(!ready())return gather();card('Your findings',`<p>Record a finding for each allegation, then the overall policy finding.</p>${findingsView(s.findings)}${button('confidence','Check evidence alignment')}`);}
- function confidence(){if(s.findings.some(v=>!v)){reply('Choose a finding for each question first.');return;}const differences=overallIndexes.filter(i=>s.findings[i]!==recommended[i]);card('Evidence alignment',`<h2>${differences.length?'Review recommended':'Evidence aligned'}</h2><p>Review what the evidence supports for each finding. You can keep your original findings or change them to the recommendations. Explanations are optional. Existing report text is not rewritten.</p><ul class="confidence-assessment">${confidenceView(s.findings,overallIndexes,recommended,confidenceReasons)}</ul><p class="demo-label">Full saved assessment from the fictional case.</p>${button('findings','Review all findings')}${button('report','Save and proceed')}`);}
+ function analysis(){if(!ready())return gather();stage('Analysis',`<p>Next, decide your findings. If you'd like to see the record laid out first, ${conduct()?'the timeline is':'the timeline and the evidence matrix are'} ready.</p>`,{next:['findings','Decide findings'],extras:[['timeline','View the timeline'],...(conduct()?[]:[['matrix:0','View the evidence matrix']])]});}
+ function timeline(){if(!ready())return gather();reply("Here's the timeline: every dated event, and what doesn't line up.");stage('Timeline · 20 events',`<ol class="actual-timeline">${artifacts.events.map(e=>`<li><time>${esc(e.date)}</time><details><summary>${esc(e.title)}</summary><p>${esc(e.description)}</p><small>${esc(e.source)}</small>${e.flags.map(f=>`<p class="timeline-flag">⚑ ${esc(typeof f==='string'?f:JSON.stringify(f))}</p>`).join('')}</details></li>`).join('')}</ol>`,{next:['findings','Decide findings'],extras:conduct()?[]:[['matrix:0','View the evidence matrix']]});}
+ function matrix(i){if(!ready())return gather();reply("Here's the evidence matrix: who and what supports each allegation.");const g=artifacts.groups[i];
+  stage('Evidence matrix',`<nav class="artifact-tabs">${artifacts.groups.map((g,j)=>`<button type="button" class="vt-chip ${j===i?'is-on':''}" data-journey="matrix:${j}" data-keep>${esc(g.title)}</button>`).join('')}</nav><h3>${esc(g.title)}</h3>${g.entries.map(e=>{const id=e.source.includes('Leah')?'leah':e.source.includes('Jordan')?'jordan':e.source.includes('Carla')?'carla':'marcus';return `<section class="matrix-account"><h4>${esc(e.source.replace(/(Complainant|Witness|Subject)/,' · $1'))}</h4><p>${esc(e.text)}</p><button type="button" class="vt-linkish" data-cite="${id}">View source</button></section>`;}).join('')}`,{next:['findings','Decide findings']});}
+ function findingsStage(){if(!ready())return gather();
+  const body=conduct()?conductFindingsView():findingsView(s.findings);
+  stage('Your findings',`<p>${conduct()?'Record whether each allegation is substantiated.':'Record a finding for each allegation, then the overall policy finding.'}</p>${body}${conduct()?`<p class="demo-label">These allegations come from ${esc(conductPath.source.report)}; they are worded a little differently from the plan above.</p>`:''}`,{next:['confidence','Check evidence alignment']});}
+ function conductFindingsView(){return '<div class="vt-fx">'+conductPath.findings.map((r,i)=>`<div class="vt-fx-row"><div class="vt-fx-q"><span class="vt-fx-n">${r.n}</span><span>${esc(r.text)}</span></div><div class="vt-fx-opts" role="radiogroup" aria-label="${esc(r.text)}">${['Substantiated','Not Substantiated'].map(v=>`<button type="button" role="radio" aria-checked="${s.findings[i]===v}" class="vt-fx-opt ${s.findings[i]===v?'is-on':''}" data-pick="${i}" data-value="${v}">${s.findings[i]===v?'✓ ':''}${v}</button>`).join('')}</div></div>`).join('')+'</div>';}
+ // Evidence alignment: one compact row per question; the reasoning opens on click.
+ function confidence(){if(s.findings.some(v=>!v)){notice('Choose a finding for each question first.');return;}confidenceSeen=true;
+  const list=items=>`<ul>${items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`;
+  const rows=conduct()?conductPath.findings.map((r,i)=>({i,title:r.text,suggests:r.recommended,conf:r.confidence,detail:`<p class="cf-k">Key factors</p>${list(r.keyFactors)}${r.counterFactors.length?`<p class="cf-k">What cuts the other way</p>${list(r.counterFactors)}`:''}${r.limitations.length?`<p class="cf-k">Limitations</p>${list(r.limitations)}`:''}`}))
+   :policyConfidenceRows().map((r,j)=>({i:overallIndexes[j],title:r.title,suggests:policyRecommended[overallIndexes[j]],conf:r.confidence,detail:r.detail}));
+  const differs=rows.filter(r=>norm(s.findings[r.i])!==norm(r.suggests)).length;
+  stage('Evidence alignment',`<p>${differs?`Your finding differs from what the evidence suggests on ${differs} ${differs===1?'question':'questions'}. You decide; keeping yours is fine, and a reason is optional.`:'Your findings line up with what the evidence suggests.'}</p><div class="cf-table">${rows.map(r=>{const same=norm(s.findings[r.i])===norm(r.suggests);return `<div class="cf-row ${same?'is-same':'is-diff'}"><div class="cf-q">${esc(r.title)}</div><div class="cf-cols"><span><small>Your finding</small>${esc(s.findings[r.i])}</span><span><small>Evidence suggests</small>${esc(r.suggests)}${r.conf?` · ${esc(r.conf)} confidence`:''}</span><span class="cf-badge">${same?'Aligned':'Differs'}</span></div>${same?'':`<div class="cf-choice">${btn('align:'+r.i,'Change to '+r.suggests)}<label>Your reasoning (optional)<textarea rows="2" data-confidence-reason="${r.i}" aria-label="Your reasoning for ${esc(r.title)}">${esc(reasons[r.i]||'')}</textarea></label></div>`}<details class="cf-detail"><summary>Why</summary>${r.detail}</details></div>`;}).join('')}</div>`,{next:['report','Open the report'],extras:[['findings','Review all findings']]});}
 
- function report(){try{mutate('report');}catch(e){reply(e.message);return;}reportOpen=true;document.querySelector('.vt-main').classList.add('with-report');let panel=document.querySelector('#report-pane');if(!panel){panel=document.createElement('aside');panel.id='report-pane';document.querySelector('.vt-main').append(panel);}panel.innerHTML=`<div class="report-toolbar"><h2>Investigation report</h2>${button('close-report','Close report')}</div><p>Draft · Marcus Doyle</p><div>${button('flag','⚑ Review flag')}${button('citation','Review citation')}</div><article class="report-paper"></article><div class="report-footer">${button('redraft','Redraft the religious-remarks analysis')}${button('final-report','Finalize report')}<small>${s.flag?'✓ Flag addressed':'1 sample flag to review'} · ${s.citation?'✓ Citation reviewed':'1 sample citation to review'}</small></div>`;
- const paper=panel.querySelector('.report-paper');paper.innerHTML=reportView();
- const headings=[...paper.querySelectorAll('h2')].filter(h=>/^[IVX]+\. /.test(h.textContent));
- headings.forEach((h,i)=>{h.id='report-section-'+i;});
- const toc=document.createElement('details');toc.className='report-contents';toc.innerHTML='<summary>Report sections · 8</summary>'+headings.map((h,i)=>`<button class="vt-chip" data-report-section="${i}">${esc(h.textContent)}</button>`).join('');paper.before(toc);
- if(revision){const h=headings[6];h.id='revised-section';let next=h.nextElementSibling;while(next&&next!==headings[7]){const remove=next;next=next.nextElementSibling;remove.remove();}const note=document.createElement('div');note.className='revision';note.innerHTML=capturedResponses.redraft.html+(accepted?'<small>Revision kept · finding unchanged</small>':button('keep-revision','Keep')+button('undo-revision','Undo'));h.after(note);}
- if(flagReplacement!==null)paper.innerHTML=paper.innerHTML.replace((capturedReview.flaggedSentences[0]||'').replace(/[¹²³⁴⁵⁶⁷⁸⁹⁰]+$/,''),esc(flagReplacement));
- const flagSentence=(capturedReview.flaggedSentences[0]||'').replace(/[¹²³⁴⁵⁶⁷⁸⁹⁰]+$/,'');for(const p of paper.querySelectorAll('p')){if(p.textContent.includes(flagSentence)){p.innerHTML=p.innerHTML.replace(flagSentence,'<button class="flag-sentence" data-journey="flag">'+flagSentence+'</button>');break;}}
- const chosen=document.createElement('p');chosen.className='demo-label';chosen.textContent='Captured generated report · '+(overallIndexes.every(i=>s.findings[i]===recommended[i])?'Matches your policy findings.':'Your findings differ from this captured report. Its original conclusions are shown for review; they have not been regenerated.');paper.before(chosen);
- const cited=[...paper.querySelectorAll('p')].find(p=>p.textContent.includes('saw the offer'));
- if(cited){const b=document.createElement('button');b.className='vt-chip';b.dataset.journey='citation';b.textContent='Inspect citation';cited.append(b);}
- card('Report',`<p>The report is open on the right. Read it, inspect a flagged passage or citation, or ask me to revise a section.</p>${button('redraft','Explain the religious remarks more clearly')}${button('flag','Review the flag')}${button('citation','Check the citation')}`);}
- function synopsisForReport(){return 'This investigation concerns Leah Goldberg’s complaint about Marcus Doyle’s response to her religious accommodation request and remarks about religious observance.'+(s.files.includes('leah')?' It also considers her subsequent account of removal from escalations.':'');}
- function review(kind){const d=document.querySelector('#document');d.querySelector('h2').textContent=kind==='flag'?'Flag review':'Citation review';const pre=d.querySelector('pre');pre.innerHTML=kind==='flag'?`<mark>${esc((capturedReview.flaggedSentences[0]||'').replace(/[¹²³⁴⁵⁶⁷⁸⁹⁰]+$/,''))}</mark>${capturedReview.flagHtml}`:`<mark>Marcus confirmed that he saw the offer and explained, "I didn't think swaps were allowed during the Q4 rollout, so I didn't pursue it."</mark><p>${esc(reportCitations['23'].title)}</p>${reportCitations['23'].html}${button('review-citation','Mark reviewed')}`;
- if(kind==='flag'){pre.querySelectorAll('dialog').forEach(e=>e.remove());pre.querySelectorAll('button').forEach(b=>{b.dataset.journey=b.textContent.includes('Edit')?'edit-flag':b.textContent.includes('Remove')?'remove-flag':'address-flag';});}
- openSourcePanel(d);}
- function dispatch(a){try{
- if(a==='resume-work'){pendingAnswer=null;if(returnStage){document.querySelector('#current-stage')?.remove();root().append(returnStage);returnStage.scrollIntoView({block:'start'});returnStage=null;}else if(!s.plan)plan();else if(s.stage==='report')report();else if(ready())analysis();else interviews();return;}
- if(a==='questions'){card('Ask about this case',`<p>Try any of these in the message box, or choose one.</p>${caseAnswers.map((q,i)=>responseAvailable(q,s)?button('question:'+i,q.title):'').join('')}`);}if(a.startsWith('question:')){const q=caseAnswers[Number(a.split(':')[1])];user(q.question||q.title);showAnswer(q);}
- if(a==='copy-answer'){navigator.clipboard.writeText(copyText).then(()=>reply('Copied.')).catch(()=>reply('Select and copy the draft text above.'));}
- if(a==='cancel-answer'){pendingAnswer=null;dispatch('resume-work');}
- if(a==='accept-answer'&&pendingAnswer){if(pendingAnswer==='finding3'){reply('The proposed conduct finding is saved in this conversation. It does not change the separate Anti-Harassment Policy determination.');}if(pendingAnswer==='reword5'){savedPlan=null;s.flag=false;s.final=false;mutate('scope');allegation5='Did Marcus Doyle remove Leah Goldberg from the escalations queue, which carries a pay differential, on September 16, 2026, because she submitted her complaint to HR on September 15, 2026?';reply('Allegation 4 is updated.');plan();}if(pendingAnswer==='priya'){savedPlan=null;s.flag=false;s.final=false;priya=true;reply('Priya Anand is added as a witness for follow-up. No interview record for her is included in these materials.');plan();}pendingAnswer=null;}
- if(a==='plan')plan();if(a==='finalize-plan'){const p=document.querySelector('#current-stage .vt-plan');if(p){p.querySelector('.vt-eyebrow').textContent='Investigation plan · final';savedPlan=p.outerHTML;}mutate('plan');interviews();}if(a==='interviews')interviews();if(a==='gather')gather();if(a==='analysis')analysis();if(a==='timeline')timeline();if(a==='findings')findings();if(a==='confidence')confidence();if(a==='propose-scope')proposeScope();if(a==='keep-scope'){summary('leah');}if(a==='scope'){savedPlan=null;mutate('scope');reply('The retaliation allegation is added to the plan.');summary('leah');}
- const [cmd,id]=a.split(':');if(cmd==='person')person(id);if(cmd==='outline')outline(id);if(cmd==='record')record(id);if(cmd==='upload')upload(id);if(cmd==='read'){// Reading a provided sample does not add it to the case.
- const was=s.files.includes(id);if(!was)s.files.push(id);source(id);if(!was)s.files=s.files.filter(k=>k!==id);
- }if(cmd==='summary')summary(id);if(cmd==='format'){format=id;summary(active);}if(cmd==='final-summary'){mutate('summary',id);interviews();}if(cmd==='matrix')matrix(Number(id));if(cmd==='align'){mutate('finding',{index:Number(id),value:recommended[Number(id)]});confidence();}
- if(a==='report')report();if(a==='close-report'){document.querySelector('#report-pane')?.remove();document.querySelector('.vt-main').classList.remove('with-report');reportOpen=false;}if(a==='flag'||a==='citation')review(a);if(a==='address-flag'||a==='review-citation'){mutate(a==='address-flag'?'flag':'citation');document.querySelector('#document').close();report();}
- if(a==='edit-flag'){const pre=document.querySelector('#document pre');pre.innerHTML='<label>Edit this sentence<textarea id="flag-edit" rows="5">'+esc((capturedReview.flaggedSentences[0]||'').replace(/[¹²³⁴⁵⁶⁷⁸⁹⁰]+$/,''))+'</textarea></label>'+button('save-flag-edit','Save');}if(a==='save-flag-edit'){flagReplacement=document.querySelector('#flag-edit').value;dispatch('address-flag');}if(a==='remove-flag'){flagReplacement='';dispatch('address-flag');}
- if(a==='redraft'){user('Redraft the religious-remarks analysis to distinguish what occurred from whether the record shows severe or pervasive conduct. Keep my finding unchanged.');revision=true;accepted=false;report();document.querySelector('#revised-section').scrollIntoView({block:'start'});}if(a==='keep-revision'){accepted=true;report();}if(a==='undo-revision'){revision=false;accepted=false;report();}if(a==='final-report'){if(!overallIndexes.every(i=>s.findings[i]===recommended[i])){reply('This captured report has different conclusions from your findings. Review the findings or keep it as a draft; the demo cannot regenerate a full alternative report.');return;}if(revision&&!accepted){reply('Keep or undo the pending revision before finalizing.');return;}mutate('finalize');reply('The report is finalized in this demo.');document.querySelector('#report-pane')?.remove();document.querySelector('.vt-main').classList.remove('with-report');card('Investigation complete',`<p>4 interviews reviewed. Evidence gathered. Findings recorded. Report reviewed and finalized.</p><p>The report remains a local fictional demonstration. Nothing was uploaded or sent.</p>${button('read-final','Read final report')}`);}if(a==='read-final'){report();s.final=true;s.stage='complete';shelf();document.querySelector('#report-pane>p').textContent='Final · Marcus Doyle';document.querySelectorAll('#report-pane [data-journey="redraft"],#report-pane [data-journey="final-report"]').forEach(b=>b.remove());}
- }catch(e){reply(e.message);}}
- function showAnswer(answer){
- if(!responseAvailable(answer,s)){card('Demo guide',`<p>This response has not been captured from Violet for this point in the case yet.</p><p>Your work is still here. Continue where you left off.</p>`,true);return;}
-
- const missing=answer.requires.filter(id=>!s.files.includes(id));
- if(missing.length){card('More of the record is needed',`<p>To answer that from this case’s record, add the following prepared materials first.</p>${tray(missing,'Add the missing materials')}<p>Then ask the question again.</p>`,true);return;}
- if(answer.needsFindings&&s.findings.some(v=>!v)){reply('Record your findings first so the executive summary reflects your decisions.');findings();return;}
- if(answer.id==='priya'){priya=true;savedPlan=null;shelf();}
- if(answer.id==='executive'&&!s.findings.every((v,i)=>v===recommended[i])){card('Demo guide','<p>The captured executive summary follows the recorded findings. Review yours before using it.</p>'+button('findings','Review findings'),true);return;}
- answered.add(answer.id);
- for(const host of [root(),returnStage].filter(Boolean)){host.querySelectorAll('.question-suggestions button').forEach(b=>{const q=caseAnswers[Number(b.dataset.journey?.split(':')[1])];if(q&&answered.has(q.id))b.remove();});host.querySelectorAll('.question-suggestions').forEach(e=>{if(!e.querySelector('button'))e.remove();});}
- let text=answer.text;
-
- copyText=text;pendingAnswer=answer.id==='priya'?null:answer.proposal||null;
- const answerCard=card(answer.title,`<div class="answer-copy captured-response">${answer.html||esc(text)}</div><div>${answer.cites.filter(([id])=>s.files.includes(id)).map(([id,q],i)=>`<button class="vt-chip" data-cite="${id}" data-needle="${esc(q)}">Source ${i+1} · ${materials[id].name}</button>`).join('')}</div>${button('copy-answer','Copy')}${answer.id==='priya'?button('interviews','Show interviews'):''}${pendingAnswer?button('accept-answer','Save this change')+button('cancel-answer','Not now'):''}`,true);
- answerCard.classList.add('draft-response');answerCard.querySelector('.vt-stagecard-head').innerHTML='<strong>● Violet</strong>';
- const provenance=document.createElement('small');provenance.className='response-provenance';provenance.textContent=answer.captureNote.startsWith('Full captured')?'Captured from Violet · complete response':answer.captureNote.startsWith('Complete live')?'Captured from Violet · earlier-stage scenario':'Captured excerpt · '+answer.captureNote;answerCard.querySelector('.answer-return').prepend(provenance);
+ // ── The report ──────────────────────────────────────────────────────────────────────────────────────────
+ function reviewCitationKey(){if(!conduct())return POLICY_REVIEW_CITATION;const c=conductReportCitations;return Object.keys(c).find(k=>c[k].html.includes("didn't pursue it"))||'1';}
+ function reportFindingsDiffer(){return conduct()?conductPath.findings.some((r,i)=>norm(s.findings[i])!==norm(r.recorded)):overallIndexes.some(i=>s.findings[i]!==policyRecommended[i]);}
+ function report(){if(!reportOpen&&s.stage!=='report'&&!s.final){try{mutate('report');}catch(e){notice(e.message);return;}}
+  if(conduct()&&!s.flag)s.flag=true; // The conduct report passed verification with no flags.
+  reportOpen=true;document.body.classList.add('report-open');
+  let panel=document.querySelector('#report-pane');if(!panel){panel=document.createElement('aside');panel.id='report-pane';document.querySelector('.vt-main').append(panel);}
+  const steps=[conduct()?{done:true,label:'No flags: verification passed 292 of 292 checks'}:{done:s.flag,label:s.flag?'Flag reviewed':'1 flag to review',action:'flag'},{done:s.citation,label:s.citation?'Citation checked':'1 citation to check',action:'citation'}];
+  const n=nextStep();const canFinal=s.flag&&s.citation&&!(revision&&!accepted);
+  panel.innerHTML=`<div class="report-toolbar"><div><h2>Investigation report</h2><p>${s.final?'Final':'Draft'} · Marcus Doyle · fictional case</p></div><div class="report-tools">${link('show-chat','Show conversation')}${btn('close-report','Close')}</div></div>
+  ${s.final?'':`<ol class="report-steps">${steps.map(x=>`<li class="${x.done?'is-done':''}">${x.done?'✓':'○'} ${x.action&&!x.done?`<button type="button" class="vt-linkish" data-journey="${x.action}" data-keep>${x.label}</button>`:x.label}</li>`).join('')}${conduct()?'':`<li class="is-optional">${revision?(accepted?'✓ Revision kept':'Revision waiting: Keep or Undo'):`<button type="button" class="vt-linkish" data-journey="redraft" data-keep>Optional: ask Violet to redraft a section</button>`}</li>`}</ol>
+  <div class="report-next">${n&&n[0]!=='final-report'?btn(n[0],n[1],'is-next'):''}<button type="button" class="vt-chip ${canFinal?'is-next':'is-waiting'}" data-journey="final-report" data-keep ${canFinal?'':'aria-disabled="true"'}>Finalize the report</button>${canFinal?'':`<small>${revision&&!accepted?'Keep or undo the revision first.':'Review the flag and check a citation first.'}</small>`}<div class="report-msg" role="status"></div></div>`}
+  <p class="demo-label">${conduct()?esc(conductPath.source.report):'Captured report from INV-2026-0096'} · ${reportFindingsDiffer()?'your findings differ from its conclusions in places':'matches your findings'}</p><article class="report-paper"></article>`;
+  const paper=panel.querySelector('.report-paper');paper.innerHTML=reportView(framework);
+  const headings=[...paper.querySelectorAll('h2')].filter(h=>/^[IVX]+\. /.test(h.textContent));headings.forEach((h,i)=>{h.id='report-section-'+i;});
+  const toc=document.createElement('details');toc.className='report-contents';toc.innerHTML=`<summary>Report sections · ${headings.length}</summary>`+headings.map((h,i)=>`<button type="button" class="vt-linkish" data-report-section="${i}">${esc(h.textContent)}</button>`).join('');paper.before(toc);
+  if(revision&&!conduct()){const h=headings.find(x=>/Anti-Harassment/.test(x.textContent))||headings[6];const nextH=headings[headings.indexOf(h)+1];h.id='revised-section';let x=h.nextElementSibling;while(x&&x!==nextH){const r=x;x=x.nextElementSibling;r.remove();}const note=document.createElement('div');note.className='revision';note.innerHTML=`<p class="revision-label">${accepted?'Revised by Violet · kept':'Violet\'s revision · your finding is unchanged'}</p>${capturedResponses.redraft.html}${accepted?'':`<div class="revision-actions">${btn('keep-revision','Keep','is-next')}${btn('undo-revision','Undo')}</div>`}`;h.after(note);}
+  if(!conduct()){const flagSentence=(capturedReview.flaggedSentences[0]||'').replace(/[¹²³⁴⁵⁶⁷⁸⁹⁰]+$/,'');
+   for(const p of paper.querySelectorAll('p')){if(p.textContent.includes(flagSentence)){p.innerHTML=flagReplacement!==null?p.innerHTML.replace(flagSentence,esc(flagReplacement)):p.innerHTML.replace(flagSentence,`<mark class="flag-sentence ${s.flag?'is-reviewed':''}" role="button" tabindex="0" data-journey="flag" data-keep title="${s.flag?'Flag reviewed':'Violet flagged this sentence; click to review'}">${flagSentence}</mark>`);break;}}}
+  if(!root().querySelector('.report-narration'))stage('Report',`<p>The report is open beside the conversation. Follow the checklist at the top of it: ${conduct()?'check a citation':'review the flag, check a citation'}, then finalize. You can ask me about any part of it here.</p>`,{cls:'report-narration',suggest:true});
  }
- function route(text){if(/tell me about.*case|show.*intake|case.*overview/i.test(text)){reply(synopsisForReport());showIntake();return true;}if(/redraft|rewrite/.test(text)){dispatch('redraft');return true;}const answer=answerFor(text);if(answer){showAnswer(answer);return true;}const t=text.toLowerCase();if(/report/.test(t)&&!/redraft|rewrite/.test(t)){dispatch('report');return true;}if(/redraft|rewrite|severe|pervasive/.test(t)){dispatch('redraft');return true;}if(/plan/.test(t)){dispatch('plan');return true;}if(/timeline/.test(t)){dispatch('timeline');return true;}if(/matrix|evidence alignment/.test(t)){dispatch(t.includes('alignment')?'confidence':'matrix:0');return true;}if(/finding/.test(t)){dispatch('findings');return true;}if(/interview|summary|summarize|outline/.test(t)){const id=interviewOrder.find(k=>t.includes(k))||active;dispatch((/outline/.test(t)?'outline:':/summary|summarize/.test(t)?'summary:':'person:')+id);return true;}if(/upload|document|file/.test(t)){dispatch('gather');return true;}if(/next|attention/.test(t)){dispatch(!s.plan?'plan':s.summaries.length<4?'interviews':ready()?'analysis':'gather');return true;}return false;}
- document.addEventListener('click',e=>{const b=e.target.closest('button');if(b?.dataset.scopeSource!==undefined){const t=document.createElement('template');t.innerHTML=capturedScope.sources[b.dataset.scopeSource];const aside=t.content.querySelector('aside');aside.querySelectorAll('button').forEach(x=>x.remove());const d=document.querySelector('#document');d.querySelector('h2').textContent=aside.getAttribute('aria-label')||'Source';d.querySelector('pre').innerHTML=aside.innerHTML;openSourcePanel(d);}if(b?.dataset.reportSection){document.querySelector('#report-section-'+b.dataset.reportSection)?.scrollIntoView({block:'start'});}if(b?.dataset.realCitation){const c=artifacts.citations[b.dataset.realCitation];if(c){const d=document.querySelector('#document');d.querySelector('h2').textContent=c.title;d.querySelector('pre').innerHTML=c.lines.map(l=>l.on?'<mark>'+esc(l.text)+'</mark>':esc(l.text)).join('\n');openSourcePanel(d);}}if(b?.dataset.pick!==undefined){mutate('finding',{index:Number(b.dataset.pick),value:b.dataset.value});const opts=b.closest('.vt-fx-opts');opts.querySelectorAll('button').forEach(x=>{const on=x===b;x.classList.toggle('is-on',on);x.setAttribute('aria-checked',String(on));});}if(b?.dataset.journey)dispatch(b.dataset.journey);if(b?.dataset.cite||b?.dataset.reportCitation){const key=(b.getAttribute('title')||b.getAttribute('aria-label')||'').replace(/^Source \d+: /,'');const [person,num]=(b.dataset.summaryCitation||'').split(':');const c=b.dataset.reportCitation?reportCitations[b.dataset.reportCitation]:summaryCitations[person]?.[num]||capturedCitations[key];if(c){const d=document.querySelector('#document');d.querySelector('h2').textContent=c.title;d.querySelector('pre').innerHTML=c.html;openSourcePanel(d);}else if(b.dataset.cite)source(b.dataset.cite,b.dataset.needle);}});
- document.addEventListener('input',e=>{if(e.target.dataset.confidenceReason!==undefined)confidenceReasons[e.target.dataset.confidenceReason]=e.target.value;});
- document.addEventListener('change',e=>{if(e.target.dataset.finding!==undefined)mutate('finding',{index:Number(e.target.dataset.finding),value:e.target.value});});
+ function closeReport(){document.querySelector('#report-pane')?.remove();document.body.classList.remove('report-open','dock-open','chat-hidden');reportOpen=false;const d=document.querySelector('#document');if(d?.open)d.close();}
+ function showInReport(el){if(!el)return;el.scrollIntoView({block:'center',behavior:'smooth'});el.classList.add('is-focus');setTimeout(()=>el.classList.remove('is-focus'),2200);}
+ function review(kind){if(!reportOpen)report();const paper=document.querySelector('#report-pane .report-paper');
+  if(kind==='flag'){if(conduct())return;showInReport(paper.querySelector('.flag-sentence'));
+   const t=document.createElement('template');t.innerHTML=capturedReview.flagHtml;t.content.querySelectorAll('dialog').forEach(e=>e.remove());
+   t.content.querySelectorAll('button').forEach(b=>{b.dataset.journey=b.textContent.includes('Edit')?'edit-flag':b.textContent.includes('Remove')?'remove-flag':'address-flag';b.dataset.keep='';if(b.dataset.journey==='address-flag')b.classList.add('is-primary');});
+   dock('Flagged sentence',t.innerHTML);}
+  else{const k=reviewCitationKey();showInReport(paper.querySelector(`[data-report-citation="${k}"]`));const c=reportCites()[k];dock(c.title,c.html+`<div class="dock-actions">${btn('review-citation','Mark citation checked','is-next')}</div>`);}}
+ function finalizeReport(anyway=false){const msg=document.querySelector('#report-pane .report-msg');
+  if(!(s.flag&&s.citation)){notice(conduct()?'Check a citation first.':'Review the flag and check a citation first.',msg);return;}
+  if(revision&&!accepted){notice('Keep or undo the revision before finalizing.',msg);return;}
+  if(reportFindingsDiffer()&&!anyway){msg.innerHTML=`<p>Your findings differ from this captured report's conclusions. In the app, Violet would redraft those sections to match your findings; that redraft isn't part of this demo.</p>${btn('findings','Review my findings')}${btn('final-report-anyway','Finalize anyway','is-next')}`;return;}
+  mutate('finalize');closeReport();reply('The report is finalized in this demo.');
+  stage('Investigation complete',`<p>4 interviews reviewed. Evidence gathered. Findings recorded. Report reviewed and finalized.</p><p>This is a fictional case; nothing was uploaded or sent.</p>`,{next:['read-final','Read the final report'],extras:[['restart','Start the case again']],suggest:false});}
+ // A refusal shows next to what was clicked, in words; otherwise in the conversation.
+ let lastClicked=null;
+ function notice(msg,where){const host=where||lastClicked?.closest('.vt-stagecard,.continue-line,.source-panel,.answer-tools')?.querySelector?.('.journey-foot,.dock-actions')||lastClicked?.closest('.answer-tools,.continue-line')||null;
+  if(host){host.querySelector(':scope > .journey-notice')?.remove();const p=document.createElement('p');p.className='journey-notice';p.setAttribute('role','alert');p.textContent=msg;host.append(p);}else reply(msg);}
+
+ // ── Answers ─────────────────────────────────────────────────────────────────────────────────────────────
+ function answerBlock({html,provenance,copy}){retire();const e=document.createElement('div');e.className='reply violet-answer stage-live';e.innerHTML=`<strong>● Violet</strong><div class="answer-copy">${html}</div><div class="answer-tools">${copy?`<button type="button" class="vt-linkish" data-journey="copy:${copy}" data-keep>Copy</button>`:''}<small>${esc(provenance)}</small></div>`;root().append(e);scroll(e);return e;}
+ function showAnswer(answer){
+  if(!responseAvailable(answer,s)){reply(unavailableReason(answer));continueLine();return;}
+  const missing=answer.requires.filter(id=>!s.files.includes(id));
+  if(missing.length){reply(`To answer that from the record, I need ${missing.map(id=>materials[id].name).join(', ')}. Add ${missing.length===1?'it':'them'} and ask again.`);stage('More of the record is needed',tray(missing,'Add the missing materials'),{suggest:false,extras:[['resume','Back to the case']]});return;}
+  if(answer.needsFindings&&s.findings.some(v=>!v)){reply('Record your findings first so the executive summary reflects your decisions.');return findingsStage();}
+  if(answer.id==='executive'&&reportFindingsDiffer())reply('The captured executive summary follows the findings in the saved report, which differ from yours in places.');
+  answered.add(answer.id);root().querySelectorAll('.question-suggestions button').forEach(b=>{const q=caseAnswers[Number(b.dataset.journey?.split(':')[1])];if(q&&answered.has(q.id))b.remove();});root().querySelectorAll('.question-suggestions').forEach(e=>{if(!e.querySelector('button'))e.remove();});
+  let html=answer.html||esc(answer.text);
+  if(answer.id==='client')html=html.replace(/\s*<button[^>]*class="source-number"[^>]*>\d+<\/button>/g,''); // client-facing draft: no citation markers
+  answerBlock({html,copy:answer.id,provenance:answer.captureNote.startsWith('Complete live')?'Captured from Violet · earlier-stage scenario':'Captured from Violet · complete response'});
+  continueLine();
+ }
+ function unavailableReason(a){
+  if(a.id==='priya')return 'I can add Priya Anand once the plan is final.';
+  if(a.id==='email')return "I'll be able to draft that once Marcus's interview is in the case.";
+  if(a.id==='client')return 'This demo has the client update Violet drafted at the plan stage; ask for it before the plan is finalized.';
+  if(['reword5','retaliation','gaps','executive','tran','pay','followup'].includes(a.id))return conduct()?'That answer was captured on the policy-based version of this case, so it isn’t available on the conduct-based path.':'That question depends on the escalations allegation, which is added to the plan after Leah’s interview.';
+  return 'That answer was captured at a later point in this case. Keep going and ask again.';
+ }
+
+ // ── Actions ─────────────────────────────────────────────────────────────────────────────────────────────
+ function dispatch(a){try{
+  const i=a.indexOf(':'),cmd=i<0?a:a.slice(0,i),id=i<0?undefined:a.slice(i+1);
+  switch(cmd){
+   case 'resume':{const n=nextStep();if(n)dispatch(n[0]);return;}
+   case 'policy':return policy();
+   case 'plan':return plan();
+   case 'finalize-plan':mutate('plan');reply('The plan is final.');return interviews();
+   case 'interviews':return interviews();
+   case 'person':return person(id);
+   case 'outline':return outline(id);
+   case 'record':return record(id);
+   case 'upload':if(upload(id))afterUpload([id]);else notice('That file is already in the case.');return;
+   case 'upload-all':{const ids=id.split(',').filter(x=>!s.files.includes(x));if(!ids.length)return;user('Added '+ids.map(x=>materials[x].name).join(', '));ids.forEach(x=>upload(x,true));return afterUpload(ids);}
+   case 'read':return source(id);
+   case 'scope-review':return reviewScope();
+   case 'propose-scope':return proposeScope();
+   case 'scope':return decideScope(true);
+   case 'keep-scope':{if(!root().querySelector('.violet-proposal .vt-stagecard')){scopeDecision='kept';reply('The plan stays as it is.');return continueLine();}return decideScope(false);}
+   case 'summary':return summary(id);
+   case 'format':{format=id;const host=lastClicked?.closest('.artifact-host');const person=host?.dataset.person;if(host&&person)host.querySelector('.vt-ff-body').innerHTML=summaryView(person,format);return;}
+   case 'final-summary':mutate('summary',id);reply(`${first[id]}'s summary is finalized.`);{const n=nextStep();return n?dispatch(n[0]):interviews();}
+   case 'gather':return gather();
+   case 'analysis':return analysis();
+   case 'timeline':return timeline();
+   case 'matrix':return matrix(Number(id));
+   case 'findings':if(reportOpen)closeReport();return findingsStage();
+   case 'confidence':return confidence();
+   case 'align':mutate('finding',{index:Number(id),value:recommended()[Number(id)]});return confidence();
+   case 'report':return report();
+   case 'close-report':closeReport();return continueLine();
+   case 'show-chat':document.body.classList.toggle('chat-shown');return;
+   case 'flag':return review('flag');
+   case 'citation':return review('citation');
+   case 'address-flag':mutate('flag');document.querySelector('#document').close();report();return;
+   case 'edit-flag':document.querySelector('#document pre').innerHTML=`<label class="flag-edit">Edit this sentence<textarea id="flag-edit" rows="5">${esc((capturedReview.flaggedSentences[0]||'').replace(/[¹²³⁴⁵⁶⁷⁸⁹⁰]+$/,''))}</textarea></label><div class="dock-actions">${btn('save-flag-edit','Save','is-next')}${btn('flag','Cancel')}</div>`;return;
+   case 'save-flag-edit':flagReplacement=document.querySelector('#flag-edit').value;return dispatch('address-flag');
+   case 'remove-flag':flagReplacement='';return dispatch('address-flag');
+   case 'review-citation':mutate('citation');document.querySelector('#document').close();report();return;
+   case 'redraft':if(conduct())return;user(REDRAFT_PROMPT);revision=true;accepted=false;reply("Here's the revised section in the report, for your review. Your finding is unchanged.");report();showInReport(document.querySelector('#revised-section'));return;
+   case 'keep-revision':accepted=true;report();return;
+   case 'undo-revision':revision=false;accepted=false;report();return;
+   case 'final-report':return finalizeReport(false);
+   case 'final-report-anyway':return finalizeReport(true);
+   case 'read-final':report();return;
+   case 'restart':document.querySelector('#reset')?.click();return;
+   case 'questions':{const qs=caseAnswers.filter(q=>responseAvailable(q,s)&&q.requires.every(r=>s.files.includes(r)));stage('Ask about the case',qs.length?`<p>Type any question in the message box, or choose one of these.</p><div class="question-list">${qs.map(q=>`<button type="button" class="suggestion" data-journey="question:${caseAnswers.indexOf(q)}">${esc(q.question)}</button>`).join('')}</div>`:'<p>As more of the record comes in, I can answer questions about it. You can type one any time.</p>',{suggest:false,next:nextStep()});return;}
+   case 'question':{const q=caseAnswers[Number(id)];user(q.question||q.title);return showAnswer(q);}
+   case 'copy':{const t=capturedResponses[id]?.text||'';const host=lastClicked?.closest('.answer-tools');if(navigator.clipboard)navigator.clipboard.writeText(t).then(()=>notice('Copied.',host)).catch(()=>notice('Select the text above to copy it.',host));else notice('Select the text above to copy it.',host);return;}
+  }
+ }catch(e){notice(e.message);}}
+ function route(text){
+  const t=text.toLowerCase();
+  if(/tell me about.*case|case.*overview|where.*(stand|are we)/.test(t)){const n=nextStep();reply(`This is Leah Goldberg's complaint about her supervisor, Marcus Doyle: a denied Friday-evening accommodation request and remarks about her religious observance${s.scope?', plus her removal from the escalations queue':''}. ${n?'Next: '+n[1].toLowerCase()+'.':'The report is final.'}`);continueLine();return true;}
+  if(/redraft|rewrite|severe|pervasive/.test(t)&&reportOpen&&!conduct()){dispatch('redraft');return true;}
+  const answer=answerFor(text);if(answer){showAnswer(answer);return true;}
+  if(/outside the (current )?plan|anything new|new allegation/.test(t)&&!conduct()&&s.files.includes('leah')&&!scopeDecision){reviewScope();return true;}
+  if(/^(next|what.?s next|what now|continue)/.test(t)){const n=nextStep();if(n){dispatch(n[0]);return true;}}
+  if(/\breport\b/.test(t)&&(s.stage==='report'||ready())){dispatch('report');return true;}
+  if(/\bplan\b/.test(t)){dispatch('plan');return true;}
+  if(/timeline/.test(t)){dispatch('timeline');return true;}
+  if(/matrix/.test(t)&&!conduct()){dispatch('matrix:0');return true;}
+  if(/alignment|confidence/.test(t)){dispatch('confidence');return true;}
+  if(/finding/.test(t)){dispatch('findings');return true;}
+  if(/interview|summary|summari[sz]e|outline/.test(t)){const id=interviewOrder.find(k=>t.includes(k)||t.includes(names[k].split(' ')[1].toLowerCase()));if(!id){dispatch('interviews');return true;}dispatch((/outline/.test(t)?'outline:':/summary|summari/.test(t)?'summary:':'person:')+id);return true;}
+  if(/upload|document|file|exhibit/.test(t)){dispatch('gather');return true;}
+  return false;
+ }
+
+ // ── Events ──────────────────────────────────────────────────────────────────────────────────────────────
+ document.addEventListener('click',e=>{const b=e.target.closest('button,[data-journey]');if(!b||!b.closest('#content,#report-pane,#case-link,#document'))return;lastClicked=b;
+  if(b.getAttribute('aria-disabled')==='true'&&b.dataset.journey!=='final-report')return;
+  if(b.dataset.scopeSource!==undefined){const t=document.createElement('template');t.innerHTML=capturedScope.sources[b.dataset.scopeSource];const aside=t.content.querySelector('aside');dock(aside.getAttribute('aria-label')||'Source',(aside.querySelector('.vt-dock-meta')?.outerHTML||'')+(aside.querySelector('.vt-dock-body')?.innerHTML||''));return;}
+  if(b.dataset.reportSection){document.querySelector('#report-section-'+b.dataset.reportSection)?.scrollIntoView({block:'start',behavior:'smooth'});return;}
+  if(b.dataset.pick!==undefined){mutate('finding',{index:Number(b.dataset.pick),value:b.dataset.value});b.closest('.vt-fx-opts').querySelectorAll('button').forEach(x=>{const on=x===b;x.classList.toggle('is-on',on);x.setAttribute('aria-checked',String(on));x.textContent=(on?'✓ ':'')+x.dataset.value.replace('Partially Substantiated','Partially');});return;}
+  if(b.dataset.reportCitation){const c=reportCites()[b.dataset.reportCitation];if(c)dock(c.title,c.html);return;}
+  if(b.dataset.cite){const key=(b.getAttribute('title')||b.getAttribute('aria-label')||'').replace(/^Source \d+: /,'').replace(/ — open the source$/,'');const [person,num]=(b.dataset.summaryCitation||'').split(':');const c=summaryCitations[person]?.[num]||capturedCitations[key];if(c)dock(c.title,c.html);else source(b.dataset.cite,b.dataset.needle);return;}
+  if(b.dataset.journey)dispatch(b.dataset.journey);});
+ document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches?.('mark[data-journey]')){e.preventDefault();lastClicked=e.target;dispatch(e.target.dataset.journey);}});
+ document.addEventListener('input',e=>{if(e.target.dataset.confidenceReason!==undefined)reasons[e.target.dataset.confidenceReason]=e.target.value;});
  document.addEventListener('dragstart',e=>{const b=e.target.closest('[data-material]');if(b)e.dataTransfer.setData('text/violet-material',b.dataset.material);});
  document.addEventListener('dragover',e=>{const d=e.target.closest('[data-drop]');if(d){e.preventDefault();d.classList.add('is-drag');}});document.addEventListener('dragleave',e=>e.target.closest('[data-drop]')?.classList.remove('is-drag'));
- document.addEventListener('drop',e=>{const d=e.target.closest('[data-drop]');if(!d)return;e.preventDefault();d.classList.remove('is-drag');const id=e.dataTransfer.getData('text/violet-material');if(d.dataset.drop.split(',').includes(id))dispatch('upload:'+id);else reply('Drag a sample file from the tray for this step. No personal files are uploaded.');});
- return {start,route,reset(){confidenceReasons={};returnStage=null;savedPlan=null;s=freshJourney();pendingAnswer=null;priya=false;allegation5='Was the removal connected to the accommodation request or HR complaint?';revision=false;accepted=false;flagReplacement=null;format='bullets';document.querySelector('#report-pane')?.remove();document.querySelector('.vt-main').classList.remove('with-report');}};
+ document.addEventListener('drop',e=>{const d=e.target.closest('[data-drop]');if(!d)return;e.preventDefault();d.classList.remove('is-drag');const id=e.dataTransfer.getData('text/violet-material');if(d.dataset.drop.split(',').includes(id))dispatch('upload:'+id);else reply('Use one of the sample files for this step. No personal files are uploaded.');});
+ document.querySelector('#document')?.addEventListener('close',()=>document.body.classList.remove('dock-open'));
+ return {start,route,nextStep:()=>nextStep(),reset(){closeReport();init();}};
 }

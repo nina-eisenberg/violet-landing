@@ -39,7 +39,7 @@ def answer_html(a):
         return f'<button type="button" class="source-number" data-cite="{key}" aria-label="{al}" title="{al}">{num}</button>'
     prose = re.sub(r'<button\b[^>]*class="av-cite"[^>]*>.*?</button>', cite, prose, flags=re.S)
     prose = re.sub(r'<a\b[^>]*href="#flag-\d+"[^>]*>(.*?)</a>', r'<span class="uncited-flag" title="Violet marked this: \1">no source cited</span>', prose, flags=re.S)
-    prose = re.sub(r' class="(?!source-number|uncited-flag)[^"]*"', '', prose)
+    prose = re.sub(r' class="(?!source-number|uncited-flag|av-flag)[^"]*"', '', prose)
     return prose, [b['text'] for b in (a['blocks'] or []) if b.get('kind') == 'text' and b.get('text')]
 
 # Policy path: scope review answer + docks into capturedCitations

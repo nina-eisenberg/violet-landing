@@ -40,7 +40,7 @@ for a in A:
         al = html.escape('Source ' + num + ': ' + lab, quote=True)
         return f'<button type="button" class="source-number" data-cite="{key}" aria-label="{al}" title="{al}">{num}</button>'
     prose = re.sub(r'<button\b[^>]*class="av-cite"[^>]*>.*?</button>', cite, prose, flags=re.S)
-    prose = re.sub(r' class="(?!source-number)[^"]*"', '', prose)
+    prose = re.sub(r' class="(?!source-number|av-flag)[^"]*"', '', prose)
     # Violet's own one-line follow-up after the answer (a "text" block) is part of the reply.
     tail = ''.join(f'<p class="violet-followup">{E(b["text"])}</p>' for b in (a['blocks'] or []) if b.get('kind') == 'text' and b.get('text'))
     full = prose + tail
