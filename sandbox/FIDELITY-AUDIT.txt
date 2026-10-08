@@ -16,9 +16,8 @@ Landing page (Oct 7, late): hero → "See how it works" quick look (quicklook.ht
   once in view, holds on hover/scroll-away, stops when the visitor clicks in; flagged sentence opens the flag card in the side
   panel) → outputs copy → "Work the full case yourself" (sandbox) → pricing and FAQ. The 4-step redraft preview and the
   highlights tour are no longer on the page (preview.*, highlights.* kept in sandbox/, unlinked).
-Visitor AI calls: one kind only, approved by Nina on Oct 7 — typed questions the keywords miss go to /api/route-question,
-which asks Jev to pick one of the prepared answers (≈$0.00005 each; it never writes text). Needs AI_GATEWAY_API_KEY in the
-landing site's Vercel project; without it the demo falls back to the honest no-answer reply.
+Visitor AI calls: none. Typed questions (and the Jev router behind them) were removed on Oct 7 at Nina's request; the
+composer is shown disabled, and questions come from the suggestions after each step. AI_GATEWAY_API_KEY is no longer used.
 Live-app spend: $1.78 recapture + 0107 conduct case and scope capture (see below) + one in-place section rewrite.
 
 WHERE EACH PIECE COMES FROM
@@ -42,7 +41,6 @@ Saved records, rendered with the app's own components offline (validated against
   Summaries (both formats), report 756439ba with flags and 157 citations (0096).
   Conduct findings, evidence review and report with 197 citations: INV-2026-0076 (Sept 24, conduct run from all 8 files).
 Written for the demo (labelled on screen as such)
-  typed-answers.js: sample answers for common uncaptured questions, cited line by line to the sample files.
   Demo-guide replies (product questions, unavailable answers, no-answer fallback) are labelled "Demo guide".
   Short connective lines in the conversation ("The policy is added.", step narration) are the demo's, as before.
 
@@ -64,8 +62,6 @@ GAPS AND DEVIATIONS
   note says so. Credibility mentions no allegation numbers now (recapture), so it is offered on both paths.
 - Summary steers (Shorter, Plainer…), Word export and edit controls are hidden: no captured results.
 - "What findings are supported?" and other open questions have no captured answer; they get the honest fallback.
-- Live routing (api/route-question.js) is untested on Vercel itself: tested locally against the real gateway with a
-  stand-in server. Deploying it needs the AI_GATEWAY_API_KEY environment variable on the landing project.
 - The site has no analytics; engagement events are emitted as `violet:track` DOM events only (threads-landing.js).
 - Quick look: the scope answer shows its first two paragraphs (rest behind "Show the whole reply"); plan and outline cards
   are clipped with "Show the whole…"; the report shows only the flagged paragraph. The conversation's request lines and the
