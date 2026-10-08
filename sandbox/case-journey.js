@@ -179,10 +179,11 @@ export function createJourney({reply,user,esc}){
   const steps=[conduct()?{done:true,label:'No flags: verification passed 292 of 292 checks'}:{done:s.flag,label:s.flag?'Flag reviewed':'1 flag to review',action:'flag'},{done:s.citation,label:s.citation?'Citation checked':'1 citation to check',action:'citation'}];
   const n=nextStep();const canFinal=s.flag&&s.citation&&!(revision&&!accepted);
   // One title row, one status line with the single next step, then the report. Provenance sits at the foot.
+  const hint=!n?'':n[0]==='flag'?'Violet’s check flagged one sentence. Open it, read why, and decide whether it stays.':n[0]==='citation'?'Spot-check one citation: the source opens beside the report with the cited line highlighted.':n[0]==='final-report'?'Everything is reviewed. Finalize to file the report.':'';
   const nextBtn=s.final?'':n?btn(n[0],n[0]==='final-report'?'Finalize the report':n[1],'is-next'):'';
   const optional=conduct()||s.final?'':revision?`<li>${accepted?'✓ Revision kept':'Revision waiting: Keep or Undo'}</li>`:`<li class="is-optional"><button type="button" class="vt-linkish" data-journey="redraft" data-keep>Ask Violet to redraft a section</button></li>`;
   panel.innerHTML=`<div class="report-toolbar"><h2>Investigation report <span class="report-state">${s.final?'Final':'Draft'}</span></h2><div class="report-tools">${link('show-chat','Show conversation')}${btn('close-report','Close')}</div></div>
-  ${s.final?'':`<div class="report-status"><ol class="report-steps">${steps.map(x=>`<li class="${x.done?'is-done':''}">${x.done?'✓':'○'} ${x.label}</li>`).join('')}${optional}</ol><div class="report-next">${nextBtn}<div class="report-msg" role="status"></div></div></div>`}
+  ${s.final?'':`<div class="report-status"><ol class="report-steps">${steps.map(x=>`<li class="${x.done?'is-done':''}">${x.done?'✓':'○'} ${x.label}</li>`).join('')}${optional}</ol><div class="report-next">${nextBtn}<div class="report-msg" role="status"></div></div>${hint?`<p class="report-hint">${hint}</p>`:''}</div>`}
   <article class="report-paper"></article><p class="demo-label report-source">${conduct()?esc(conductPath.source.report):'Captured report from INV-2026-0096'} · ${reportFindingsDiffer()?'your findings differ from its conclusions in places':'matches your findings'}</p>`;
   const paper=panel.querySelector('.report-paper');paper.innerHTML=reportView(framework);
   const headings=[...paper.querySelectorAll('h2')].filter(h=>/^[IVX]+\. /.test(h.textContent));headings.forEach((h,i)=>{h.id='report-section-'+i;});
@@ -199,7 +200,7 @@ export function createJourney({reply,user,esc}){
    const t=document.createElement('template');t.innerHTML=capturedReview.flagHtml;t.content.querySelectorAll('dialog').forEach(e=>e.remove());
    t.content.querySelectorAll('button').forEach(b=>{b.dataset.journey=b.textContent.includes('Edit')?'edit-flag':b.textContent.includes('Remove')?'remove-flag':'address-flag';b.dataset.keep='';if(b.dataset.journey==='address-flag')b.classList.add('is-primary');});
    dock('Flagged sentence',t.innerHTML);}
-  else{const k=reviewCitationKey();showInReport(paper.querySelector(`[data-report-citation="${k}"]`));const c=reportCites()[k];dock(c.title,c.html+`<div class="dock-actions">${btn('review-citation','Mark citation checked','is-next')}</div>`);}}
+  else{const k=reviewCitationKey();showInReport(paper.querySelector(`[data-report-citation="${k}"]`));const c=reportCites()[k];dock(c.title,`<div class="dock-actions dock-actions-top"><span>The highlighted line is the source for citation ${k}. Does it support the sentence?</span>${btn('review-citation','Yes, mark it checked','is-next')}</div>`+c.html);}}
  function finalizeReport(anyway=false){const msg=document.querySelector('#report-pane .report-msg');
   if(!(s.flag&&s.citation)){notice(conduct()?'Check a citation first.':'Review the flag and check a citation first.',msg);return;}
   if(revision&&!accepted){notice('Keep or undo the revision before finalizing.',msg);return;}
