@@ -39,7 +39,11 @@ Saved records, rendered with the app's own components offline (validated against
   Scope moment (policy path): Violet's real answer to "Does Leah's interview raise anything outside the current
   investigation plan?", the real proposal card, caveat and full reply (folded), and her real saved follow-up (0105).
   Summaries (both formats), report 756439ba with flags and 157 citations (0096).
-  Conduct findings, evidence review and report with 197 citations: INV-2026-0076 (Sept 24, conduct run from all 8 files).
+  Conduct findings, evidence review and report: INV-2026-0107 itself, completed live on Oct 7 at Nina's request (all
+  interviews and exhibits added, five findings recorded — allegation 4 changed to Violet's recommendation, Not
+  Substantiated — report drafted, verified and filed). 166 citations; Violet's check raised 4 flags, the demo walks
+  through one ("Kim did not say where Doyle was looking", no support found). Drafting stopped once on "Failed to
+  fetch" after 5 of 10 sections; Retry finished it (product issue noted).
 Written for the demo (labelled on screen as such)
   Demo-guide replies (product questions, unavailable answers, no-answer fallback) are labelled "Demo guide".
   Short connective lines in the conversation ("The policy is added.", step narration) are the demo's, as before.
@@ -53,8 +57,6 @@ DEMO SHORTCUTS (Nina's walkthrough, Oct 7 night)
   VI findings passage on alternatives, with the summary's flagged sentence below it.
 
 GAPS AND DEVIATIONS
-- Conduct path is a composite: the plan (0107, 4 allegations, from the complaint) and the findings/report (0076,
-  6 allegations, from all files, Sept 24 — older than the rest) are worded differently; the findings screen says so.
 - Conduct path hides replies captured in the policy plan's terms (client, deadline, harassment, finding3 and the
   post-scope replies); it says why if asked.
 - Policy path: if the visitor keeps the plan at three allegations, findings, alignment and report still cover four.

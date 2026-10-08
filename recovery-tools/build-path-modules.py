@@ -42,26 +42,28 @@ def answer_html(a):
     prose = re.sub(r' class="(?!source-number|uncited-flag|av-flag)[^"]*"', '', prose)
     return prose, [b['text'] for b in (a['blocks'] or []) if b.get('kind') == 'text' and b.get('text')]
 
-# Policy path: scope review answer + docks into capturedCitations
-A5 = json.loads((B / 'rendered-answers-0105.json').read_text())
-review, follow = answer_html(A5[0])
-cm = S / 'captured-citations.js'; ctext = cm.read_text()
-cc = json.loads(re.search(r'export const capturedCitations=(\{.*?\});\nexport const summaryCitations=', ctext, re.S)[1]); added = 0
-for a in A5:
-    for c in a['citations']:
-        srcd = a['sourceCorpus'].get(c['sourceId'])
-        if not srcd: continue
-        s0, e0 = c['lineStart'], c.get('lineEnd') or c['lineStart']
-        key = label(srcd['label']) + (f", lines {s0}–{e0}" if e0 > s0 else f", line {s0}")
-        if key not in cc: cc[key] = dock(srcd, c['sourceId'], s0, e0); added += 1
-cm.write_text(re.sub(r'export const capturedCitations=\{.*?\};\nexport const summaryCitations=', lambda _: 'export const capturedCitations=' + json.dumps(cc, ensure_ascii=False) + ';\nexport const summaryCitations=', ctext, flags=re.S))
-(S / 'scope-review.js').write_text('// INV-2026-0105, Oct 6 2026 04:00 UTC: Violet\'s real answer to the investigator\'s open question about Leah\'s interview,\n// rendered by the app\'s CitedAnswer from the saved message. See recovery-tools/build-path-modules.py.\n'
-  'export const scopeReview=' + json.dumps({'question': A5[0]['question'].replace('’', "'"), 'html': review, 'followup': follow,
-   'savedReply': "Added allegation 4. The plan was already final, so this is a change to the final plan. Carla and Jordan and Marcus's outlines don't cover it yet."}, ensure_ascii=False) + ';\n')
+import os
+if os.environ.get('POLICY_PATH'):  # the policy half predates the compact citation store (source-corpora.js); kept for provenance
+    # Policy path: scope review answer + docks into capturedCitations
+    A5 = json.loads((B / 'rendered-answers-0105.json').read_text())
+    review, follow = answer_html(A5[0])
+    cm = S / 'captured-citations.js'; ctext = cm.read_text()
+    cc = json.loads(re.search(r'export const capturedCitations=(\{.*?\});\nexport const summaryCitations=', ctext, re.S)[1]); added = 0
+    for a in A5:
+        for c in a['citations']:
+            srcd = a['sourceCorpus'].get(c['sourceId'])
+            if not srcd: continue
+            s0, e0 = c['lineStart'], c.get('lineEnd') or c['lineStart']
+            key = label(srcd['label']) + (f", lines {s0}–{e0}" if e0 > s0 else f", line {s0}")
+            if key not in cc: cc[key] = dock(srcd, c['sourceId'], s0, e0); added += 1
+    cm.write_text(re.sub(r'export const capturedCitations=\{.*?\};\nexport const summaryCitations=', lambda _: 'export const capturedCitations=' + json.dumps(cc, ensure_ascii=False) + ';\nexport const summaryCitations=', ctext, flags=re.S))
+    (S / 'scope-review.js').write_text('// INV-2026-0105, Oct 6 2026 04:00 UTC: Violet\'s real answer to the investigator\'s open question about Leah\'s interview,\n// rendered by the app\'s CitedAnswer from the saved message. See recovery-tools/build-path-modules.py.\n'
+      'export const scopeReview=' + json.dumps({'question': A5[0]['question'].replace('’', "'"), 'html': review, 'followup': follow,
+       'savedReply': "Added allegation 4. The plan was already final, so this is a change to the final plan. Carla and Jordan and Marcus's outlines don't cover it yet."}, ensure_ascii=False) + ';\n')
 
 # Conduct path
 plans = json.loads((B / 'rendered-plans.json').read_text())
-d76 = json.loads((B / 'db-dumps' / 'conduct-fad3808b.json').read_text())
+d76 = json.loads((B / 'db-dumps' / '0107.json').read_text())  # Oct 7: the conduct report now comes from the same case as the plan
 det = json.loads([a for a in d76['artifacts'] if a['type'] == 'guided-report-determinations'][-1]['content'])
 pa = det['evidenceReview']['assessment']['perAllegation']
 rows = []
@@ -72,9 +74,14 @@ for i, sc in enumerate(det['reportScope']):
                  'counterFactors': ev.get('counterFactors') or [], 'limitations': ev.get('limitations') or []})
 RR = json.loads((B / 'rendered-report-conduct.json').read_text()); corpus = json.loads((B / 'report-corpus-conduct.json').read_text())
 rc = {str(i + 1): dock(corpus[c['sourceId']], c['sourceId'], c['lineStart'], c.get('lineEnd'), c.get('quote') or '') for i, c in enumerate(RR['citations']) if c['sourceId'] in corpus}
+fi = next(i for i, f in enumerate(RR['live']) if (f.get('claimText') or '').startswith('Kim did not say where Doyle was looking'))
+flag = {'sentence': RR['live'][fi]['claimText'], 'card': RR['cards'][fi]}
+rep = [a for a in d76['artifacts'] if a['type'] == 'investigation-report-guided'][-1]['content']; O = '<!--guided-verification:'; st = rep.rfind(O)
+faith = json.loads(rep[st + len(O):rep.index('-->', st)])['faithfulness']; faith = {'total': faith['total'], 'supported': faith['supported'], 'flagged': len(RR['live'])}
 p0107 = json.loads((B / 'db-dumps' / '0107.json').read_text()); plan0107 = json.loads(p0107['case']['planData'])
 (S / 'conduct-path.js').write_text('// Conduct-based path. See recovery-tools/build-path-modules.py for provenance.\n'
   'export const conductPath=' + json.dumps({'initialPlan': plans['0107'], 'planAllegations': [q['text'] for g in plan0107['allegations'] for q in g['scopeQuestions']],
    'findings': rows, 'overallNote': det['evidenceReview']['assessment'].get('overallNote'), 'report': inner(RR['reportHtml'], 'prose-violet'), 'reportCitations': rc,
-   'source': {'plan': 'INV-2026-0107 · created Oct 7 2026 from the complaint and HR-114 · conduct-based', 'report': 'INV-2026-0076 · Sept 24 2026 · conduct-based run of the same fictional case from all eight files'}}, ensure_ascii=False) + ';\n')
-print('scope docks added', added, '| conduct findings', len(rows), '| conduct report cites', len(rc), '| plan allegations', len(plan0107['allegations']))
+   'flag': flag, 'flagCount': len(RR['live']), 'faithfulness': faith,
+   'source': {'plan': 'INV-2026-0107 · created Oct 7 2026 from the complaint and HR-114 · conduct-based', 'report': 'INV-2026-0107 · filed Oct 7 2026 · the same case as the plan'}}, ensure_ascii=False) + ';\n')
+print('conduct findings', len(rows), '| conduct report cites', len(rc), '| plan allegations', len(plan0107['allegations']))
