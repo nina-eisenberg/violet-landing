@@ -56,3 +56,10 @@ html,body{margin:0;height:100%;background:#faf9fc;font-family:Inter,system-ui,sa
 .ql-flag-dock{padding:6px 14px}
 .ql-flag-quote{margin:0 0 12px;padding:10px 12px;background:#fdf2f2;border-left:3px solid #e2a3a3;border-radius:0 8px 8px 0;font:14px/1.55 Newsreader,Georgia,serif}
 .ql-flag-dock .cf-flag-card{border:1px solid #ebe5f1;border-radius:12px;padding:12px}
+.ql-plan-more{color:#857e90;font-size:13px;list-style:none}
+.ql-report-sec{margin:0;font:600 11px/1.5 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#857e90}
+.ql-report h4{font:600 17px/1.4 Newsreader,Georgia,serif;margin:2px 0 10px;color:#241640}
+.ql-report p{margin:0 0 12px}
+.ql-flag-block{margin-top:14px;padding-top:12px;border-top:1px solid #efe9f5}
+.ql-flag-block .ql-flag-hint{margin:0 0 6px}
+.ql-flag-line{margin:0;font-size:14.5px}

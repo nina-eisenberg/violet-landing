@@ -13,10 +13,14 @@ const clip=(html,label)=>`<div class="ql-clip" tabindex="-1">${html}</div><butto
 const strip=h=>{const r=tpl(h);r.querySelectorAll('.vt-mode,.vt-stagecard-foot,.journey-foot,.vt-tabs,.vt-summary-panel-acts').forEach(e=>e.remove());const d=document.createElement('div');d.append(r);return d.innerHTML;};
 // The scope answer, first two paragraphs shown; the rest behind "Show the whole reply".
 const scopeParts=[...tpl(conductScope.html).firstElementChild.children].map(e=>e.outerHTML);
-// The report: the paragraph Violet's own check flagged. The sentence opens the flag card beside the report.
+// The report: a findings passage (VI, consideration of alternatives), with its sources. Violet's check flagged a sentence
+// in the summary of findings; it sits below as its own block and opens the flag card beside the report.
 const flagged=capturedReview.flaggedSentences[0];
-const para=[...tpl(reportView('policy')).querySelectorAll('p')].find(p=>p.textContent.includes(flagged.slice(0,60)));
-const paraHtml=(para?.innerHTML||flagged).replace(flagged,`<mark class="ql-flag-mark" role="button" tabindex="0" data-flag title="See why Violet flagged this">${flagged}</mark>`);
+const reportDom=tpl(reportView('policy'));
+const altHead=[...reportDom.querySelectorAll('h3,h4')].find(h=>h.textContent.trim().startsWith('Consideration and Discussion of Alternatives'));
+const findingParas=[];for(let e=altHead?.nextElementSibling;e&&e.tagName==='P';e=e.nextElementSibling)findingParas.push(e.outerHTML);
+const findingHtml=findingParas.join('');
+const flagBlock=`<div class="ql-flag-block"><p class="ql-flag-hint"><span>1 sentence flagged</span> In the summary of findings. Click it to see why.</p><p class="ql-flag-line"><mark class="ql-flag-mark" role="button" tabindex="0" data-flag title="See why Violet flagged this">${flagged}</mark></p></div>`;
 const steps=[
  {label:'Plan',you:'Here’s the complaint and our accommodation policy.',files:['Complaint email','Accommodation policy'],
   violet:()=>clip(strip(planView({final:false,framework:'conduct'})),'plan'),
@@ -31,7 +35,7 @@ const steps=[
   violet:()=>`<div class="ql-text">${capturedResponses.hearers.html}</div>`,
   wait:10000,caption:'<b>Ask anything about the case.</b> Every answer points to its source. Click a number to read the transcript line.'},
  {label:'Report',you:'Draft the report.',
-  violet:()=>`<div class="ql-report"><h3>Draft report · 157 citations · checked against the record by Violet</h3><p>${paraHtml}</p><p class="ql-flag-hint"><span>1 sentence flagged</span> Click the highlighted sentence to see why.</p></div>`,
+  violet:()=>`<div class="ql-report"><h3>Draft report · 157 citations · checked against the record by Violet</h3><p class="ql-report-sec">VI. Findings: Religious Accommodation Policy</p><h4>Consideration and Discussion of Alternatives</h4>${findingHtml}${flagBlock}</div>`,
   caption:'<b>Violet drafts and checks the report.</b> Sentences that need a look are flagged. You review, edit, and approve. Findings are yours.'},
 ];
 let n=0;

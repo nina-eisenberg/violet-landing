@@ -7,6 +7,7 @@ function setExpanded(value) {
   expand.setAttribute('aria-expanded', String(value));
   expand.textContent = value ? 'Return to website ↙' : 'Expand ↗';
 }
+document.querySelector('#reset-tour').addEventListener('click', () => frame.contentWindow?.postMessage({ violet: 'reset' }, location.origin));
 expand.addEventListener('click', () => setExpanded(expand.getAttribute('aria-expanded') !== 'true'));
 window.addEventListener('keydown', event => { if (event.key === 'Escape') setExpanded(false); });
 

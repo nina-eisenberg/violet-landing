@@ -19,6 +19,8 @@ export function planView({final,scope,framework}){
  r.querySelectorAll('button.vt-editable').forEach(b=>{const s=document.createElement('span');s.className='vt-plan-static';s.innerHTML=b.innerHTML;b.replaceWith(s);});
  r.querySelectorAll('.vt-editable').forEach(e=>{e.removeAttribute('role');e.removeAttribute('tabindex');e.classList.remove('vt-editable');});
  r.querySelectorAll('details.vt-plan-sec').forEach(e=>e.open=true);
+ // The demo shows the first four documents to gather (the saved plans list eight), so the card stays readable.
+ r.querySelectorAll('.vt-plan-checklist').forEach(ul=>{[...ul.children].slice(4).forEach(li=>li.remove());const n=ul.previousElementSibling?.querySelector('.vt-plan-count');if(n)n.textContent=String(ul.children.length);});
  return t.innerHTML;
 }
 // Summaries are the app's SummaryCard renders. Steers and menus that have no captured result are not shown.
@@ -37,8 +39,13 @@ export function summaryView(id,format){
 export function outlineView(id){
  const t=template(capturedOutlines[id]),r=t.content;
  r.querySelectorAll('.vt-stagecard-foot,.vt-icon-btn,.vt-card-tools').forEach(e=>e.remove());
- r.querySelectorAll('button').forEach(b=>{if(b.getAttribute('role')==='tab')return;b.remove();});
+ r.querySelectorAll('button,.vt-tabs,.vt-summary-panel-acts').forEach(b=>b.remove());
  r.querySelectorAll('[contenteditable]').forEach(e=>e.removeAttribute('contenteditable'));
+ // Open at the allegation questions: the header block goes, and the opening, background and general sections fold away.
+ const doc=r.querySelector('.vt-doc');const lines=doc?[...doc.children]:[];
+ const h2s=lines.filter(e=>e.classList.contains('is-h2'));const first=h2s[0],main=h2s.find(e=>/Allegation/i.test(e.textContent));
+ if(doc&&first&&main){const fold=document.createElement('details');fold.className='outline-fold';fold.innerHTML=`<summary>Opening, admonishments and background questions (${h2s.indexOf(main)} sections)</summary>`;
+  let on=false;for(const e of lines){if(e===main)break;if(e===first)on=true;if(on)fold.append(e);else e.remove();}main.before(fold);}
  return t.innerHTML;
 }
 export function policyText(kind){

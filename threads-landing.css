@@ -92,3 +92,4 @@ body.tour-expanded {overflow:hidden;}.tour-workspace.is-expanded {position:fixed
 .tour-choice.is-on{border-color:#7043bb;box-shadow:0 0 0 3px #efe7fb;background:#fdfbff}
 .tour-choice:focus-visible{outline:3px solid #a58bd6;outline-offset:2px}
 @media(max-width:760px){.outputs-grid,.tour-choices{grid-template-columns:1fr}.preview-frame{height:820px}}
+.tour-bar-actions{display:flex;gap:8px;align-items:center}

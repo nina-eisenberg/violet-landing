@@ -111,3 +111,23 @@ body.report-open.source-open .vt-shell{margin-right:0}
 .rev-note{margin:14px 0;padding:12px 16px;border-radius:10px;background:#f4f1f7;font-size:14px;color:#4d4757}.rev-note p{margin:0 0 6px}
 .reply.thinking div{color:#a59fae;font-size:20px;letter-spacing:2px;animation:pulseDots 1s infinite}
 @keyframes pulseDots{50%{opacity:.4}}
+.outline-fold{margin:0 0 12px;border:1px solid #ebe5f1;border-radius:10px;padding:8px 12px;background:#fff}
+.outline-fold summary{cursor:pointer;color:#5c359e;font-size:14px;font-weight:500}
+.new-allegation{margin:8px 0 0;padding:10px 14px;border-left:3px solid #7043bb;background:#f7f3fd;border-radius:0 10px 10px 0}
+#report-pane .report-toolbar{align-items:center}
+#report-pane .report-state{display:inline-block;margin-left:8px;padding:2px 9px;border-radius:999px;background:#f1ebfa;color:#5c359e;font:600 11px/1.6 Inter,sans-serif;vertical-align:middle;letter-spacing:.03em}
+#report-pane .report-status{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;margin:12px 0 14px;padding:10px 14px;background:#fff;border:1px solid #e6dff0;border-radius:12px}
+#report-pane .report-status .report-steps{margin:0;padding:0;border:0;background:none}
+#report-pane .report-status .report-next{margin:0}
+#report-pane .report-source{margin:14px 0 0}
+@media(min-width:1100px){#report-pane .report-tools [data-journey="show-chat"]{display:none}}
+.demo-celebrate .celebrate-top{display:flex;align-items:center;gap:16px;padding:14px 18px}
+.demo-celebrate .celebrate-top>div{display:flex;flex-direction:column;gap:3px;font-size:13px;color:#6f6879}
+.demo-celebrate .celebrate-top b{font:500 20px Newsreader,Georgia,serif;color:#282333}
+.demo-celebrate .celebrate-figure{height:84px;width:auto;flex-shrink:0;transform-origin:50% 100%}
+.demo-celebrate.is-cheering .celebrate-figure{animation:demo-cheer .9s ease-in-out 2}
+.demo-celebrate.is-cheering{box-shadow:0 0 0 4px #efe7fb,0 12px 30px -16px rgba(112,67,187,.5);transition:box-shadow .4s}
+@keyframes demo-cheer{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-14px) rotate(-6deg)}60%{transform:translateY(0) rotate(5deg)}}
+.demo-confetti{position:fixed;inset:0;pointer-events:none;z-index:2000;overflow:hidden}
+.demo-confetti i{position:fixed;width:8px;height:13px;border-radius:2px;opacity:0;animation:demo-confetti 2.3s cubic-bezier(.15,.6,.35,1) forwards}
+@keyframes demo-confetti{0%{opacity:1;transform:translate(0,0) rotate(0)}35%{opacity:1;transform:translate(var(--dx),var(--dy)) rotate(calc(var(--r)*.4))}80%{opacity:1}100%{opacity:0;transform:translate(calc(var(--dx)*1.3),calc(var(--dy) + var(--fall))) rotate(var(--r))}}

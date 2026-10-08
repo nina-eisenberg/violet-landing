@@ -43,7 +43,8 @@ export function createJourney({reply,user,esc}){
  const mutate=(event,id)=>{s={...progress(s,event,id),framework};shelf();};
  const btn=(a,t,cls='')=>`<button type="button" class="vt-chip ${cls}" data-journey="${a}">${t}</button>`;
  const link=(a,t)=>`<button type="button" class="vt-linkish journey-link" data-journey="${a}">${t}</button>`;
- const scroll=e=>requestAnimationFrame(()=>e.scrollIntoView({block:'start',behavior:'smooth'}));
+ // When one click adds several blocks (an answer, then a card), bring the first into view, so the reply is read from its start.
+ let scrollTarget=null;const scroll=e=>{if(scrollTarget)return;scrollTarget=e;requestAnimationFrame(()=>{const t=scrollTarget;scrollTarget=null;t.scrollIntoView({block:'start',behavior:'smooth'});});};
  const norm=v=>String(v||'').toLowerCase().replace('partially substantiated','partially');
 
  // ── What comes next ─────────────────────────────────────────────────────────────────────────────────────
@@ -52,6 +53,9 @@ export function createJourney({reply,user,esc}){
   if(!s.files.includes('policy'))return ['policy','Add the policy'];
   if(!s.plan)return ['finalize-plan','Finalize the plan'];
   if(s.files.includes('leah')&&!scopeDecision)return root()?.querySelector('.violet-proposal .vt-stagecard')?['scope','Save or keep the proposed change']:scopeReviewed?['propose-scope','Ask Violet to propose the change']:['scope-review',"Check Leah's interview for anything new"];
+  // One summary makes the point: after the first is finalized, the rest arrive in one upload and are summarized together.
+  const missing=interviewOrder.filter(id=>!s.files.includes(id));
+  if(s.summaries.length&&missing.length)return ['upload-all:'+missing.join(','),missing.length===3?'Upload the other transcripts':`Upload the other ${missing.length===1?'transcript':missing.length+' transcripts'}`];
   for(const id of interviewOrder){
    if(!s.files.includes(id))return ['person:'+id,`Prepare ${first[id]}'s interview`];
    if(!s.summaries.includes(id))return ['summary:'+id,`Review ${first[id]}'s summary`];
@@ -80,9 +84,10 @@ export function createJourney({reply,user,esc}){
   shelf();scroll(e);return e;
  }
  // After an answer or detour: the main journey's next step, offered in place.
- function continueLine(lead='Back to the case'){
+ // After an answer, the one next step, as a button in the same thread (no label: there is nowhere to go "back" to).
+ function continueLine(){
   const n=nextStep();if(!n)return;
-  retire();const e=document.createElement('div');e.className='continue-line stage-live';e.innerHTML=`<span>${lead}</span>${btn(n[0],n[1],'is-next')}`;root().append(e);
+  retire();const e=document.createElement('div');e.className='continue-line stage-live';e.innerHTML=btn(n[0],n[1],'is-next');root().append(e);
  }
  function shelf(){const n=nextStep();document.querySelector('#case-link').innerHTML=`<button class="vt-nav-item is-on" data-journey="resume" data-keep>Marcus Doyle</button><div class="vt-case-sub">${conduct()?'Conduct-based':'Policy-based'} · ${s.final?'Final report':s.stage==='report'?'Report draft':s.plan?'Plan final':'Intake complete'}</div><button class="vt-nav-item" data-journey="plan" data-keep>Plan ${s.plan?'✓':''}</button><button class="vt-nav-item" data-journey="interviews" data-keep>Interviews · ${s.summaries.length}/4</button><button class="vt-nav-item" data-journey="questions" data-keep>Ask about the case</button><button class="vt-nav-item" data-journey="gather" data-keep>Documents · ${s.files.length+1}</button>${s.findings.some(Boolean)||s.summaries.length===4?'<button class="vt-nav-item" data-journey="findings" data-keep>Findings</button>':''}${s.stage==='report'||s.final?'<button class="vt-nav-item" data-journey="report" data-keep>Report</button>':''}${n?`<p class="vt-case-next">Next: ${n[1]}</p>`:''}`;}
  function tray(ids,label){return `<div class="material-drop" data-drop="${ids.join(',')}" tabindex="0" aria-label="${label}"><b>${label}</b><span>Drop a sample file here, or choose one below</span></div><div class="sample-tray"><span class="demo-label">Your demo materials · fictional</span>${ids.map(id=>`<div class="material-item"><button class="sample-file" draggable="true" data-material="${id}">▤ ${materials[id].name}</button>${btn('upload:'+id,'Use this file')}${link('read:'+id,'Read')}</div>`).join('')}${ids.length>1?`<div class="material-all">${btn('upload-all:'+ids.join(','),'Use all '+ids.length+' files')}</div>`:''}</div>`;}
@@ -102,15 +107,16 @@ export function createJourney({reply,user,esc}){
   const rest=remaining();
   stage('Interviews',`<p>${s.summaries.length} of 4 summaries finalized.</p><div class="interview-tiles">${interviewOrder.map(id=>`<button class="person-tile" data-journey="person:${id}" data-keep><b>${names[id]}</b><span>${roles[id]}</span><small>${s.summaries.includes(id)?'✓ Summary finalized':s.files.includes(id)?'Record added · summary ready':s.outlines.includes(id)?'Outline ready':'Not yet interviewed'}</small></button>`).join('')}</div>${bulkOffer(rest)}`,{next:nextStep()});}
  // Add the remaining interview records in one go. On the policy path Leah's comes first, because her interview changes the plan.
- function bulkOffer(rest){if(!rest.length)return '';if(!s.files.includes('leah'))return '';return `<div class="bulk-offer"><span>For the demo, the interviews have been conducted.</span>${btn('upload-all:'+rest.join(','),rest.length===4?'Add all four interview records':`Add the other ${rest.length===1?'interview record':rest.length+' interview records'}`)}</div>`;}
+ function bulkOffer(rest){if(!rest.length)return '';return `<div class="bulk-offer"><span>For the demo, the interviews have been conducted.</span>${btn('upload-all:'+rest.join(','),rest.length===4?'Upload all interview transcripts':`Upload the other ${rest.length===1?'transcript':rest.length+' transcripts'}`)}</div>`;}
  function person(id){
-  stage(names[id]+' · '+roles[id],`<p>${id==='carla'?'Carla’s record is interview notes, not a verbatim transcript.':'Prepare the outline, then bring in the completed interview.'}</p>`,{next:s.files.includes(id)?['summary:'+id,`Review ${first[id]}'s summary`]:s.outlines.includes(id)?['record:'+id,id==='carla'?'Add the interview notes':'Add the transcript']:['outline:'+id,'Write the interview outline'],extras:[...(s.outlines.includes(id)?[['outline:'+id,'View the outline']]:[]),...(!s.files.includes(id)&&!s.outlines.includes(id)?[['record:'+id,'Skip to the record']]:[]),['interviews','All interviews']]});}
+  stage(names[id]+' · '+roles[id],`<p>${id==='carla'?'Carla’s record is interview notes, not a verbatim transcript.':'Prepare the outline, then bring in the completed interview.'}</p>`,{next:s.files.includes(id)?['summary:'+id,`Review ${first[id]}'s summary`]:s.outlines.includes(id)?['record:'+id,id==='carla'?'Add the interview notes':'Add the transcript']:['outline:'+id,'Write the interview outline'],extras:[...(s.outlines.includes(id)?[['outline:'+id,'View the outline']]:[]),...(!s.files.includes(id)&&!s.outlines.includes(id)?[['record:'+id,id==='carla'?'Upload the interview notes':'Upload the transcript']]:[]),['interviews','All interviews']]});}
  function outline(id){mutate('outline',id);const e=stage('Interview outline · '+names[id],outlineView(id),{next:s.files.includes(id)?['summary:'+id,`Review ${first[id]}'s summary`]:['record:'+id,id==='carla'?'Add the interview notes':'Add the transcript'],extras:[['interviews','All interviews']]});e.classList.add('artifact-host');}
  function record(id){if(s.files.includes(id))return summary(id);stage(names[id]+' · '+(id==='carla'?'Interview notes':'Interview record'),`<p>${id==='carla'?'Add the notes from Carla’s phone interview.':'For the demo, the interview has already been conducted. Add its transcript.'}</p>${tray([id],id==='carla'?'Add interview notes':'Add the transcript')}`,{extras:[['interviews','All interviews']]});}
  function upload(id,quiet=false){if(s.files.includes(id))return false;mutate('upload',id);if(!quiet)user('Added '+materials[id].name);return true;}
  function afterUpload(ids){
   if(ids.includes('policy')){reply('The policy is added.');return plan();}
   const people=ids.filter(id=>interviewOrder.includes(id)),docs=ids.filter(id=>!interviewOrder.includes(id));
+  if(people.length&&s.summaries.length){const more=finishSummaries();reply(`${listNames(people)}: ${people.length>1?'interviews':'interview'} added and summarized, finalized for the demo. Open any summary from Interviews.`);const n=nextStep();return n?dispatch(n[0]):interviews();}
   if(people.length){reply(people.length>1?`${people.map(id=>first[id]).join(', ')}: records added; the interviews are marked complete.`:people[0]==='carla'?'The interview notes are added.':'The transcript is added; the interview is marked complete.');
    if(people.includes('leah')&&!scopeDecision){return stage('Interview added',`<p>Leah's account is in the case. Before summarizing, it is worth checking whether her interview raises anything the plan doesn't cover.</p>`,{next:['scope-review',"Check Leah's interview for anything new"],extras:[['summary:leah','Read her summary first']]});}
    if(people.length>1)return interviews();return summary(people[0]);}
@@ -137,11 +143,14 @@ export function createJourney({reply,user,esc}){
   if(p)p.outerHTML=save?`<div class="vt-plan-change-done">✓ Saved: ${conduct()?'change allegations':'add Anti-Retaliation Policy'}.</div>`:'<div class="vt-plan-change-done is-kept">Kept the plan as it was.</div>';
   scopeDecision=save?'saved':'kept';if(save){mutate('scope');reply(conduct()?conductScope.savedReply:scopeReview.savedReply);}
   else reply(`The plan stays at ${conduct()?'four':'three'} allegations. You can still ask about the escalations removal at any time.`);
-  continueLine(save?'The other outlines were written before the change.':'Back to the case');}
+  if(save){const n=nextStep();stage('Plan updated',conduct()?`<p>Allegation 5 is now part of the plan:</p><p class="new-allegation">${esc(conductScope.newAllegation)}</p>`:'<p>The Anti-Retaliation Policy is now part of the plan, with the escalations removal as an allegation.</p>',{next:n,suggest:false});return;}
+  continueLine();}
+ function finishSummaries(){const more=interviewOrder.filter(x=>s.files.includes(x)&&!s.summaries.includes(x));more.forEach(x=>mutate('summary',x));return more;}
+ function listNames(ids){const n=ids.map(x=>first[x]);return n.length<2?n.join(''):n.slice(0,-1).join(', ')+' and '+n[n.length-1];}
  function summary(id){if(!s.files.includes(id))return record(id);
   const e=stage('Interview summary · '+names[id],summaryView(id,format),{next:s.summaries.includes(id)?nextStep():['final-summary:'+id,'Finalize this summary'],extras:[['interviews','All interviews']]});e.classList.add('artifact-host');e.dataset.person=id;}
  function gather(){if(!s.plan)return plan();const missing=['emails','records'].filter(id=>!s.files.includes(id));
-  stage('Documents',`<p>${s.summaries.length<4?'You can add evidence now and return to the interviews.':'That’s everyone interviewed. Drop in anything else you have: emails, messages, records, notes.'}</p>${missing.length?tray(missing,'Add case documents'):'<p>✓ Email and chat records<br>✓ Workforce and training records</p>'}<details><summary>Files in the case</summary>${['complaint',...s.files].map(id=>link('read:'+id,id==='complaint'?'01_Complaint_Email_Goldberg.docx':materials[id].name)).join('')}</details>`,{next:missing.length?null:s.summaries.length<4?nextStep():['analysis','That’s everything'],extras:s.summaries.length<4?[['interviews','Return to interviews']]:[]});}
+  stage('Documents',`<p>${s.summaries.length<4?'You can add evidence now and return to the interviews.':'That’s everyone interviewed. Drop in anything else you have: emails, messages, records, notes.'}</p>${missing.length?tray(missing,'Add case documents'):'<p>✓ Email and chat records<br>✓ Workforce and training records</p>'}<details><summary>Files in the case</summary>${['complaint',...s.files].map(id=>link('read:'+id,id==='complaint'?'01_Complaint_Email_Goldberg.docx':materials[id].name)).join('')}</details>`,{next:missing.length>1?['upload-all:'+missing.join(','),'Upload both documents']:missing.length?null:s.summaries.length<4?nextStep():['analysis','That’s everything'],extras:s.summaries.length<4?[['interviews','Return to interviews']]:[]});}
  function ready(){return s.summaries.length===4&&['emails','records'].every(k=>s.files.includes(k));}
  function analysis(){if(!ready())return gather();stage('Analysis',`<p>Next, decide your findings. If you'd like to see the record laid out first, ${conduct()?'the timeline is':'the timeline and the evidence matrix are'} ready.</p>`,{next:['findings','Decide findings'],extras:[['timeline','View the timeline'],...(conduct()?[]:[['matrix:0','View the evidence matrix']])]});}
  function timeline(){if(!ready())return gather();reply("Here's the timeline: every dated event, and what doesn't line up.");stage('Timeline · 20 events',`<ol class="actual-timeline">${artifacts.events.map(e=>`<li><time>${esc(e.date)}</time><details><summary>${esc(e.title)}</summary><p>${esc(e.description)}</p><small>${esc(e.source)}</small>${e.flags.map(f=>`<p class="timeline-flag">⚑ ${esc(typeof f==='string'?f:JSON.stringify(f))}</p>`).join('')}</details></li>`).join('')}</ol>`,{next:['findings','Decide findings'],extras:conduct()?[]:[['matrix:0','View the evidence matrix']]});}
@@ -170,13 +179,14 @@ export function createJourney({reply,user,esc}){
   let panel=document.querySelector('#report-pane');if(!panel){panel=document.createElement('aside');panel.id='report-pane';document.querySelector('.vt-main').append(panel);}
   const steps=[conduct()?{done:true,label:'No flags: verification passed 292 of 292 checks'}:{done:s.flag,label:s.flag?'Flag reviewed':'1 flag to review',action:'flag'},{done:s.citation,label:s.citation?'Citation checked':'1 citation to check',action:'citation'}];
   const n=nextStep();const canFinal=s.flag&&s.citation&&!(revision&&!accepted);
-  panel.innerHTML=`<div class="report-toolbar"><div><h2>Investigation report</h2><p>${s.final?'Final':'Draft'} · Marcus Doyle · fictional case</p></div><div class="report-tools">${link('show-chat','Show conversation')}${btn('close-report','Close')}</div></div>
-  ${s.final?'':`<ol class="report-steps">${steps.map(x=>`<li class="${x.done?'is-done':''}">${x.done?'✓':'○'} ${x.action&&!x.done?`<button type="button" class="vt-linkish" data-journey="${x.action}" data-keep>${x.label}</button>`:x.label}</li>`).join('')}${conduct()?'':`<li class="is-optional">${revision?(accepted?'✓ Revision kept':'Revision waiting: Keep or Undo'):`<button type="button" class="vt-linkish" data-journey="redraft" data-keep>Optional: ask Violet to redraft a section</button>`}</li>`}</ol>
-  <div class="report-next">${n&&n[0]!=='final-report'?btn(n[0],n[1],'is-next'):''}<button type="button" class="vt-chip ${canFinal?'is-next':'is-waiting'}" data-journey="final-report" data-keep ${canFinal?'':'aria-disabled="true"'}>Finalize the report</button>${canFinal?'':`<small>${revision&&!accepted?'Keep or undo the revision first.':'Review the flag and check a citation first.'}</small>`}<div class="report-msg" role="status"></div></div>`}
-  <p class="demo-label">${conduct()?esc(conductPath.source.report):'Captured report from INV-2026-0096'} · ${reportFindingsDiffer()?'your findings differ from its conclusions in places':'matches your findings'}</p><article class="report-paper"></article>`;
+  // One title row, one status line with the single next step, then the report. Provenance sits at the foot.
+  const nextBtn=s.final?'':n?btn(n[0],n[0]==='final-report'?'Finalize the report':n[1],'is-next'):'';
+  const optional=conduct()||s.final?'':revision?`<li>${accepted?'✓ Revision kept':'Revision waiting: Keep or Undo'}</li>`:`<li class="is-optional"><button type="button" class="vt-linkish" data-journey="redraft" data-keep>Ask Violet to redraft a section</button></li>`;
+  panel.innerHTML=`<div class="report-toolbar"><h2>Investigation report <span class="report-state">${s.final?'Final':'Draft'}</span></h2><div class="report-tools">${link('show-chat','Show conversation')}${btn('close-report','Close')}</div></div>
+  ${s.final?'':`<div class="report-status"><ol class="report-steps">${steps.map(x=>`<li class="${x.done?'is-done':''}">${x.done?'✓':'○'} ${x.label}</li>`).join('')}${optional}</ol><div class="report-next">${nextBtn}<div class="report-msg" role="status"></div></div></div>`}
+  <article class="report-paper"></article><p class="demo-label report-source">${conduct()?esc(conductPath.source.report):'Captured report from INV-2026-0096'} · ${reportFindingsDiffer()?'your findings differ from its conclusions in places':'matches your findings'}</p>`;
   const paper=panel.querySelector('.report-paper');paper.innerHTML=reportView(framework);
   const headings=[...paper.querySelectorAll('h2')].filter(h=>/^[IVX]+\. /.test(h.textContent));headings.forEach((h,i)=>{h.id='report-section-'+i;});
-  const toc=document.createElement('details');toc.className='report-contents';toc.innerHTML=`<summary>Report sections · ${headings.length}</summary>`+headings.map((h,i)=>`<button type="button" class="vt-linkish" data-report-section="${i}">${esc(h.textContent)}</button>`).join('');paper.before(toc);
   if(revision&&!conduct()){const h=headings.find(x=>/Anti-Harassment/.test(x.textContent))||headings[6];const nextH=headings[headings.indexOf(h)+1];h.id='revised-section';let x=h.nextElementSibling;while(x&&x!==nextH){const r=x;x=x.nextElementSibling;r.remove();}const note=document.createElement('div');note.className='revision';note.innerHTML=`<div class="rev-banner"><span>${accepted?'✓ Kept Violet\'s rewrite':'Redrafted just now. What\'s new is highlighted.'} · ${sectionRevision.quotesVerified} quotes verified</span>${accepted?'':`<span class="revision-actions">${btn('keep-revision','Keep','is-next')}${btn('undo-revision','Undo')}</span>`}</div><div class="rev-body ${accepted?'is-kept':''}">${sectionRevision.html}</div><div class="rev-note"><p class="revision-label">Violet's note</p><p>${esc(sectionRevision.note)}</p></div>`;h.after(note);}
   if(!conduct()){const flagSentence=(capturedReview.flaggedSentences[0]||'').replace(/[¹²³⁴⁵⁶⁷⁸⁹⁰]+$/,'');
    for(const p of paper.querySelectorAll('p')){if(p.textContent.includes(flagSentence)){p.innerHTML=flagReplacement!==null?p.innerHTML.replace(flagSentence,esc(flagReplacement)):p.innerHTML.replace(flagSentence,`<mark class="flag-sentence ${s.flag?'is-reviewed':''}" role="button" tabindex="0" data-journey="flag" data-keep title="${s.flag?'Flag reviewed':'Violet flagged this sentence; click to review'}">${flagSentence}</mark>`);break;}}}
@@ -195,8 +205,20 @@ export function createJourney({reply,user,esc}){
   if(!(s.flag&&s.citation)){notice(conduct()?'Check a citation first.':'Review the flag and check a citation first.',msg);return;}
   if(revision&&!accepted){notice('Keep or undo the revision before finalizing.',msg);return;}
   if(reportFindingsDiffer()&&!anyway){msg.innerHTML=`<p>Your findings differ from this captured report's conclusions. In the app, Violet would redraft those sections to match your findings; that redraft isn't part of this demo.</p>${btn('findings','Review my findings')}${btn('final-report-anyway','Finalize anyway','is-next')}`;return;}
-  mutate('finalize');closeReport();reply('The report is finalized in this demo.');
-  stage('Investigation complete',`<p>4 interviews reviewed. Evidence gathered. Findings recorded. Report reviewed and finalized.</p><p>This is a fictional case; nothing was uploaded or sent.</p>`,{next:['read-final','Read the final report'],extras:[['restart','Start the case again']],suggest:false});}
+  mutate('finalize');closeReport();celebrate();}
+ // Filing the report, as the app celebrates it: Violet cheering, a short burst of confetti, and what it took.
+ function celebrate(){retire();const e=document.createElement('section');e.className='vt-stagecard stage-live demo-celebrate';
+  e.innerHTML=`<div class="celebrate-top"><img src="violet-welcome.webp" alt="" aria-hidden="true" class="celebrate-figure"><div><b>Report filed. Nice work.</b><span>4 interviews · ${s.findings.length} allegations · every sentence checked against the record</span><span>This was a fictional case; nothing was uploaded or sent.</span></div></div><div class="vt-stagecard-foot journey-foot">${btn('read-final','Read the final report','is-next')}${link('restart','Start the case again')}</div>`;
+  root().append(e);shelf();scroll(e);track('sandbox_complete');
+  const fire=()=>{e.classList.add('is-cheering');setTimeout(()=>e.classList.remove('is-cheering'),1900);confetti();};
+  const io=new IntersectionObserver(es=>{if(es.some(x=>x.isIntersecting)){io.disconnect();setTimeout(fire,250);}},{threshold:.4});io.observe(e);}
+ function confetti(){const layer=document.createElement('div');layer.className='demo-confetti';layer.setAttribute('aria-hidden','true');
+  const colors=['#7043bb','#9b6fe0','#c9b2f2','#f2b8d8','#ffd27a','#5c359e','#8fd3c1'];const w=innerWidth,h=innerHeight;
+  for(let i=0;i<120;i++){const p=document.createElement('i');const a=(Math.random()*120+30)*Math.PI/180;const v=.35*h+Math.random()*.3*h;
+   p.style.left=`${w/2+(Math.random()-.5)*w*.33}px`;p.style.top=`${h*.45+(Math.random()-.5)*h*.1}px`;p.style.background=colors[i%colors.length];
+   if(i%3===0){p.style.width='7px';p.style.height='7px';p.style.borderRadius='50%';}
+   p.style.setProperty('--dx',`${Math.cos(a)*v*.9}px`);p.style.setProperty('--dy',`${-Math.sin(a)*v}px`);p.style.setProperty('--fall',`${.55*h+Math.random()*.3*h}px`);p.style.setProperty('--r',`${Math.random()*900-450}deg`);p.style.animationDelay=`${Math.random()*150}ms`;layer.append(p);}
+  document.body.append(layer);setTimeout(()=>layer.remove(),2600);}
  // A refusal shows next to what was clicked, in words; otherwise in the conversation.
  let lastClicked=null;
  function notice(msg,where){const host=where||lastClicked?.closest('.vt-stagecard,.continue-line,.source-panel,.answer-tools')?.querySelector?.('.journey-foot,.dock-actions')||lastClicked?.closest('.answer-tools,.continue-line')||null;
@@ -248,7 +270,7 @@ export function createJourney({reply,user,esc}){
    case 'keep-scope':{if(!root().querySelector('.violet-proposal .vt-stagecard')){scopeDecision='kept';reply('The plan stays as it is.');return continueLine();}return decideScope(false);}
    case 'summary':return summary(id);
    case 'format':{format=id;const host=lastClicked?.closest('.artifact-host');const person=host?.dataset.person;if(host&&person)host.querySelector('.vt-ff-body').innerHTML=summaryView(person,format);return;}
-   case 'final-summary':mutate('summary',id);reply(`${first[id]}'s summary is finalized.`);{const n=nextStep();return n?dispatch(n[0]):interviews();}
+   case 'final-summary':{mutate('summary',id);const more=finishSummaries();reply(`${first[id]}'s summary is finalized.`+(more.length?` For the demo, ${listNames(more)}’s ${more.length>1?'summaries are':'summary is'} finalized too; open any of them from Interviews.`:''));const n=nextStep();return n?dispatch(n[0]):interviews();}
    case 'gather':return gather();
    case 'analysis':return analysis();
    case 'timeline':return timeline();

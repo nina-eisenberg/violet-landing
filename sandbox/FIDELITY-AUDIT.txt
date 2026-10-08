@@ -46,6 +46,14 @@ Written for the demo (labelled on screen as such)
   Demo-guide replies (product questions, unavailable answers, no-answer fallback) are labelled "Demo guide".
   Short connective lines in the conversation ("The policy is added.", step narration) are the demo's, as before.
 
+DEMO SHORTCUTS (Nina's walkthrough, Oct 7 night)
+  Plan cards show the first four documents to gather (saved plans list eight). Outlines open at the allegation
+  questions; the header block is dropped and sections I–III fold into one line. After the first summary is finalized,
+  the other transcripts are added, summarized and finalized in one step; the two exhibits upload with one button.
+  Intake skips "where was it first raised" and names Jordan Kim. Filing the report shows the app's celebration
+  (violet-welcome.webp from the app, confetti code mirrored from FlowCards.tsx). The quick look's report step shows the
+  VI findings passage on alternatives, with the summary's flagged sentence below it.
+
 GAPS AND DEVIATIONS
 - Conduct path is a composite: the plan (0107, 4 allegations, from the complaint) and the findings/report (0076,
   6 allegations, from all files, Sept 24 — older than the rest) are worded differently; the findings screen says so.
