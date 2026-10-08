@@ -19,6 +19,9 @@ export function planView({final,scope,framework}){
  r.querySelectorAll('button.vt-editable').forEach(b=>{const s=document.createElement('span');s.className='vt-plan-static';s.innerHTML=b.innerHTML;b.replaceWith(s);});
  r.querySelectorAll('.vt-editable').forEach(e=>{e.removeAttribute('role');e.removeAttribute('tabindex');e.classList.remove('vt-editable');});
  r.querySelectorAll('details.vt-plan-sec').forEach(e=>e.open=true);
+ // The conduct plan (INV-2026-0107) named the witness only as "Jordan", as the complaint does. The demo uses his full name,
+ // as the intake does, and lists him after the complainant and subject.
+ r.querySelectorAll('.vt-plan-wit-row').forEach(row=>{const b=row.querySelector('b');if(b?.textContent.trim()!=='Jordan')return;b.textContent='Jordan Kim';const em=row.querySelector('em');if(em)em.textContent='Witness · Member Services Representative, Contact Center';row.querySelector('.vt-plan-oncase')?.remove();const wit=row.closest('.vt-plan-wit');const last=[...wit.parentElement.querySelectorAll(':scope>.vt-plan-wit')].pop();if(last&&last!==wit)last.after(wit);});
  // The demo shows the first four documents to gather (the saved plans list eight), so the card stays readable.
  r.querySelectorAll('.vt-plan-checklist').forEach(ul=>{[...ul.children].slice(4).forEach(li=>li.remove());const n=ul.previousElementSibling?.querySelector('.vt-plan-count');if(n)n.textContent=String(ul.children.length);});
  return t.innerHTML;
