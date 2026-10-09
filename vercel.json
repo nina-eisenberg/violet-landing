@@ -1,12 +1,39 @@
 {
   "cleanUrls": true,
   "redirects": [
-    { "source": "/california-training", "destination": "/training/california", "permanent": true }
+    {
+      "source": "/california-training",
+      "destination": "/training/california",
+      "permanent": true
+    }
   ],
   "rewrites": [
-    { "source": "/training/illinois", "destination": "/training/coming-soon.html?state=illinois" },
-    { "source": "/training/connecticut", "destination": "/training/coming-soon.html?state=connecticut" },
-    { "source": "/training/delaware", "destination": "/training/coming-soon.html?state=delaware" },
-    { "source": "/training/maine", "destination": "/training/coming-soon.html?state=maine" }
+    {
+      "source": "/training/illinois",
+      "destination": "/training/coming-soon.html?state=illinois"
+    },
+    {
+      "source": "/training/connecticut",
+      "destination": "/training/coming-soon.html?state=connecticut"
+    },
+    {
+      "source": "/training/delaware",
+      "destination": "/training/coming-soon.html?state=delaware"
+    },
+    {
+      "source": "/training/maine",
+      "destination": "/training/coming-soon.html?state=maine"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(sandbox/.*|threads-landing\\.(?:js|css))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
   ]
 }
