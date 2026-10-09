@@ -27,7 +27,25 @@
   ],
   "headers": [
     {
-      "source": "/(sandbox/.*|threads-landing\\.(?:js|css))",
+      "source": "/sandbox/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/threads-landing.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/threads-landing.css",
       "headers": [
         {
           "key": "Cache-Control",
