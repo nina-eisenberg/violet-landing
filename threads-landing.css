@@ -93,3 +93,25 @@ body.tour-expanded {overflow:hidden;}.tour-workspace.is-expanded {position:fixed
 .tour-choice:focus-visible{outline:3px solid #a58bd6;outline-offset:2px}
 @media(max-width:760px){.outputs-grid,.tour-choices{grid-template-columns:1fr}.preview-frame{height:820px}}
 .tour-bar-actions{display:flex;gap:8px;align-items:center}
+/* Phones: each demo is a card that opens full screen (threads-landing.js). */
+.demo-card{display:none}
+.demo-overlay{position:fixed;inset:0;z-index:10001;display:flex;flex-direction:column;background:#faf9fc}
+.demo-overlay[hidden]{display:none}
+.demo-overlay-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px 10px 16px;padding-top:max(10px,env(safe-area-inset-top));background:#f0eaf7;border-bottom:1px solid #e3d9f0;font:500 13px/1.4 var(--sans,Inter,sans-serif);color:#5d4879}
+.demo-overlay-actions{display:flex;gap:8px}
+.demo-overlay-bar button{min-height:44px;padding:0 16px;border:1px solid #d9cbe8;border-radius:999px;background:#fff;color:#6740b1;font:600 14px var(--sans,Inter,sans-serif);cursor:pointer}
+.demo-overlay iframe{flex:1;width:100%;border:0;display:block;padding-bottom:env(safe-area-inset-bottom)}
+body.demo-open{overflow:hidden}
+body.demo-open .mobile-start{display:none}
+@media(max-width:700px){
+  .demo-card{display:flex;flex-direction:column;gap:6px;width:100%;margin:8px 0 0;padding:20px 20px 18px;text-align:left;border:1px solid #ddd3e9;border-radius:18px;background:#fff;box-shadow:0 14px 40px #35204c12;font:inherit;color:#352f40;cursor:pointer}
+  .demo-card b{font:500 24px/1.2 Newsreader,Georgia,serif;color:#241640}
+  .demo-card span{font-size:15px;line-height:1.5;color:#5f5969}
+  .demo-card .demo-card-kicker{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#7a6a92}
+  .demo-card .demo-card-go{align-self:flex-start;margin-top:8px;padding:12px 20px;border-radius:999px;background:#6a3fb5;color:#fff;font-weight:600;font-size:15px}
+  .preview-frame,.tour-workspace{display:none!important}
+  .product-preview{padding-bottom:8px}
+  /* Bigger tap targets for small links. */
+  header nav a{display:inline-flex;align-items:center;min-height:44px}
+  .threads-founder a,.pricing-section p a,.faq-section a,.contact-section a,footer nav a{display:inline-block;padding-top:12px;padding-bottom:12px}
+}

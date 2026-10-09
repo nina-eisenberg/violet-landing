@@ -136,3 +136,11 @@ body.report-open.source-open .vt-shell{margin-right:0}
 .dock-actions-top{position:sticky;top:0;z-index:2;display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 10px;padding:10px 14px;background:#f7f3fd;border:1px solid #e3d9f0;border-radius:10px;font:13.5px/1.5 Inter,sans-serif;white-space:normal}
 .dock-actions-top span{flex:1 1 200px;color:#3a2463}
 #report-pane .report-hint{flex-basis:100%;margin:0;color:#5f5969;font-size:13px}
+/* Phones: the open report takes the whole screen; "Show conversation" swaps to the conversation and back. */
+@media(max-width:700px){
+  body.report-open:not(.chat-shown) .vt-main>.vt-home,body.report-open:not(.chat-shown) .vt-main>#chat{display:none}
+  body.report-open:not(.chat-shown) #report-pane{max-height:none;flex:1;min-height:0;padding:14px 14px 24px}
+  body.report-open.chat-shown #report-pane{flex:none;max-height:none;padding:10px 14px}
+  body.report-open.chat-shown #report-pane>:not(.report-toolbar){display:none}
+  #report-pane .report-toolbar h2{font-size:18px}
+}

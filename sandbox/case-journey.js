@@ -195,7 +195,7 @@ export function createJourney({reply,user,esc}){
   setTimeout(()=>{const h=document.querySelector('.vt-home');if(h)h.scrollTop=h.scrollHeight;},80);
   if(!root().querySelector('.report-narration'))stage('Report',`<p>The report is open beside the conversation. Follow the checklist at the top of it: review the flag, check a citation, then finalize. You can ask me about any part of it here.</p>`,{cls:'report-narration',suggest:true});
  }
- function closeReport(){document.querySelector('#report-pane')?.remove();document.body.classList.remove('report-open','dock-open','chat-hidden');reportOpen=false;const d=document.querySelector('#document');if(d?.open)d.close();}
+ function closeReport(){document.querySelector('#report-pane')?.remove();document.body.classList.remove('report-open','dock-open','chat-hidden','chat-shown');reportOpen=false;const d=document.querySelector('#document');if(d?.open)d.close();}
  function showInReport(el){if(!el)return;const pane=document.querySelector('#report-pane');const go=()=>{if(!pane||!el.isConnected)return;pane.scrollTop+=el.getBoundingClientRect().top-pane.getBoundingClientRect().top-pane.clientHeight/3;};go();setTimeout(go,120);setTimeout(go,450);el.classList.add('is-focus');setTimeout(()=>el.classList.remove('is-focus'),2400);}
  function review(kind){if(!reportOpen)report();const paper=document.querySelector('#report-pane .report-paper');
   if(kind==='flag'){showInReport(paper.querySelector('.flag-sentence'));
@@ -282,7 +282,7 @@ export function createJourney({reply,user,esc}){
    case 'align':mutate('finding',{index:Number(id),value:recommended()[Number(id)]});return confidence();
    case 'report':return report();
    case 'close-report':closeReport();return continueLine();
-   case 'show-chat':document.body.classList.toggle('chat-shown');return;
+   case 'show-chat':{const on=document.body.classList.toggle('chat-shown');const l=document.querySelector('#report-pane [data-journey="show-chat"]');if(l)l.textContent=on?'Show the report':'Show conversation';return;}
    case 'flag':return review('flag');
    case 'citation':return review('citation');
    case 'address-flag':mutate('flag');document.querySelector('#document').close();report();return;
