@@ -144,3 +144,42 @@ body.report-open.source-open .vt-shell{margin-right:0}
   body.report-open.chat-shown #report-pane>:not(.report-toolbar){display:none}
   #report-pane .report-toolbar h2{font-size:18px}
 }
+/* The quoted sentence at the top of a flag or citation panel. */
+.dock-quote{margin:0 0 12px;padding:10px 12px;background:#fbf8ff;border-left:3px solid #7043bb;border-radius:0 10px 10px 0;font:15px/1.55 Newsreader,Georgia,serif;color:#241640;white-space:normal}
+.dock-actions-top .dock-quote{flex-basis:100%;margin:0}
+/* Phone report checklist (hidden on wider screens). */
+.report-mobile,.rm-back-bar{display:none}
+@media(max-width:700px){
+  body.report-open #report-pane .report-status,body.report-open #report-pane .report-tools [data-journey="show-chat"]{display:none}
+  body.report-open:not(.report-reading) #report-pane .report-paper,body.report-open:not(.report-reading) #report-pane .report-source{display:none}
+  body.report-open:not(.report-reading) .report-mobile{display:block}
+  body.report-open.report-reading .rm-back-bar{display:block;position:sticky;top:-14px;z-index:3;margin:0 -14px 12px;padding:10px 14px;background:#f4f1f7;border-bottom:1px solid #e3d9f0}
+  .rm-back-bar .vt-chip{min-height:44px;font-size:15px}
+  .rm-intro{margin:6px 0 14px;font-size:15px;line-height:1.55;color:#4a4455}
+  .rm-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+  .rm-step{display:flex;align-items:center;gap:14px;width:100%;padding:16px;border:1px solid #e3d9f0;border-radius:16px;background:#fff;text-align:left;font:inherit;color:#282333}
+  button.rm-step{cursor:pointer;border-color:#7043bb;box-shadow:0 6px 18px #6a3fb51f}
+  .rm-step b{display:block;font-size:16px;font-weight:600}
+  .rm-step small{display:block;margin-top:2px;font-size:13.5px;color:#6f6879}
+  .rm-step>span:nth-child(2){flex:1}
+  .rm-n{flex:none;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:999px;background:#efe7fb;color:#5c359e;font-weight:700}
+  button.rm-step .rm-n{background:#6a3fb5;color:#fff}
+  .rm-step.is-done{background:#f3faf6;border-color:#cfe9db}.rm-step.is-done .rm-n{background:#23704f;color:#fff}
+  .rm-step.is-later{opacity:.6}
+  .rm-go{font-size:20px;color:#6a3fb5}
+  .rm-read{display:block;margin:18px auto 0;min-height:44px;font-size:15px}
+  .report-mobile .report-msg:not(:empty){margin-top:12px}
+  /* Each step opens as its own full-screen page with one way back. */
+  #document.source-panel.is-step[open]{inset:0;height:100dvh;border-radius:0;border-top:0}
+  #document.is-step>#close{min-height:44px;padding:0 14px;font-size:15px;font-weight:600}
+}
+@media(max-width:700px){
+  #document.source-panel.is-step[open]{grid-template-columns:1fr;grid-template-rows:auto auto minmax(0,1fr);z-index:60}
+  #document.is-step>#close{grid-column:1;grid-row:1;justify-self:start;margin:10px 12px 0;border:1px solid #d9cdea;border-radius:999px;background:#fff;color:#5c359e}
+  #document.is-step>h2{grid-column:1;grid-row:2;padding:10px 16px 12px}
+  #document.is-step>pre{grid-row:3}
+}
+@media(max-width:700px){
+  body.report-open #report-pane.is-final .report-paper,body.report-open #report-pane.is-final .report-source{display:block}
+  body.report-open.report-reading .rm-back-bar{width:auto;box-sizing:border-box}
+}

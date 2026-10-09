@@ -1,5 +1,5 @@
 import {openSourcePanel,setupSourcePanel} from './source-panel.js';
-import {createJourney,track} from './case-journey.js';
+import {createJourney,track} from './case-journey.js?v=20261008b';
 import {complaint} from './complaint.js';
 const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const synopsis='Leah Goldberg made a formal complaint to HR about her supervisor, Marcus Doyle. She says he denied her request not to work Friday evenings after 5 PM for Shabbat, did not discuss a coworker’s proposed shift swap, and took ten days to respond. She also reports a remark made to her at a team huddle and a religious remark relayed to her by Jordan. She asks HR to investigate and help keep her Friday evenings free.';

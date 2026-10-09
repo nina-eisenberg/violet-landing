@@ -39,6 +39,7 @@ export function createJourney({reply,user,esc}){
  // The flag the demo walks through: on the conduct path, one of the four Violet's check raised on INV-2026-0107.
  const flagSentence=()=>conduct()?conductPath.flag.sentence:(capturedReview.flaggedSentences[0]||'').replace(/[¹²³⁴⁵⁶⁷⁸⁹⁰]+$/,'');
  const flagCard=()=>conduct()?conductPath.flag.card:capturedReview.flagHtml;
+ const phone=()=>window.matchMedia('(max-width: 700px)').matches;
  const recommended=()=>conduct()?conductPath.findings.map(r=>r.recorded):policyRecommended;
  function init(fw='conduct'){framework=fw;s={...freshJourney(fw==='conduct'?conductPath.findings.length:7),framework:fw};format='bullets';revision=false;accepted=false;flagReplacement=null;scopeDecision=null;scopeReviewed=false;answered=new Set();reasons={};confidenceSeen=false;reportOpen=false;}
  init();
@@ -93,7 +94,7 @@ export function createJourney({reply,user,esc}){
  }
  function shelf(){const n=nextStep();document.querySelector('#case-link').innerHTML=`<button class="vt-nav-item is-on" data-journey="resume" data-keep>Marcus Doyle</button><div class="vt-case-sub">${conduct()?'Conduct-based':'Policy-based'} · ${s.final?'Final report':s.stage==='report'?'Report draft':s.plan?'Plan final':'Intake complete'}</div><button class="vt-nav-item" data-journey="plan" data-keep>Plan ${s.plan?'✓':''}</button><button class="vt-nav-item" data-journey="interviews" data-keep>Interviews · ${s.summaries.length}/4</button><button class="vt-nav-item" data-journey="questions" data-keep>Ask about the case</button><button class="vt-nav-item" data-journey="gather" data-keep>Documents · ${s.files.length+1}</button>${s.findings.some(Boolean)||s.summaries.length===4?'<button class="vt-nav-item" data-journey="findings" data-keep>Findings</button>':''}${s.stage==='report'||s.final?'<button class="vt-nav-item" data-journey="report" data-keep>Report</button>':''}${n?`<p class="vt-case-next">Next: ${n[1]}</p>`:''}`;}
  function tray(ids,label){return `<div class="material-drop" data-drop="${ids.join(',')}" tabindex="0" aria-label="${label}"><b>${label}</b><span>Drop a sample file here, or choose one below</span></div><div class="sample-tray"><span class="demo-label">Your demo materials · fictional</span>${ids.map(id=>`<div class="material-item"><button class="sample-file" draggable="true" data-material="${id}">▤ ${materials[id].name}</button>${btn('upload:'+id,'Use this file')}${link('read:'+id,'Read')}</div>`).join('')}${ids.length>1?`<div class="material-all">${btn('upload-all:'+ids.join(','),'Use all '+ids.length+' files')}</div>`:''}</div>`;}
- function dock(title,html){const d=document.querySelector('#document');d.querySelector('h2').textContent=title;d.querySelector('pre').innerHTML=html;openSourcePanel(d);document.body.classList.add('dock-open');}
+ function dock(title,html){const d=document.querySelector('#document');d.querySelector('h2').textContent=title;const c=d.querySelector('#close');if(c)c.textContent=phone()&&reportOpen?'← Back to the checklist':'Close';d.classList.toggle('is-step',phone()&&reportOpen);d.querySelector('pre').innerHTML=html;openSourcePanel(d);document.body.classList.add('dock-open');}
  function source(id,needle=''){if(id==='synopsis'){const c=capturedCitations['Case synopsis, line 1'];if(c)dock(c.title,c.html);return;}
   const material=id.endsWith('-policy')?policyText(id):id==='complaint'?{name:'01_Complaint_Email_Goldberg.docx',text:complaint}:materials[id];if(!material)return;
   dock(material.name,material.text.split('\n').map(line=>needle&&line.includes(needle)?`<mark>${esc(line)}</mark>`:esc(line)).join('\n'));}
@@ -178,6 +179,7 @@ export function createJourney({reply,user,esc}){
   if(!reportOpen)track('report_reached');
   reportOpen=true;document.body.classList.add('report-open');
   let panel=document.querySelector('#report-pane');if(!panel){panel=document.createElement('aside');panel.id='report-pane';document.querySelector('.vt-main').append(panel);}
+  panel.classList.toggle('is-final',!!s.final);
   const steps=[{done:s.flag,label:s.flag?'Flag reviewed':'1 flag to review',action:'flag'},{done:s.citation,label:s.citation?'Citation checked':'1 citation to check',action:'citation'}];
   const n=nextStep();const canFinal=s.flag&&s.citation&&!(revision&&!accepted);
   // One title row, one status line with the single next step, then the report. Provenance sits at the foot.
@@ -186,8 +188,11 @@ export function createJourney({reply,user,esc}){
   const optional=conduct()||s.final?'':revision?`<li>${accepted?'✓ Revision kept':'Revision waiting: Keep or Undo'}</li>`:`<li class="is-optional"><button type="button" class="vt-linkish" data-journey="redraft" data-keep>Ask Violet to redraft a section</button></li>`;
   panel.innerHTML=`<div class="report-toolbar"><h2>Investigation report <span class="report-state">${s.final?'Final':'Draft'}</span></h2><div class="report-tools">${link('show-chat','Show conversation')}${btn('close-report','Close')}</div></div>
   ${s.final?'':`<div class="report-status"><ol class="report-steps">${steps.map(x=>`<li class="${x.done?'is-done':''}">${x.done?'✓':'○'} ${x.label}</li>`).join('')}${optional}</ol><div class="report-next">${nextBtn}<div class="report-msg" role="status"></div></div>${hint?`<p class="report-hint">${hint}</p>`:''}</div>`}
+  ${s.final?'':mobileChecklist(canFinal)}
+  <div class="rm-back-bar"><button type="button" class="vt-chip" data-journey="read-report-close" data-keep>← Back to the checklist</button></div>
   <article class="report-paper"></article><p class="demo-label report-source">${conduct()?esc(conductPath.source.report):'Captured report from INV-2026-0096'} · ${reportFindingsDiffer()?'your findings differ from its conclusions in places':'matches your findings'}</p>`;
   const paper=panel.querySelector('.report-paper');paper.innerHTML=reportView(framework);
+  if(phone()&&!document.body.classList.contains('report-reading'))panel.scrollTop=0;
   const headings=[...paper.querySelectorAll('h2')].filter(h=>/^[IVX]+\. /.test(h.textContent));headings.forEach((h,i)=>{h.id='report-section-'+i;});
   if(revision&&!conduct()){const h=headings.find(x=>/Anti-Harassment/.test(x.textContent))||headings[6];const nextH=headings[headings.indexOf(h)+1];h.id='revised-section';let x=h.nextElementSibling;while(x&&x!==nextH){const r=x;x=x.nextElementSibling;r.remove();}const note=document.createElement('div');note.className='revision';note.innerHTML=`<div class="rev-banner"><span>${accepted?'✓ Kept Violet\'s rewrite':'Redrafted just now. What\'s new is highlighted.'} · ${sectionRevision.quotesVerified} quotes verified</span>${accepted?'':`<span class="revision-actions">${btn('keep-revision','Keep','is-next')}${btn('undo-revision','Undo')}</span>`}</div><div class="rev-body ${accepted?'is-kept':''}">${sectionRevision.html}</div><div class="rev-note"><p class="revision-label">Violet's note</p><p>${esc(sectionRevision.note)}</p></div>`;h.after(note);}
   {const fs=flagSentence();
@@ -195,15 +200,31 @@ export function createJourney({reply,user,esc}){
   setTimeout(()=>{const h=document.querySelector('.vt-home');if(h)h.scrollTop=h.scrollHeight;},80);
   if(!root().querySelector('.report-narration'))stage('Report',`<p>The report is open beside the conversation. Follow the checklist at the top of it: review the flag, check a citation, then finalize. You can ask me about any part of it here.</p>`,{cls:'report-narration',suggest:true});
  }
- function closeReport(){document.querySelector('#report-pane')?.remove();document.body.classList.remove('report-open','dock-open','chat-hidden','chat-shown');reportOpen=false;const d=document.querySelector('#document');if(d?.open)d.close();}
+ // PHONES GET A CHECKLIST, NOT THE WHOLE REPORT (Nina, Oct 8): scrolling a long report on a phone to find two checks
+ // and Finalize trapped people. The report opens as three steps; each opens full screen; reading it is optional.
+ // The sentence a report citation belongs to: the text before its marker, back to the previous sentence end.
+ function citedSentence(sup){const p=sup?.closest('p,li');if(!p)return '';let text='';for(const n of p.childNodes){if(n.contains?.(sup)||n===sup)break;text+=n.textContent;}
+  const parts=text.replace(/\s+/g,' ').trim().split(/(?<=[.!?][”"’]?)\s+(?=[A-Z“"])/);return parts[parts.length-1]||'';}
+ function mobileChecklist(canFinal){
+  const step=(n,done,label,action,why)=>done?`<li class="rm-step is-done"><span class="rm-n">✓</span><span><b>${label}</b><small>Done</small></span></li>`
+   :action?`<li><button type="button" class="rm-step" data-journey="${action}" data-keep><span class="rm-n">${n}</span><span><b>${label}</b><small>${why}</small></span><span class="rm-go" aria-hidden="true">→</span></button></li>`
+   :`<li class="rm-step is-later"><span class="rm-n">${n}</span><span><b>${label}</b><small>${why}</small></span></li>`;
+  return `<div class="report-mobile"><p class="rm-intro">Violet drafted the report and checked it against the record. Two quick checks, then file it.</p><ol class="rm-steps">${
+   step(1,s.flag,'Review the flagged sentence','flag','See why Violet flagged it, then decide')}${
+   step(2,s.citation,'Check one citation',s.flag?'citation':'citation','See the source line beside the sentence')}${
+   step(3,false,'Finalize the report',canFinal?'final-report':null,canFinal?'File it. You can still read it first.':'After the two checks')}</ol>
+   <div class="report-msg" role="status"></div>
+   <button type="button" class="vt-linkish rm-read" data-journey="read-report" data-keep>Read the full report</button></div>`;
+ }
+ function closeReport(){document.querySelector('#report-pane')?.remove();document.body.classList.remove('report-open','dock-open','chat-hidden','chat-shown','report-reading');reportOpen=false;const d=document.querySelector('#document');if(d?.open)d.close();}
  function showInReport(el){if(!el)return;const pane=document.querySelector('#report-pane');const go=()=>{if(!pane||!el.isConnected)return;pane.scrollTop+=el.getBoundingClientRect().top-pane.getBoundingClientRect().top-pane.clientHeight/3;};go();setTimeout(go,120);setTimeout(go,450);el.classList.add('is-focus');setTimeout(()=>el.classList.remove('is-focus'),2400);}
  function review(kind){if(!reportOpen)report();const paper=document.querySelector('#report-pane .report-paper');
   if(kind==='flag'){showInReport(paper.querySelector('.flag-sentence'));
    const t=document.createElement('template');t.innerHTML=flagCard();t.content.querySelectorAll('dialog').forEach(e=>e.remove());
    t.content.querySelectorAll('button').forEach(b=>{b.dataset.journey=b.textContent.includes('Edit')?'edit-flag':b.textContent.includes('Remove')?'remove-flag':'address-flag';b.dataset.keep='';if(b.dataset.journey==='address-flag')b.classList.add('is-primary');});
-   dock('Flagged sentence',t.innerHTML);}
-  else{const k=reviewCitationKey();showInReport(paper.querySelector(`[data-report-citation="${k}"]`));const c=reportCites()[k];dock(c.title,`<div class="dock-actions dock-actions-top"><span>The highlighted line is the source for citation ${k}. Does it support the sentence?</span>${btn('review-citation','Yes, mark it checked','is-next')}</div>`+c.html);}}
- function finalizeReport(anyway=false){const msg=document.querySelector('#report-pane .report-msg');
+   dock('Flagged sentence',`<blockquote class="dock-quote">“${esc(flagSentence())}”</blockquote>`+t.innerHTML);}
+  else{const k=reviewCitationKey();const sup=paper.querySelector(`[data-report-citation="${k}"]`);showInReport(sup);const c=reportCites()[k];const said=citedSentence(sup);dock(c.title,`<div class="dock-actions dock-actions-top">${said?`<blockquote class="dock-quote">“${esc(said)}”</blockquote>`:''}<span>The highlighted line is the source for ${said?'this sentence':`citation ${k}`}. Does it support it?</span>${btn('review-citation','Yes, mark it checked','is-next')}</div>`+c.html);}}
+ function finalizeReport(anyway=false){const msg=[...document.querySelectorAll('#report-pane .report-msg')].find(e=>e.offsetParent)||document.querySelector('#report-pane .report-msg');
   if(!(s.flag&&s.citation)){notice('Review the flag and check a citation first.',msg);return;}
   if(revision&&!accepted){notice('Keep or undo the revision before finalizing.',msg);return;}
   if(reportFindingsDiffer()&&!anyway){msg.innerHTML=`<p>Your findings differ from this captured report's conclusions. In the app, Violet would redraft those sections to match your findings; that redraft isn't part of this demo.</p>${btn('findings','Review my findings')}${btn('final-report-anyway','Finalize anyway','is-next')}`;return;}
@@ -283,6 +304,8 @@ export function createJourney({reply,user,esc}){
    case 'report':return report();
    case 'close-report':closeReport();return continueLine();
    case 'show-chat':{const on=document.body.classList.toggle('chat-shown');const l=document.querySelector('#report-pane [data-journey="show-chat"]');if(l)l.textContent=on?'Show the report':'Show conversation';return;}
+   case 'read-report':document.body.classList.add('report-reading');{const p=document.querySelector('#report-pane');if(p)p.scrollTop=0;}return;
+   case 'read-report-close':document.body.classList.remove('report-reading');{const p=document.querySelector('#report-pane');if(p)p.scrollTop=0;}return;
    case 'flag':return review('flag');
    case 'citation':return review('citation');
    case 'address-flag':mutate('flag');document.querySelector('#document').close();report();return;
